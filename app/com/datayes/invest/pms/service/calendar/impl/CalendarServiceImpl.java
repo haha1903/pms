@@ -24,4 +24,10 @@ public class CalendarServiceImpl implements CalendarService {
         return null;
     }
 
+    @Override
+    public LocalDate nextCalendarDay(LocalDate date) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

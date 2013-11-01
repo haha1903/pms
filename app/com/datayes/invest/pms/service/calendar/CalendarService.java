@@ -9,4 +9,6 @@ public interface CalendarService {
     LocalDate previousTradeDay(LocalDate date);
     
     LocalDate sameOrPreviousTradeDay(LocalDate date);
+    
+    LocalDate nextCalendarDay(LocalDate date);
 }
