@@ -174,6 +174,7 @@ app/com/datayes/invest/pms/service/marketindex/MarketIndexService.java -text
 app/com/datayes/invest/pms/service/marketindex/impl/MarketIndexServiceImpl.java -text
 app/com/datayes/invest/pms/util/BeanException.java -text
 app/com/datayes/invest/pms/util/BeanUtil.java -text
+app/com/datayes/invest/pms/util/DefaultValues.java -text
 app/controllers/Application.scala -text
 app/test/TestPersist.java -text
 app/views/index.scala.html -text
@@ -192,6 +193,7 @@ public/stylesheets/main.css -text
 /svnignore.exclude -text
 test/ApplicationSpec.scala -text
 test/IntegrationSpec.scala -text
+test/com/datayes/invest/pms/service/marketdata/impl/MarketDataServiceMockImpl.java -text
 test/com/datayes/invest/pms/util/BeanUtilTest.java -text
 test/com/datayes/invest/pms/util/Position.java -text
 test/com/datayes/invest/pms/util/PositionHist.java -text
