@@ -30,4 +30,27 @@ public class CalendarServiceImpl implements CalendarService {
         return null;
     }
 
+    @Override
+    public LocalDate previousCalendarDay(LocalDate date) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public LocalDate previousTradeDay(LocalDate date, String exchangeCode, int numOfDays) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public LocalDate nextTradeDay(LocalDate date) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public LocalDate nextTradeDay(LocalDate date, String exchangeCode, int numOfDays) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

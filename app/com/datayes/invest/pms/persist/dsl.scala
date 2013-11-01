@@ -1,7 +1,7 @@
 package com.datayes.invest.platform.persist
 
 import scala.collection.JavaConversions._
-import com.datayes.invest.platform.logging.Logging
+import com.datayes.invest.pms.logging.Logging
 import javax.persistence.EntityTransaction
 import com.datayes.invest.pms.persist.Transaction
 import com.datayes.invest.pms.persist.Persist

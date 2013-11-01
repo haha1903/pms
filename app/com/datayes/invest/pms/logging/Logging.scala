@@ -1,4 +1,4 @@
-package com.datayes.invest.platform.logging
+package com.datayes.invest.pms.logging
 
 trait Logging {
   

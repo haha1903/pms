@@ -13,7 +13,7 @@ public class Repo extends Security {
 
 	private Integer baseDays;
 
-	private Integer days;
+	private Integer maturity;
 
 	//@Column(name = "INTEREST_BASEDAYS")
 	public Integer getBaseDays() {
@@ -24,12 +24,12 @@ public class Repo extends Security {
 		this.baseDays = baseDays;
 	}
 
-	//@Column(name = "DAYS")
-	public Integer getDays() {
-		return days;
+	//@Column(name = "MATURITY")
+	public Integer getMaturity() {
+		return maturity;
 	}
 
-	public void setDays(Integer days) {
-		this.days = days;
+	public void setMaturity(Integer maturity) {
+		this.maturity = maturity;
 	}
 }
