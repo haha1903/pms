@@ -19,7 +19,7 @@ public enum FutureDeliveryMethod implements DbValue<Integer> {
 
     public static FutureDeliveryMethod fromDbValue(Integer v) {
         for (FutureDeliveryMethod m : values()) {
-            if (m.dbValue == v)
+            if (m.dbValue.equals(v))
                 return m;
         }
         return null;

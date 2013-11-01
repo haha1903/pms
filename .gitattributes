@@ -93,6 +93,7 @@ app/com/datayes/invest/pms/dao/security/impl/RepoDaoImpl.java -text
 app/com/datayes/invest/pms/dao/security/impl/SecurityDaoImpl.java -text
 app/com/datayes/invest/pms/dbtype/AccountClassType.java -text
 app/com/datayes/invest/pms/dbtype/AccountTypeType.java -text
+app/com/datayes/invest/pms/dbtype/AccountValuationType.java -text
 app/com/datayes/invest/pms/dbtype/AssetClass.java -text
 app/com/datayes/invest/pms/dbtype/DbValue.java -text
 app/com/datayes/invest/pms/dbtype/FutureDeliveryMethod.java -text
@@ -155,6 +156,10 @@ app/com/datayes/invest/pms/logic/transaction/impl/RepoTransactionLogic.scala -te
 app/com/datayes/invest/pms/logic/transaction/impl/StockIndexFutureTransactionLogic.scala -text
 app/com/datayes/invest/pms/logic/transaction/impl/StockTradeTransactionLogic.scala -text
 app/com/datayes/invest/pms/logic/transaction/impl/TransactionLogicBase.scala -text
+app/com/datayes/invest/pms/logic/valuation/account/AccountValuationLogic.scala -text
+app/com/datayes/invest/pms/logic/valuation/account/impl/AccountValuationCalc.scala -text
+app/com/datayes/invest/pms/logic/valuation/account/impl/AccountValuationLogicImpl.scala -text
+app/com/datayes/invest/pms/logic/valuation/position/PositionValuationLogic.scala -text
 app/com/datayes/invest/pms/persist/Persist.java -text
 app/com/datayes/invest/pms/persist/PersistException.java -text
 app/com/datayes/invest/pms/persist/PersistModule.java -text

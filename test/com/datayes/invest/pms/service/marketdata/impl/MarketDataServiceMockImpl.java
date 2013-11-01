@@ -35,4 +35,16 @@ public class MarketDataServiceMockImpl implements MarketDataService {
         Map<Long, MarketData> newMap = new HashMap<>(map);
         this.futureMarketDataMap = Collections.unmodifiableMap(newMap);
     }
+
+    @Override
+    public MarketData getEquityMarketData(Long securityId, LocalDate asOfDate) {
+        MarketData md = equityMarketDataMap.get(securityId);
+        return md;
+    }
+
+    @Override
+    public MarketData getFutureMarketData(Long securityId, LocalDate asOfDate) {
+        MarketData md = futureMarketDataMap.get(securityId);
+        return md;
+    }
 }

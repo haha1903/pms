@@ -19,7 +19,7 @@ public enum AccountTypeType implements DbValue<Long> {
 
     public static AccountTypeType fromDbValue(Long v) {
         for (AccountTypeType t : AccountTypeType.values()) {
-            if(v == t.getDbValue()) {
+            if(t.getDbValue().equals(v)) {
                 return t;
             }
         }

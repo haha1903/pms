@@ -23,7 +23,7 @@ public enum RateType implements DbValue<Long> {
 
     public static RateType fromDbValue(Long v) {
         for(RateType t: RateType.values()) {
-            if(v == t.dbValue)
+            if(t.dbValue.equals(v))
                 return t;
         }
         return null;

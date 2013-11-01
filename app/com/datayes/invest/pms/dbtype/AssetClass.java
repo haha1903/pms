@@ -23,7 +23,7 @@ public enum AssetClass implements DbValue<Integer> {
     public static AssetClass fromDbValue(Integer v) {
         AssetClass ret = null;
         for (AssetClass ac : values()) {
-            if (ac.getDbValue() == v) {
+            if (ac.getDbValue().equals(v)) {
                 ret = ac;
             }
         }

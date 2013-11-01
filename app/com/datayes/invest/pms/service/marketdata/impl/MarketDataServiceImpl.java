@@ -22,4 +22,16 @@ public class MarketDataServiceImpl implements MarketDataService {
         return null;
     }
 
+    @Override
+    public MarketData getEquityMarketData(Long securityId, LocalDate asOfDate) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public MarketData getFutureMarketData(Long securityId, LocalDate asOfDate) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }
