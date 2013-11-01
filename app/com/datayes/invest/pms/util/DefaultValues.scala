@@ -5,6 +5,8 @@ import com.datayes.invest.pms.dbtype.PositionValuationType
 object DefaultValues {
   
   val CARRYING_VALUE_TYPE = 1L
+  
+  val CASH_PRICE = BigDecimalConstants.ONE
 
   val CURRENCY_CODE = "CNY"
     

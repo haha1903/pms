@@ -160,6 +160,7 @@ app/com/datayes/invest/pms/logic/valuation/account/AccountValuationLogic.scala -
 app/com/datayes/invest/pms/logic/valuation/account/impl/AccountValuationCalc.scala -text
 app/com/datayes/invest/pms/logic/valuation/account/impl/AccountValuationLogicImpl.scala -text
 app/com/datayes/invest/pms/logic/valuation/position/PositionValuationLogic.scala -text
+app/com/datayes/invest/pms/logic/valuation/position/impl/MarketValuationEngineImpl.scala -text
 app/com/datayes/invest/pms/persist/Persist.java -text
 app/com/datayes/invest/pms/persist/PersistException.java -text
 app/com/datayes/invest/pms/persist/PersistModule.java -text
@@ -188,6 +189,7 @@ app/com/datayes/invest/pms/service/marketindex/MarketIndexService.java -text
 app/com/datayes/invest/pms/service/marketindex/impl/MarketIndexServiceImpl.java -text
 app/com/datayes/invest/pms/util/BeanException.java -text
 app/com/datayes/invest/pms/util/BeanUtil.java -text
+app/com/datayes/invest/pms/util/BigDecimalConstants.scala -text
 app/com/datayes/invest/pms/util/DefaultValues.scala -text
 app/controllers/Application.scala -text
 app/test/TestPersist.java -text
