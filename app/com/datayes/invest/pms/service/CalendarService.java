@@ -8,5 +8,5 @@ public interface CalendarService {
     
     LocalDate previousTradeDay(LocalDate date);
     
-    LocalDate todayOrPreviousTradeDay(LocalDate date);
+    LocalDate sameOrPreviousTradeDay(LocalDate date);
 }

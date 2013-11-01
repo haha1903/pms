@@ -19,7 +19,7 @@ public class CalendarServiceImpl implements CalendarService {
     }
 
     @Override
-    public LocalDate todayOrPreviousTradeDay(LocalDate date) {
+    public LocalDate sameOrPreviousTradeDay(LocalDate date) {
         // TODO Auto-generated method stub
         return null;
     }
