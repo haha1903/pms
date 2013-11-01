@@ -152,6 +152,8 @@ app/com/datayes/invest/pms/logic/transaction/BusinessException.java -text
 app/com/datayes/invest/pms/logic/transaction/Transaction.scala -text
 app/com/datayes/invest/pms/logic/transaction/TransactionLogic.scala -text
 app/com/datayes/invest/pms/logic/transaction/impl/RepoTransactionLogic.scala -text
+app/com/datayes/invest/pms/logic/transaction/impl/StockIndexFutureTransactionLogic.scala -text
+app/com/datayes/invest/pms/logic/transaction/impl/StockTradeTransactionLogic.scala -text
 app/com/datayes/invest/pms/logic/transaction/impl/TransactionLogicBase.scala -text
 app/com/datayes/invest/pms/persist/Persist.java -text
 app/com/datayes/invest/pms/persist/PersistException.java -text
