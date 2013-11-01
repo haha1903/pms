@@ -1,5 +1,4 @@
 * text=auto !eol
-.settings/org.scala-ide.sdt.core.prefs -text
 /README -text
 app/com/datayes/invest/pms/config/Config.java -text
 app/com/datayes/invest/pms/dao/AccountDaoModule.java -text
@@ -189,6 +188,7 @@ project/plugins.sbt -text
 public/images/favicon.png -text
 public/javascripts/jquery-1.9.0.min.js -text
 public/stylesheets/main.css -text
+/svnignore.exclude -text
 test/ApplicationSpec.scala -text
 test/IntegrationSpec.scala -text
 test/com/datayes/invest/pms/util/BeanUtilTest.java -text
