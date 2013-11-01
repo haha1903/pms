@@ -1,0 +1,107 @@
+#
+# Database
+#
+accountmaster.db {
+    url = "jdbc:mysql://localhost:3306/accountmaster"
+    user = root
+    password = ""
+}
+securitymaster.db {
+    url = "jdbc:mysql://10.20.111.101:3306/securitymaster2"
+    user = tao.tao
+    password = "Welcome2013"
+}
+
+hibernate.show_sql = false
+
+
+#
+# Host information
+#
+pms {
+    api.url = "http://10.20.102.158:9000"
+    f2e.host = "f2e01-dev.datayes.com"
+}
+
+
+#
+# SSO
+#
+paas.sso {
+    enabled = false
+    auth.url = "https://10.20.112.214:9443/samlsso"
+    consumer.url="http://10.20.102.158:9000/saml/pms/consumer"
+}
+
+
+#
+# External Systems
+#
+jupitar.jms {
+    url = "tcp://trading4-dev.datayes.com:61666"
+    topic = "Topic.Tiger.ClientUpdate"
+}
+
+mds.http {
+    host = "trading4-dev.datayes.com"
+    port = 8080
+}
+rabbitmq {
+    queue_name = "PMS_MARKETDATA_QUEUE"
+    exchange_name = "rtmdd.marketData.CN"
+    equity_key = "marketData.CN.Equities"
+    future_key = "marketData.CN.Futures"
+    host = "10.20.136.21"
+}
+redis {
+    host = "10.20.112.103"
+    port = 6379
+    channel = "future"
+}
+
+
+#
+# Settings related to system
+#
+
+system {
+    running.mode = NORMAL       # NORMAL or NO_DAEMON
+    scheduler.interval = 600    # in seconds
+    valuation.interval = 900    # in seconds
+}
+
+
+#
+# Market
+#
+market {
+    open.time = "08:00:00"
+    close.time = "17:00:00"
+}
+
+
+#
+# Proxy
+#
+proxy {
+    attribution {
+        client.id = 1
+        odbc.name = "JYDB2"
+        host = "http://invest02-dev.datayes.com:8080"
+        # http request timeout, in seconds
+        timeout = 30
+
+    }
+    upload.path = "/tmp"
+}
+
+
+#
+# Logger
+#
+logger {
+    application = INFO
+    com.datayes.invest.platform = DEBUG
+    controllers = INFO
+    play = INFO
+}

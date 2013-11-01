@@ -1,0 +1,67 @@
+package com.datayes.invest.pms.dao.account.impl;
+
+import java.util.List;
+
+import javax.persistence.Query;
+
+import org.joda.time.LocalDate;
+
+import com.datayes.invest.pms.dao.account.AccountValuationHistDao;
+import com.datayes.invest.pms.entity.account.AccountValuationHist;
+
+public class AccountValuationHistDaoImpl extends GenericAccountMasterDaoImpl<AccountValuationHist, Long>
+
+    implements AccountValuationHistDao {
+
+    protected AccountValuationHistDaoImpl() {
+        super(AccountValuationHist.class);
+    }
+
+    public AccountValuationHist findByAccountIdTypeIdAsOfDate(Long accountId, Long typeId, LocalDate asOfDate) {
+
+        Query q = getEntityManager().createQuery(
+                "from AccountValuationHist where accountId = :accountId and typeId = :typeId and asOfDate = :asOfDate");
+        q.setParameter("accountId", accountId);
+        q.setParameter("typeId", typeId);
+        q.setParameter("asOfDate", asOfDate);
+        enableCache(q);
+
+        List<AccountValuationHist> list = (List<AccountValuationHist>) q.getResultList();
+
+        if(list.size() != 0) {
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    public List<AccountValuationHist> findByAccountIdTypeIdBeforeDate(
+            Long accountId, Long typeId, LocalDate beforeDate) {
+        Query q = getEntityManager().createQuery(
+            "from AccountValuationHist where accountId = :accountId and typeId = :typeId " +
+            "and asOfDate <= :beforeDate order by asOfDate asc");
+        q.setParameter("accountId", accountId);
+        q.setParameter("typeId", typeId);
+        q.setParameter("beforeDate", beforeDate);
+        enableCache(q);
+
+        return (List<AccountValuationHist>) q.getResultList();
+    }
+
+    public void deleteByAccountId(Long accountId) {
+        Query q = getEntityManager().createQuery(
+                "delete from AccountValuationHist where accountId = :accountId");
+        q.setParameter("accountId", accountId);
+        q.executeUpdate();
+    }
+
+    @Override
+    public List<AccountValuationHist> findByAccountIdAsOfDate(Long accountId, LocalDate asOfDate) {
+        Query q = getEntityManager().createQuery(
+                        "from AccountValuationHist where accountId = :accountId and asOfDate = :asOfDate");
+        q.setParameter("accountId", accountId);
+        q.setParameter("asOfDate", asOfDate);
+        List<AccountValuationHist> list = q.getResultList();
+        return list;
+    }
+}
