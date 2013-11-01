@@ -324,7 +324,7 @@ class AccountValuationEngineImpl extends AccountValuationLogic with Logging {
 
       if (future != null) {
         val securityId = secPosition.getSecurityId
-        val md = marketDataService.getFutureMarketData(securityId, asOfDate)
+        val md = marketDataService.getMarketData(securityId, asOfDate)
         if (md == null) {
           0d
         } else {

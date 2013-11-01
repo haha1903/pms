@@ -111,7 +111,7 @@ class MarketValuationLogic extends PositionValuationLogic with Logging {
       }
     }
     // TODO handle future price
-    equityMarketDataMap = marketDataService.getEquityMarketData(securityIds, asOfDate)
+    equityMarketDataMap = marketDataService.getMarketData(securityIds, asOfDate)
   }
 
   private def loadPositionHists(positions: Seq[Position]): Map[Long, PositionHist] = {
@@ -148,7 +148,7 @@ class MarketValuationLogic extends PositionValuationLogic with Logging {
   }
 
   private def getFutureMarketPrice(securityId: Long): BigDecimal = {
-    val md = marketDataService.getFutureMarketData(securityId, this.asOfDate)
+    val md = marketDataService.getMarketData(securityId, this.asOfDate)
     if (md == null) {
       logger.error("Unable to find market data for security #{} on {}", securityId, asOfDate)
       BigDecimalConstants.ZERO
