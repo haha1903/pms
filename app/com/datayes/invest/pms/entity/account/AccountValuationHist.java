@@ -125,7 +125,7 @@ public class AccountValuationHist extends EntityBase {
      */
 
     @Embeddable
-    public class PK implements Serializable {
+    public static class PK implements Serializable {
 
         private Long accountId;
 

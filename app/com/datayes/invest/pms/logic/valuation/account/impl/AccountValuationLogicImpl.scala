@@ -518,11 +518,9 @@ class AccountValuationEngineImpl extends AccountValuationLogic with Logging {
 
   private def findNetWorth(accountId: Long, asOfDate: LocalDate): BigDecimal = {
 
-    val netWorthAccValType = AccountValuationType.NET_WORTH.getDbValue
-    val hist = accountValuationHistDao.findByAccountIdTypeIdAsOfDate(
-      accountId,
-      netWorthAccValType,
-      asOfDate)
+    val netWorthAccValType = AccountValuationType.NET_WORTH
+    val pk = new AccountValuationHist.PK(accountId, netWorthAccValType.getDbValue(), asOfDate)
+    val hist = accountValuationHistDao.findById(pk)
 
     if (hist != null) {
       hist.getValueAmount
@@ -624,8 +622,8 @@ class AccountValuationEngineImpl extends AccountValuationLogic with Logging {
     val accountId = account.getId
     val currencyCode = account.getCurrencyCode
 
-    val hist = accountValuationHistDao.findByAccountIdTypeIdAsOfDate(accountId,
-      accValType.getDbValue, asOfDate)
+    val pk = new AccountValuationHist.PK(accountId, accValType.getDbValue(), asOfDate)
+    val hist = accountValuationHistDao.findById(pk)
 
     if (null == hist) {
       val newHist = new AccountValuationHist(accountId,

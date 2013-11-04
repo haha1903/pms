@@ -11,6 +11,7 @@ import com.datayes.invest.pms.dao.account.AccountDao
 import com.datayes.invest.pms.web.model.models.AccountsSummary
 import com.datayes.invest.pms.web.model.models.AccountsSummaryItem
 import com.datayes.invest.pms.dbtype.AccountValuationType
+import com.datayes.invest.pms.entity.account.AccountValuationHist
 
 class AccountsSummaryService extends Logging {
 
@@ -80,17 +81,20 @@ class AccountsSummaryService extends Logging {
   }
   
   private def getAccountShareValue(accountId: Long, asOfDate: LocalDate): BigDecimal = {
-    var acctHist = accountValuationHistDao.findByAccountIdTypeIdAsOfDate(accountId, AccountValuationType.SHARE.getDbValue, asOfDate)
+    val pk = new AccountValuationHist.PK(accountId, AccountValuationType.SHARE.getDbValue, asOfDate)
+    var acctHist = accountValuationHistDao.findById(pk)
     if (acctHist == null) 0 else acctHist.getValueAmount
   }
   
   private def getAccountNetWorthValue(accountId: Long, asOfDate: LocalDate): BigDecimal = {
-    var acctHist = accountValuationHistDao.findByAccountIdTypeIdAsOfDate(accountId, AccountValuationType.NET_WORTH.getDbValue, asOfDate)
+    val pk = new AccountValuationHist.PK(accountId, AccountValuationType.NET_WORTH.getDbValue, asOfDate)
+    var acctHist = accountValuationHistDao.findById(pk)
     if (acctHist == null) 0 else acctHist.getValueAmount
   }
     
   private def getAccountCashValue(accountId: Long, asOfDate: LocalDate): BigDecimal = {
-    var acctHist = accountValuationHistDao.findByAccountIdTypeIdAsOfDate(accountId, AccountValuationType.CASH.getDbValue, asOfDate)
+    val pk = new AccountValuationHist.PK(accountId, AccountValuationType.CASH.getDbValue, asOfDate)
+    var acctHist = accountValuationHistDao.findById(pk)
     if (acctHist == null) 0 else acctHist.getValueAmount
   }
   

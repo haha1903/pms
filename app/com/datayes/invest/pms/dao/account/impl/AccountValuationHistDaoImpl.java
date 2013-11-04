@@ -16,24 +16,6 @@ public class AccountValuationHistDaoImpl extends GenericAccountMasterDaoImpl<Acc
         super(AccountValuationHist.class);
     }
 
-    public AccountValuationHist findByAccountIdTypeIdAsOfDate(Long accountId, Long typeId, LocalDate asOfDate) {
-
-        Query q = getEntityManager().createQuery(
-                "from AccountValuationHist where accountId = :accountId and typeId = :typeId and asOfDate = :asOfDate");
-        q.setParameter("accountId", accountId);
-        q.setParameter("typeId", typeId);
-        q.setParameter("asOfDate", asOfDate);
-        enableCache(q);
-
-        List<AccountValuationHist> list = (List<AccountValuationHist>) q.getResultList();
-
-        if(list.size() != 0) {
-            return list.get(0);
-        } else {
-            return null;
-        }
-    }
-
     public List<AccountValuationHist> findByAccountIdTypeIdBeforeDate(
             Long accountId, Long typeId, LocalDate beforeDate) {
         Query q = getEntityManager().createQuery(

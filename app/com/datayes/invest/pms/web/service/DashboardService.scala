@@ -18,6 +18,7 @@ import com.datayes.invest.pms.dbtype.AccountValuationType
 import com.datayes.invest.pms.util.DefaultValues
 import com.datayes.invest.pms.dbtype.AssetClass
 import com.datayes.invest.pms.util.BigDecimalConstants
+import com.datayes.invest.pms.entity.account.AccountValuationHist
 
 
 class DashboardService extends Logging {
@@ -102,8 +103,8 @@ class DashboardService extends Logging {
   }
 
   private def loadCashAsset(accountId: Long, asOfDate: LocalDate): Asset = {
-    val valHist = accountValuationHistDao.findByAccountIdTypeIdAsOfDate(accountId,
-      AccountValuationType.CASH.getDbValue, asOfDate)
+    val pk = new AccountValuationHist.PK(accountId, AccountValuationType.CASH.getDbValue, asOfDate)
+    val valHist = accountValuationHistDao.findById(pk)
     val value: BigDecimal = if (valHist != null) {
       valHist.getValueAmount
     } else {
@@ -227,8 +228,8 @@ class DashboardService extends Logging {
     var date = func(asOfDate)
     var fundReturn: BigDecimal = 1
     while (date.compareTo(asOfDate) <= 0) {
-      var accountValuationHist = accountValuationHistDao.findByAccountIdTypeIdAsOfDate(
-            accountId, AccountValuationType.DAILY_RETURN.getDbValue, date)
+      val pk = new AccountValuationHist.PK(accountId, AccountValuationType.DAILY_RETURN.getDbValue, date)
+      var accountValuationHist = accountValuationHistDao.findById(pk)
       if (accountValuationHist != null) {
         val dailyReturn: BigDecimal = accountValuationHist.getValueAmount
         fundReturn = fundReturn * (dailyReturn + 1)
@@ -449,8 +450,8 @@ class DashboardService extends Logging {
   private def getOverviewValue(accountId: Long, asOfDate: LocalDate,
       accValType: AccountValuationType): BigDecimal = {
 
-    val valHist = accountValuationHistDao.findByAccountIdTypeIdAsOfDate(
-      accountId, accValType.getDbValue, asOfDate)
+    val pk = new AccountValuationHist.PK(accountId, accValType.getDbValue, asOfDate)
+    val valHist = accountValuationHistDao.findById(pk)
     if (valHist == null) {
       logger.warn("Failed to load account valuation hist ({}) for account #{} on {}", accValType, accountId, asOfDate)
       BigDecimal("0")
