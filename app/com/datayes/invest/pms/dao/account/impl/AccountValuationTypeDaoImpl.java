@@ -5,13 +5,7 @@ import com.datayes.invest.pms.entity.account.AccountValuationType;
 
 import java.util.List;
 
-/**
- * Created with IntelliJ IDEA.
- * System: Ubuntu
- * User: baoan @datayes
- * Date: 8/27/13
- * Time: 3:22 PM
- */
+
 public class AccountValuationTypeDaoImpl extends GenericAccountMasterDaoImpl<AccountValuationType, Long>
     implements AccountValuationTypeDao {
 

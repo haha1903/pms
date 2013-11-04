@@ -6,11 +6,9 @@ import org.joda.time.LocalDate;
 
 import com.datayes.invest.pms.entity.account.PositionValuationHist;
 
-public interface PositionValuationHistDao extends GenericAccountMasterDao<PositionValuationHist, Long> {
-    
-    PositionValuationHist findByPositionIdAsOfDate(Long positionId, Long typeId, LocalDate asOfDate);
+public interface PositionValuationHistDao extends GenericAccountMasterDao<PositionValuationHist, PositionValuationHist.PK> {
 
-    List<PositionValuationHist> findByPositionIdListAsOfDate(List<Long> positionIdList, Long typeId, LocalDate asOfDate);
+    List<PositionValuationHist> findByPositionIdListTypeIdAsOfDate(List<Long> positionIdList, Long typeId, LocalDate asOfDate);
     
     List<PositionValuationHist> findByPositionIdListAsOfDate(List<Long> positionIdList, LocalDate asOfDate);
 

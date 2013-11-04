@@ -3,7 +3,6 @@ package com.datayes.invest.pms.dao.account.impl;
 import javax.persistence.Query;
 
 import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 
 import com.datayes.invest.pms.dao.account.TransactionDao;

@@ -58,9 +58,6 @@ class MarketValuationLogic extends PositionValuationLogic with Logging {
 
   @Inject
   private var securityDao: SecurityDao = null
-//  
-//  @Inject
-//  private var futureDao: FutureDao = null
   
   @Inject
   private var marketDataService: MarketDataService = null
@@ -68,14 +65,6 @@ class MarketValuationLogic extends PositionValuationLogic with Logging {
   private var asOfDate: LocalDate = null
   
   private var equityMarketDataMap: JMap[JLong, MarketData] = null
-
-//  override def processAllAccounts(asOfDate: LocalDate): Unit = {
-//    logger.info("Doing market valuation on accounts for as of date {}", asOfDate)
-//    val accounts = accountDao.findEffectiveAccounts(asOfDate)
-//    for (a <- accounts) {
-//      process(a, asOfDate)
-//    }
-//  }
 
   override def process(account: Account, asOfDate: LocalDate): Unit = {
     this.asOfDate = asOfDate
@@ -123,21 +112,12 @@ class MarketValuationLogic extends PositionValuationLogic with Logging {
 
   private def loadPositionValuationHists(positions: Seq[Position]): Map[Long, PositionValuationHist] = {
     val ids = positions.map(_.getId)
-    val hists = positionValuationHistDao.findByPositionIdListAsOfDate(ids, valuationType.getDbValue, asOfDate)
+    val hists = positionValuationHistDao.findByPositionIdListTypeIdAsOfDate(ids, valuationType.getDbValue, asOfDate)
     val map = hists.map { h => (h.getPK.getPositionId.toLong -> h) }.toMap
     map
   }
 
   private def getEquityMarketPrice(securityId: Long): BigDecimal = {
-//    marketDataService.getMarketDataWithFallback(securityId, asOfDate).map {
-//      _ match {
-//        case rmd: RealtimeMarketData => rmd.priceTrade
-//        case hmd: HistoryMarketData => hmd.priceCloseOpt.getOrElse(BigDecimal("0"))
-//      }
-//    }.getOrElse {
-//      logger.error("Unable to find market data for security #{} on {}", securityId, asOfDate)
-//      BigDecimal(0)
-//    }
     val md = equityMarketDataMap.get(securityId)
     if (md == null) {
       logger.error("Unable to find market data for security #{} on {}", securityId, asOfDate)
@@ -158,12 +138,6 @@ class MarketValuationLogic extends PositionValuationLogic with Logging {
   }
 
   private def valuatePosition(position: Position, positionHist: PositionHist, positionValuationHistOpt: Option[PositionValuationHist]): Unit = {
-//    val positionHist = positionHistDao.findByPositionIdAsOfDate(position.getId, asOfDate)
-//    if (positionHist == null) {
-//      logger.error("Failed to find position history for position #{} on {}", position.getId, asOfDate)
-//      return
-//    }
-
     val (price: BigDecimal, currencyCode: String) = position match {
       case securityPosition: SecurityPosition =>
         val security = securityDao.findById(securityPosition.getSecurityId)
@@ -201,10 +175,6 @@ class MarketValuationLogic extends PositionValuationLogic with Logging {
   private def savePositionValuationHist(position: Position, positionHist: PositionHist,
     positionValuationHistOpt: Option[PositionValuationHist],
     marketPrice: BigDecimal, valueAmount: BigDecimal, currencyCode: String): Unit = {
-
-    // TODO handle more types
-//    val hist = positionValuationHistDao.findByPositionIdAsOfDate(position.getId,
-//        valuationType.dbValue, asOfDate)
 
     positionValuationHistOpt match {
       case Some(hist) =>

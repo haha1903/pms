@@ -8,7 +8,5 @@ import com.datayes.invest.pms.entity.account.Account;
 
 public interface AccountDao extends GenericAccountMasterDao<Account, Long> {
     
-    //public List<Account> findAll();
-
     public List<Account> findEffectiveAccounts(LocalDate asOfDate);
 }

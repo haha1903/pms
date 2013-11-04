@@ -1,7 +1,6 @@
 package com.datayes.invest.pms.dao.account.impl;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -35,18 +34,6 @@ class GenericAccountMasterDaoImpl<T, K extends Serializable> extends EntityManag
 
     public void detach(T entity) {
         getEntityManager().detach(entity);
-    }
-
-    @SuppressWarnings("unchecked")
-	public List<T> findWithPagination(int pageSize, int page) {
-        return getEntityManager().createQuery("from " + classOfEntity.getName())
-            .setFirstResult(pageSize * page).setMaxResults(pageSize).getResultList();
-    }
-
-    public long findCount() {
-        Long num = (Long) getEntityManager().createQuery(
-            "select count(*) from " + classOfEntity.getName()).getResultList().get(0);
-        return num.longValue();
     }
 
     protected Query enableCache(Query query) {

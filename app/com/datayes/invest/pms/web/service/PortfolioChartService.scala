@@ -8,6 +8,7 @@ import com.datayes.invest.pms.util.DefaultValues
 import com.datayes.invest.pms.entity.account.SecurityPosition
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.web.model.models._
+import com.datayes.invest.pms.entity.account.PositionValuationHist
 
 
 class PortfolioChartService extends Logging {
@@ -54,8 +55,8 @@ class PortfolioChartService extends Logging {
   }*/
   
   private def getMarketValue(pos: SecurityPosition, asOfDate: LocalDate): BigDecimal = {
-    val valHist = positionValuationHistDao.findByPositionIdAsOfDate(pos.getId,
-        DefaultValues.POSITION_VALUATION_TYPE.getDbValue, asOfDate)
+    val pk = new PositionValuationHist.PK(pos.getId, DefaultValues.POSITION_VALUATION_TYPE.getDbValue, asOfDate)
+    val valHist = positionValuationHistDao.findById(pk)
       if (valHist == null) {
         // TODO design exception
         throw new RuntimeException("Position #" + pos.getId + " valuation history not found")

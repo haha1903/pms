@@ -16,14 +16,6 @@ public class SecurityTransactionDaoImpl extends AccountRelatedDaoImpl<SecurityTr
 		super(SecurityTransaction.class);
 	}
 
-	public List<SecurityTransaction> findRepoTransaction(Long accountId, LocalDate asOfDate) {
-		String query = "from " + classOfEntity.getName()
-				+ " where assetClassId=:assetClassId and accountId=:accountId";
-		return enableCache(getEntityManager().createQuery(query, SecurityTransaction.class))
-				.setParameter("assetClassId", AssetClass.REPO.getDbValue()).setParameter("accountId", accountId)
-				.getResultList();
-	}
-
 	public List<SecurityTransaction> findRepoTransactionWithInterests(Long accountId, LocalDate asOfDate) {
 		List<SecurityTransaction> list = findRepoTransaction(accountId, asOfDate);
 		List<SecurityTransaction> result = new LinkedList<SecurityTransaction>();
@@ -60,5 +52,13 @@ public class SecurityTransactionDaoImpl extends AccountRelatedDaoImpl<SecurityTr
 
 		return result;
 	}
+
+    private List<SecurityTransaction> findRepoTransaction(Long accountId, LocalDate asOfDate) {
+        String query = "from " + classOfEntity.getName()
+                + " where assetClassId=:assetClassId and accountId=:accountId";
+        return enableCache(getEntityManager().createQuery(query, SecurityTransaction.class))
+                .setParameter("assetClassId", AssetClass.REPO.getDbValue()).setParameter("accountId", accountId)
+                .getResultList();
+    }
 
 }

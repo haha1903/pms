@@ -14,36 +14,10 @@ public class AccountRelatedDaoImpl<T, K extends Serializable> extends GenericAcc
     }
 
     @SuppressWarnings("unchecked")
-    public List<T> findWithPagination(int pageSize, int page) {
-        return (List<T>) getEntityManager().createQuery("from " + classOfEntity.getName())
-            .setFirstResult(pageSize * page).setMaxResults(pageSize).getResultList();
-    }
-
-    public long findCount() {
-        Integer num = (Integer) getEntityManager().createQuery(
-            "select count(*) from " + classOfEntity.getName()).getResultList().get(0);
-        return num.intValue();
-    }
-
-    @SuppressWarnings("unchecked")
     public List<T> findByAccountId(Long accountId) {
         Query q = getEntityManager().createQuery(
             "from " + classOfEntity.getName() + " where accountId = :accountId");
         q.setParameter("accountId", accountId);
         return (List<T>) q.getResultList();
-    }
-    
-    @SuppressWarnings("unchecked")
-    public List<T> findWithPaginationByAccountId(Long accountId, int pageSize, int page) {
-        return (List<T>) getEntityManager().createQuery(
-            "from " + classOfEntity.getName() + " where accountId = " + accountId)
-            .setFirstResult(pageSize * page).setMaxResults(pageSize).getResultList();
-    }
-
-    public int findCountByAccountId(Long accountId) {
-        Integer num = (Integer) getEntityManager().createQuery(
-            "select count(*) from " + classOfEntity.getName() + " where accountId = " + accountId).
-            getResultList().get(0);
-        return num.intValue();
     }
 }

@@ -58,12 +58,6 @@ class AssetsLoader extends Logging {
   private var securityPositionDao: SecurityPositionDao = null
 
 
-//  @Inject
-//  private var institutionIndustryDao: InstitutionIndustryDao = null
-
-  
-
-
   def loadAssets(accountId: Long, asOfDate: LocalDate): Seq[Asset] = {
     logger.debug("Loading assets from account #{} on as of date {}", accountId, asOfDate)
     val positions = securityPositionDao.findByAccountId(accountId)
@@ -100,22 +94,9 @@ class AssetsLoader extends Logging {
     nonEmptyAssets
   }
 
-//  private def loadSingleAsset(position: Position, positionHist: PositionHist,
-//      carryingValueHist: CarryingValueHist, asOfDate: LocalDate): Option[Asset] = {
-//
-//    position match {
-//      case secPos: SecurityPosition =>
-//        loadSecurityAsset(secPos, positionHist, carryingValueHist, asOfDate)
-//      case x =>
-//        logger.error("Code error. Unable to handle position {}", position)
-//        None
-//    }
-//  }
-
-
   private def loadCarryingValueHists(positions: Seq[Position], asOfDate: LocalDate): Map[Long, CarryingValueHist] = {
     val ids = positions.map(_.getId)
-    val hists = carryingValueHistDao.findByPositionIdListAsOfDate(ids, DefaultValues.CARRYING_VALUE_TYPE, asOfDate)
+    val hists = carryingValueHistDao.findByPositionIdListTypeIdAsOfDate(ids, DefaultValues.CARRYING_VALUE_TYPE, asOfDate)
     val map = hists.map { h => (h.getPK.getPositionId.toLong -> h) }.toMap
     map
   }
@@ -131,8 +112,7 @@ class AssetsLoader extends Logging {
       Map[Long, PositionValuationHist] = {
 
     val ids = positions.map(_.getId)
-    val hists = positionValuationHistDao.findByPositionIdListAsOfDate(
-      ids, DefaultValues.POSITION_VALUATION_TYPE.getDbValue, asOfDate)
+    val hists = positionValuationHistDao.findByPositionIdListTypeIdAsOfDate(ids, DefaultValues.POSITION_VALUATION_TYPE.getDbValue, asOfDate)
     val map = hists.map { h => (h.getPK.getPositionId.toLong -> h) }.toMap
     map
   }

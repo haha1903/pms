@@ -17,14 +17,6 @@ public class AccountDaoImpl extends GenericAccountMasterDaoImpl<Account, Long> i
         super(Account.class);
     }
 
-    /*
-    @SuppressWarnings("unchecked")
-    public List<Account> findAll() {
-        List<Account> accountList = (List<Account>) getEntityManager().createQuery("from Account").
-            getResultList();
-        return accountList;
-    }*/
-
     @SuppressWarnings("unchecked")
     public List<Account> findEffectiveAccounts(LocalDate asOfDate) {
         Query q = getEntityManager().createQuery("from Account where openDate <= (:asOfDate)");

@@ -162,11 +162,13 @@ class RepoTransactionLogic extends TransactionLogicBase with Logging {
   }
 
   private def findSecurityPosition(accountId: Long, securityId: Long, ledgerType: LedgerType, openDate: LocalDate): SecurityPosition = {
-    Option(securityPositionDao.findByAccountIdSecurityIdLedgerIdOpenDate(
-      accountId, securityId, ledgerType.getDbValue, openDate)) match {
-      case Some(position) => position
-      case None => createSecurityPosition(accountId, securityId, ledgerType.getDbValue,
+    val position = securityPositionDao.findByAccountIdSecurityIdLedgerId(accountId, securityId, ledgerType.getDbValue())
+    if (position != null && position.getOpenDate() != null && position.getOpenDate().equals(openDate)) {
+      position
+    } else {
+      val pos = createSecurityPosition(accountId, securityId, ledgerType.getDbValue,
         getExchangeCodeBySecurity(securityId), new LocalDateTime(openDate.toDateTimeAtStartOfDay()))
+      pos
     }
   }
 

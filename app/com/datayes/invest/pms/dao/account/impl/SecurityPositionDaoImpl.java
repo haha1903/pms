@@ -22,11 +22,8 @@ public class SecurityPositionDaoImpl extends AccountRelatedDaoImpl<SecurityPosit
 		super(SecurityPosition.class);
 	}
 
-	public SecurityPosition findSecurityPosition(Long accountId, Long securityId, Long ledgerId) {
-		String query = String.format(
-				"from %s where accountId=:accountId and securityId=:securityId and ledgerId=:ledgerId",
-				classOfEntity.getName());
-
+	public SecurityPosition findByAccountIdSecurityIdLedgerId(Long accountId, Long securityId, Long ledgerId) {
+		String query = "from SecurityPosition where accountId=:accountId and securityId=:securityId and ledgerId=:ledgerId";
 		TypedQuery<SecurityPosition> q = getEntityManager().createQuery(query, SecurityPosition.class);
 		enableCache(q);
 		
@@ -61,5 +58,4 @@ public class SecurityPositionDaoImpl extends AccountRelatedDaoImpl<SecurityPosit
         
 		super.save(entity);
 	}
-	
 }

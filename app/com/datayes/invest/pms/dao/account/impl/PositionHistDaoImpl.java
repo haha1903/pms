@@ -41,16 +41,9 @@ public class PositionHistDaoImpl extends GenericAccountMasterDaoImpl<PositionHis
 
     @Override
     public void deleteByPositionId(Long positionId) {
-        /*Query q = getEntityManager().createQuery(
+        Query q = getEntityManager().createQuery(
                 "delete from PositionHist h where h.PK.positionId = :positionId");
         q.setParameter("positionId", positionId);
-        q.executeUpdate();*/
-        Query q = getEntityManager().createQuery(
-                "from PositionHist h where h.PK.positionId = :positionId");
-        q.setParameter("positionId", positionId);
-        List<PositionHist> list = q.getResultList();
-        for (PositionHist ph : list) {
-            getEntityManager().remove(ph);
-        }
+        q.executeUpdate();
     }
 }

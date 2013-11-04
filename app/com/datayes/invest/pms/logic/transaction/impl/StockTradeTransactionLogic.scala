@@ -113,7 +113,7 @@ class StockTradeTransaction extends TransactionLogicBase with Logging {
   }
 
   private def getSecurityPosition(accountId: Long, securityId: Long, asOfDate: LocalDate): SecurityPosition = {
-    var securityPosition = securityPositionDao.findSecurityPosition(
+    var securityPosition = securityPositionDao.findByAccountIdSecurityIdLedgerId(
       accountId, securityId, LedgerType.SECURITY.getDbValue)
 
     if (securityPosition == null) {

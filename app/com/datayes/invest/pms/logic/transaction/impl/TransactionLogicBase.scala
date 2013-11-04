@@ -105,10 +105,11 @@ abstract class TransactionLogicBase extends TransactionLogic {
   }
 
   protected def findCarryingValueHist(id: Long, typeId: Long, accountId: Long, asOfDate: LocalDate): CarryingValueHist = {
-    var carryingValueHist = carryingValueHistDao.findByPositionIdAsOfDate(id, typeId, asOfDate)
+    val pk = new CarryingValueHist.PK(id, typeId, asOfDate)
+    var carryingValueHist = carryingValueHistDao.findById(pk)
 
     if (null == carryingValueHist) {
-      val pk = new CarryingValueHist.PK(id, typeId, asOfDate)
+      
       carryingValueHist = new CarryingValueHist(pk, accountId, BigDecimal.valueOf(0.0),
         DefaultValues.CURRENCY_CODE, new LocalDateTime(asOfDate.toDateTimeAtCurrentTime))
       carryingValueHistDao.save(carryingValueHist)

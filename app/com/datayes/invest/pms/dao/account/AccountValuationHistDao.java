@@ -6,7 +6,7 @@ import org.joda.time.LocalDate;
 
 import com.datayes.invest.pms.entity.account.AccountValuationHist;
 
-public interface AccountValuationHistDao extends GenericAccountMasterDao<AccountValuationHist, Long> {
+public interface AccountValuationHistDao extends GenericAccountMasterDao<AccountValuationHist, AccountValuationHist.PK> {
 
     AccountValuationHist findByAccountIdTypeIdAsOfDate(Long accountId, Long typeId, LocalDate asOfDate);
     

@@ -6,8 +6,4 @@ import java.util.List;
 public interface AccountRelatedGenericDao<T, K extends Serializable> extends GenericAccountMasterDao<T, K> {
 
     List<T> findByAccountId(Long accountId);
-    
-    List<T> findWithPaginationByAccountId(Long accountId, int pageSize, int page);
-
-    int findCountByAccountId(Long accountId);
 }

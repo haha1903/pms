@@ -9,9 +9,8 @@ import org.joda.time.LocalDate;
 import com.datayes.invest.pms.dao.account.AccountValuationHistDao;
 import com.datayes.invest.pms.entity.account.AccountValuationHist;
 
-public class AccountValuationHistDaoImpl extends GenericAccountMasterDaoImpl<AccountValuationHist, Long>
-
-    implements AccountValuationHistDao {
+public class AccountValuationHistDaoImpl extends GenericAccountMasterDaoImpl<AccountValuationHist, AccountValuationHist.PK>
+        implements AccountValuationHistDao {
 
     protected AccountValuationHistDaoImpl() {
         super(AccountValuationHist.class);

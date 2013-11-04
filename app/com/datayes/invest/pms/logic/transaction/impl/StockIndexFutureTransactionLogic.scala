@@ -168,7 +168,7 @@ class StockIndexFutureTransactionLogic extends TransactionLogicBase with Logging
         throw new RuntimeException("Cannot map trade side " + side + " to ledger type")
     }
 
-    var securityPosition = securityPositionDao.findSecurityPosition(
+    var securityPosition = securityPositionDao.findByAccountIdSecurityIdLedgerId(
       accountId, securityId, ledgerType.getDbValue)
     if (securityPosition == null) {
       securityPosition = createSecurityPosition(accountId, securityId, ledgerType.getDbValue,

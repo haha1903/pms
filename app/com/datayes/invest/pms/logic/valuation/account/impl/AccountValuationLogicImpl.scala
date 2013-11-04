@@ -24,6 +24,8 @@ import com.datayes.invest.pms.entity.account.Position
 import com.datayes.invest.pms.dbtype.LedgerType
 import com.datayes.invest.pms.util.DefaultValues
 import com.datayes.invest.pms.entity.account.AccountValuationHist
+import com.datayes.invest.pms.entity.account.PositionValuationHist
+import com.datayes.invest.pms.entity.account.CarryingValueHist
 
 class AccountValuationEngineImpl extends AccountValuationLogic with Logging {
 
@@ -155,7 +157,8 @@ class AccountValuationEngineImpl extends AccountValuationLogic with Logging {
 
     val posValuationHists = new java.util.ArrayList[BigDecimal]
     for (pos <- specifiedPositions) {
-      val vh = positionValuationHistDao.findByPositionIdAsOfDate(pos.getId, DefaultValues.POSITION_VALUATION_TYPE.getDbValue, asOfDate)
+      val pk = new PositionValuationHist.PK(pos.getId, DefaultValues.POSITION_VALUATION_TYPE.getDbValue(), asOfDate)
+      val vh = positionValuationHistDao.findById(pk)
       if (vh != null) 
         posValuationHists.add(vh.getValueAmount())
     }
@@ -234,8 +237,8 @@ class AccountValuationEngineImpl extends AccountValuationLogic with Logging {
     //TODO: need to calculate previous close price, need to time quantity
 
     val positionFutures = specifiedPositions.map(p => {
-      val carringValueHist = carryingValueHistDao.findByPositionIdAsOfDate(p.getId,
-        DefaultValues.CARRYING_VALUE_TYPE, asOfDate)
+      val cvhpk = new CarryingValueHist.PK(p.getId, DefaultValues.CARRYING_VALUE_TYPE, asOfDate)
+      val carringValueHist = carryingValueHistDao.findById(cvhpk)
 
       val carryingValueAmount = {
         if (null == carringValueHist) {
@@ -246,8 +249,8 @@ class AccountValuationEngineImpl extends AccountValuationLogic with Logging {
         }
       }
 
-      val posValuationHist = positionValuationHistDao.findByPositionIdAsOfDate(p.getId,
-        DefaultValues.POSITION_VALUATION_TYPE.getDbValue, asOfDate)
+      val pvhpk = new PositionValuationHist.PK(p.getId, DefaultValues.POSITION_VALUATION_TYPE.getDbValue, asOfDate)
+      val posValuationHist = positionValuationHistDao.findById(pvhpk)
 
       val futureValueAmount = {
         if (null == posValuationHist) {
