@@ -1,6 +1,9 @@
 package com.datayes.invest.pms.util
 
 import com.datayes.invest.pms.dbtype.PositionValuationType
+import com.datayes.invest.pms.logic.accountinit.RateSourceData
+import com.datayes.invest.pms.dbtype.RateType
+import com.datayes.invest.pms.dbtype.TradeSide
 
 object DefaultValues {
   
@@ -38,4 +41,25 @@ object DefaultValues {
   
   val THIS_FUND = "本基金"
 
+    
+  val DEFAULT_FEES = List(
+    RateSourceData(RateType.FutureCommission, Some(TradeSide.BUY), None, BigDecimal(0.00001)),
+    RateSourceData(RateType.FutureCommission, Some(TradeSide.SELL), None, BigDecimal(0.00001)),
+    RateSourceData(RateType.FutureCommission, Some(TradeSide.COVER), None, BigDecimal(0.00001)),
+    RateSourceData(RateType.FutureCommission, Some(TradeSide.SHORT), None, BigDecimal(0.00001)),
+    RateSourceData(RateType.FutureDeliveryCharges, Some(TradeSide.SHORT), None, BigDecimal(0.00005)),
+    RateSourceData(RateType.FutureDeliveryCharges, Some(TradeSide.SELL), None, BigDecimal(0.00005)),
+    RateSourceData(RateType.FutureDeliveryCharges, Some(TradeSide.COVER), None, BigDecimal(0.00005)),
+    RateSourceData(RateType.FutureDeliveryCharges, Some(TradeSide.SHORT), None, BigDecimal(0.00005)),
+    RateSourceData(RateType.FutureMinMarginRatio, Some(TradeSide.SHORT), None, BigDecimal(0.25)),
+    RateSourceData(RateType.FutureMinMarginRatio, Some(TradeSide.SHORT), None, BigDecimal(0.25)),
+    RateSourceData(RateType.FutureTransactionFee, Some(TradeSide.SHORT), None, BigDecimal(0.000035)),
+    RateSourceData(RateType.FutureTransactionFee, Some(TradeSide.SELL), None, BigDecimal(0.000035)),
+    RateSourceData(RateType.FutureTransactionFee, Some(TradeSide.COVER), None, BigDecimal(0.000035)),
+    RateSourceData(RateType.FutureTransactionFee, Some(TradeSide.SHORT), None, BigDecimal(0.000035)),
+    RateSourceData(RateType.Stamp, Some(TradeSide.SHORT), None, BigDecimal(0.001)),
+    RateSourceData(RateType.Stamp, Some(TradeSide.SELL), None, BigDecimal(0.001)),
+    RateSourceData(RateType.StockCommission, Some(TradeSide.SHORT), None, BigDecimal(0.0008)),
+    RateSourceData(RateType.StockCommission, Some(TradeSide.SELL), None, BigDecimal(0.0008))
+  )
 }

@@ -18,6 +18,7 @@ object ApplicationBuild extends Build {
     // "com.github.scopt" %% "scopt" % "3.1.0",
     "com.google.code.gson" % "gson" % "2.2.4",
     "com.google.inject" % "guice" % "3.0",
+    "com.google.inject.extensions" % "guice-assistedinject" % "3.0",
     "com.rabbitmq" % "amqp-client" % "3.1.4",
     "joda-time" % "joda-time" % "2.2",
     "mysql" % "mysql-connector-java" % "5.1.25",
