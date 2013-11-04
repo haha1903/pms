@@ -2,12 +2,17 @@ package com.datayes.invest.pms.dao.account.impl;
 
 import java.util.List;
 
+import javax.inject.Inject;
 import javax.persistence.Query;
 
+import com.datayes.invest.pms.dao.account.IdGenerator;
 import com.datayes.invest.pms.dao.account.PositionDao;
 import com.datayes.invest.pms.entity.account.Position;
 
 public class PositionDaoImpl extends AccountRelatedDaoImpl<Position, Long> implements PositionDao {
+    
+    @Inject
+    private IdGenerator idGenerator;
 
     protected PositionDaoImpl() {
         super(Position.class);
@@ -27,14 +32,10 @@ public class PositionDaoImpl extends AccountRelatedDaoImpl<Position, Long> imple
 	    Long positionId = entity.getId();
 
         if (positionId == null) {
-            // TODO fix this
-            entity.setId(1L);
+            Long id = idGenerator.getNextPositionId();
+            entity.setId(id);
         }
         
-        if (entity.getId().equals(Long.valueOf(96L))) {
-            System.out.println("stop");
-        }
-
 		super.save(entity);
 	}
 }

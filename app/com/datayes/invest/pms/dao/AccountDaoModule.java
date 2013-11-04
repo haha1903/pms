@@ -10,6 +10,7 @@ import com.datayes.invest.pms.dao.account.CarryingValueHistDao;
 import com.datayes.invest.pms.dao.account.CashPositionDao;
 import com.datayes.invest.pms.dao.account.CashTransactionDao;
 import com.datayes.invest.pms.dao.account.FeeDao;
+import com.datayes.invest.pms.dao.account.IdGenerator;
 import com.datayes.invest.pms.dao.account.MarketDataSnapshotDao;
 import com.datayes.invest.pms.dao.account.PositionClassDao;
 import com.datayes.invest.pms.dao.account.PositionDao;
@@ -35,6 +36,7 @@ import com.datayes.invest.pms.dao.account.impl.CarryingValueHistDaoImpl;
 import com.datayes.invest.pms.dao.account.impl.CashPositionDaoImpl;
 import com.datayes.invest.pms.dao.account.impl.CashTransactionDaoImpl;
 import com.datayes.invest.pms.dao.account.impl.FeeDaoImpl;
+import com.datayes.invest.pms.dao.account.impl.IdGeneratorImpl;
 import com.datayes.invest.pms.dao.account.impl.MarketDataSnapshotDaoImpl;
 import com.datayes.invest.pms.dao.account.impl.PositionClassDaoImpl;
 import com.datayes.invest.pms.dao.account.impl.PositionDaoImpl;
@@ -83,5 +85,7 @@ public class AccountDaoModule extends AbstractModule {
         bind(SystemIdMappingDao.class).to(SystemIdMappingDaoImpl.class).in(Scopes.SINGLETON);
         bind(TradeSideDao.class).to(TradeSideDaoImpl.class).in(Scopes.SINGLETON);
         bind(TransactionDao.class).to(TransactionDaoImpl.class).in(Scopes.SINGLETON);
+        
+        bind(IdGenerator.class).to(IdGeneratorImpl.class).in(Scopes.SINGLETON);
     }
 }
