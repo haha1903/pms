@@ -4,6 +4,10 @@ import com.datayes.invest.pms.dbtype.PositionValuationType
 
 object DefaultValues {
   
+  val CALENDAR_FIND_NUMBER = 14
+
+  val CALENDAR_FIND_RATIO = 1.5
+  
   val CARRYING_VALUE_TYPE = 1L
   
   val CASH_PRICE = BigDecimalConstants.ONE
@@ -20,18 +24,13 @@ object DefaultValues {
   
   val CHANGE_YEAR_TO_DATE = 5
 
-  val SH_STOCK_EXCHANGE_CODE = "XSHG"
-
   val CURRENCY_CODE = "CNY"
     
   val POSITION_VALUATION_TYPE = PositionValuationType.MARKET;
+  
+  val SH_STOCK_EXCHANGE_CODE = "XSHG"
 
   val STOCK_INDEX_FUTURE_PRICE_RATIO = 300
   
   val THIS_FUND = "本基金"
-
-  val CALENDAR_FIND_NUMBER = 14
-
-  val CALENDAR_FIND_RATIO = 1.5
-
 }
