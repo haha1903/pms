@@ -1,16 +1,13 @@
 package com.datayes.invest.pms.dao.account.impl;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-import javax.inject.Inject;
+import javax.persistence.TypedQuery;
 
 import com.datayes.invest.pms.dao.account.IdGenerator;
-import com.datayes.invest.pms.dao.account.PositionDao;
 
-public class IdGeneratorImpl implements IdGenerator {
-
-    @Inject
-    private PositionDao positionDao;
+public class IdGeneratorImpl extends EntityManagerProvider implements IdGenerator {
     
     private final Object nextPositionIdLock = new Object();
     
@@ -20,12 +17,21 @@ public class IdGeneratorImpl implements IdGenerator {
         if (nextPositionId == null) {
             synchronized (nextPositionIdLock) {
                 if (nextPositionId == null) {
-                    long maxId = positionDao.findLargestPositionId();
+                    long maxId = findLargestPositionId();
                     nextPositionId = new AtomicLong(maxId + 1);
                 }
             }
         }
         long id = nextPositionId.getAndIncrement();
         return id;
+    }
+    
+    private long findLargestPositionId() {
+        TypedQuery<Long> q = getEntityManager().createQuery("select max(id) from Position", Long.class);
+        List<Long> list = q.getResultList();
+        if (list == null || list.isEmpty() || list.get(0) == null) {
+            return 0;
+        }
+        return (long) list.get(0);
     }
 }

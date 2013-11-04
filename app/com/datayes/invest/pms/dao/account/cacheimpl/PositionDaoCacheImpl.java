@@ -50,11 +50,6 @@ public class PositionDaoCacheImpl implements PositionDao {
         throw new UnsupportedOperationException();
     }
 
-	@Override
-	public long findLargestPositionId() {
-	    throw new UnsupportedOperationException();
-	}
-
     @Override
     public void delete(Position entity) {
         throw new UnsupportedOperationException();

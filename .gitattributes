@@ -2,7 +2,10 @@
 /README -text
 app/com/datayes/invest/pms/config/Config.java -text
 app/com/datayes/invest/pms/config/RunningMode.java -text
-app/com/datayes/invest/pms/dao/AccountDaoModule.java -text
+app/com/datayes/invest/pms/dao/AccountBaseDaoModule.java -text
+app/com/datayes/invest/pms/dao/AccountExtraDaoCacheModule.java -text
+app/com/datayes/invest/pms/dao/AccountExtraDaoModule.java -text
+app/com/datayes/invest/pms/dao/IdGeneratorModule.java -text
 app/com/datayes/invest/pms/dao/SecurityDaoModule.java -text
 app/com/datayes/invest/pms/dao/account/AccountClassDao.java -text
 app/com/datayes/invest/pms/dao/account/AccountDao.java -text
@@ -208,8 +211,8 @@ app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateTimeType.java -te
 app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateTimeTypeDescriptor.java -text
 app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateType.java -text
 app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateTypeDescriptor.java -text
-app/com/datayes/invest/pms/play/AppModule.java -text
 app/com/datayes/invest/pms/play/Global.scala -text
+app/com/datayes/invest/pms/play/Injectors.java -text
 app/com/datayes/invest/pms/play/LoggingFilter.scala -text
 app/com/datayes/invest/pms/service/calendar/CalendarService.java -text
 app/com/datayes/invest/pms/service/calendar/impl/CalendarServiceImpl.java -text
@@ -269,7 +272,6 @@ app/controllers/ProxyController.scala -text
 app/controllers/util/DecimalWriters.scala -text
 app/controllers/util/Jsonp.scala -text
 app/net/jcip/annotations/NotThreadSafe.java -text
-app/test/TestAppModule.java -text
 app/test/TestIdGenerator.java -text
 app/test/TestPersist.java -text
 app/views/index.scala.html -text

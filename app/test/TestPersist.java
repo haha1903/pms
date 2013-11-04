@@ -1,6 +1,6 @@
 package test;
 
-import com.datayes.invest.pms.dao.AccountDaoModule;
+import com.datayes.invest.pms.dao.AccountBaseDaoModule;
 import com.datayes.invest.pms.dao.SecurityDaoModule;
 import com.datayes.invest.pms.dao.account.AccountDao;
 import com.datayes.invest.pms.dao.security.ExchangeCalendarDao;
@@ -20,7 +20,7 @@ import org.joda.time.LocalDate;
 public class TestPersist {
 
     public static void main(String[] args) {
-        Injector injector = Guice.createInjector(new PersistModule(), new AccountDaoModule(), new SecurityDaoModule());
+        Injector injector = Guice.createInjector(new PersistModule(), new AccountBaseDaoModule(), new SecurityDaoModule());
         PersistService persistService = injector.getInstance(PersistService.class);
         persistService.initialize();
         

@@ -17,15 +17,6 @@ public class PositionDaoImpl extends AccountRelatedDaoImpl<Position, Long> imple
     protected PositionDaoImpl() {
         super(Position.class);
     }
-
-    public long findLargestPositionId() {
-        Query q = getEntityManager().createQuery("select max(id) from Position");
-        List list = q.getResultList();
-        if (list == null || list.isEmpty() || list.get(0) == null) {
-            return 0;
-        }
-        return (long) list.get(0);
-    }
     
 	@Override
 	public void save(Position entity) {		

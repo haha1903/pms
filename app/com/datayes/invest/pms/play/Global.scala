@@ -9,6 +9,9 @@ import play.api.libs.json.Json
 import com.datayes.invest.pms.config.Config
 import com.datayes.invest.pms.config.RunningMode
 import com.google.inject.Guice
+import com.google.inject.Injector
+import com.google.inject.Stage
+import com.datayes.invest.pms.persist.PersistService
 
 object Global extends WithFilters(new LoggingFilter) with Logging {
 
@@ -19,12 +22,20 @@ object Global extends WithFilters(new LoggingFilter) with Logging {
 
   private lazy val schedulerInterval = Config.INSTANCE.getLong("system.scheduler.interval")
   
-  private val injector = Guice.createInjector(new AppModule())
+  private var injector: Injector = null
+  
+  private var importerInjector: Injector = null
 
   override def onStart(app: Application): Unit = {
-
+    createInjectors()
   }
-
+  
+  private def createInjectors(): Unit = {
+    val injectors = new Injectors()
+    injector = injectors.getInjector()
+    importerInjector = injectors.getImporterInjector()
+  }
+  
   private var controllerMap = Map[Class[_], Any]()
 
   override def getControllerInstance[A](controllerClass: Class[A]): A = {
