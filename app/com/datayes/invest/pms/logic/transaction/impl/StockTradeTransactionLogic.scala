@@ -14,7 +14,7 @@ import com.datayes.invest.pms.dbtype.LedgerType
 import com.datayes.invest.pms.util.DefaultValues
 import com.datayes.invest.pms.entity.account.SecurityPosition
 
-class StockTradeTransaction extends TransactionLogicBase with Logging {
+class StockTradeTransactionLogic extends TransactionLogicBase with Logging {
 
   @Inject
   private var accountDao: AccountDao = null

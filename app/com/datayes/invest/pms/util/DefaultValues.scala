@@ -26,6 +26,8 @@ object DefaultValues {
 
   val CURRENCY_CODE = "CNY"
     
+  val PMS_SOURCE_TRANSACTION_ID  = "0"
+    
   val POSITION_VALUATION_TYPE = PositionValuationType.MARKET;
   
   val SH_STOCK_EXCHANGE_CODE = "XSHG"

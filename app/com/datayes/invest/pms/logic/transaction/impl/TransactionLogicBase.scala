@@ -118,8 +118,8 @@ abstract class TransactionLogicBase extends TransactionLogic {
   }
 
   protected def saveTransaction(t: Transaction, commissionAndFee: (BigDecimal, BigDecimal), asOfDate: LocalDate, repoFields: (BigDecimal, LocalDate, Integer) = null): Unit = {
-    val securityTransaction = new SecurityTransaction(t.accountId, t.transactionSourceId, t.transactionClass,
-      t.securityId, t.side.toString)
+    val securityTransaction = new SecurityTransaction(t.accountId, t.transactionSourceId, t.transactionClass.getDbValue(),
+      t.securityId, t.side.getDbValue())
     securityTransaction.setOrderId(null)
     securityTransaction.setSourceTransactionId(t.sourceTransactionId)
     securityTransaction.setSourceTransactionDate(new LocalDateTime(t.executionDate.toDateTimeAtCurrentTime))

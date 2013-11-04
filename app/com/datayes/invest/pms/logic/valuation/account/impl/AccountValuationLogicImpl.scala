@@ -27,7 +27,7 @@ import com.datayes.invest.pms.entity.account.AccountValuationHist
 import com.datayes.invest.pms.entity.account.PositionValuationHist
 import com.datayes.invest.pms.entity.account.CarryingValueHist
 
-class AccountValuationEngineImpl extends AccountValuationLogic with Logging {
+class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
 
   @Inject
   private var accountDao: AccountDao = null
