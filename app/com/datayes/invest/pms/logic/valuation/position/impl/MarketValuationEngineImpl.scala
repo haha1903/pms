@@ -20,18 +20,13 @@ import com.datayes.invest.pms.dao.account.PositionValuationHistDao
 import com.datayes.invest.pms.dao.security.SecurityDao
 import com.datayes.invest.pms.dao.security.FutureDao
 import com.datayes.invest.pms.service.marketdata.MarketDataService
-import com.datayes.invest.pms.service.marketdata.MarketData
-import com.datayes.invest.pms.entity.account.Account
-import com.datayes.invest.pms.entity.account.Position
-import com.datayes.invest.pms.entity.account.SecurityPosition
-import com.datayes.invest.pms.entity.account.PositionHist
-import com.datayes.invest.pms.entity.account.PositionValuationHist
+import com.datayes.invest.pms.entity.account._
 import com.datayes.invest.pms.dbtype.PositionValuationType
 import com.datayes.invest.pms.util.DefaultValues
 import com.datayes.invest.pms.entity.security.Equity
 import com.datayes.invest.pms.entity.security.Future
 import com.datayes.invest.pms.entity.security.Repo
-import com.datayes.invest.pms.entity.account.CashPosition
+import scala.Some
 
 
 class MarketValuationLogic extends PositionValuationLogic with Logging {

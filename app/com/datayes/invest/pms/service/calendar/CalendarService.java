@@ -5,6 +5,8 @@ import org.joda.time.LocalDate;
 public interface CalendarService {
 
     boolean isTradeDay(LocalDate date);
+
+    boolean isTradeDay(LocalDate date, String exchangeCode);
     
     LocalDate previousTradeDay(LocalDate date);
     

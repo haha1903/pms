@@ -12,6 +12,8 @@ object ApplicationBuild extends Build {
 
   val appDependencies = Seq(
     "com.alibaba" % "fastjson" % "1.1.35",
+    "com.dyuproject.protostuff" % "protostuff-core" % "1.0.7",
+    "com.dyuproject.protostuff" % "protostuff-runtime" % "1.0.7",
     // "com.datayes.paas.sso" % "datayes-sso" % "1.0.5" withSources,
     // "com.github.scopt" %% "scopt" % "3.1.0",
     "com.google.code.gson" % "gson" % "2.2.4",

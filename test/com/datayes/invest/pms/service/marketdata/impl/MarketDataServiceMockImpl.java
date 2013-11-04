@@ -7,7 +7,7 @@ import java.util.Set;
 
 import org.joda.time.LocalDate;
 
-import com.datayes.invest.pms.service.marketdata.MarketData;
+import com.datayes.invest.pms.entity.account.MarketData;
 import com.datayes.invest.pms.service.marketdata.MarketDataService;
 
 public class MarketDataServiceMockImpl implements MarketDataService {

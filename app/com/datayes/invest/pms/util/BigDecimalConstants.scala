@@ -6,5 +6,7 @@ object BigDecimalConstants {
   
   val ONE = BigDecimal("1")
   
-  val EPSION = BigDecimal("0.0000000001")
+  val EPSILON = BigDecimal("0.0000000001")
+
+  val PRICE_EPSILON = BigDecimal("0.0001")
 }
