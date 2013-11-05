@@ -1,31 +1,34 @@
 package com.datayes.invest.pms.service.marketdata.impl;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+
+import javax.inject.Inject;
+
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import scala.math.BigDecimal;
 
 import com.datayes.invest.pms.config.Config;
 import com.datayes.invest.pms.dao.account.MarketDataDao;
 import com.datayes.invest.pms.dao.security.PriceVolumeDao;
+import com.datayes.invest.pms.entity.account.MarketData;
 import com.datayes.invest.pms.entity.security.PriceVolume;
-import com.datayes.invest.pms.persist.Persist;
-import com.datayes.invest.pms.persist.Transaction;
 import com.datayes.invest.pms.service.calendar.CalendarService;
+import com.datayes.invest.pms.service.marketdata.MarketDataService;
 import com.datayes.invest.pms.service.marketdata.impl.cache.MarketDataCache;
 import com.datayes.invest.pms.service.marketdata.impl.task.EquityCacheUpdateTask;
 import com.datayes.invest.pms.service.marketdata.impl.task.FutureCacheUpdateTask;
 import com.datayes.invest.pms.service.marketdata.impl.task.MarketDataDbScheduler;
 import com.datayes.invest.pms.util.DefaultValues;
-import org.joda.time.LocalDate;
-
-import com.datayes.invest.pms.entity.account.MarketData;
-import com.datayes.invest.pms.service.marketdata.MarketDataService;
-import org.joda.time.LocalDateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import scala.math.BigDecimal;
-
-import javax.inject.Inject;
 
 public class MarketDataServiceImpl implements MarketDataService {
 
@@ -42,10 +45,11 @@ public class MarketDataServiceImpl implements MarketDataService {
     private CalendarService calendarService = null;
 
     private static Config config = Config.INSTANCE;
-    //private static String openTime = config.getString("market.open.time");
-    //private static String closeTime = config.getString("market.close.time");
-    private static String openTime = "09:30:00";
-    private static String closeTime = "15:00:00";
+    
+//    private static String configOpenTime = config.getString("market.open.time");
+//    private static String configCloseTime = config.getString("market.close.time");
+    private static String configOpenTime = "09:30:00";
+    private static String configCloseTime = "15:00:00";
     
     private static final Logger LOGGER = LoggerFactory.getLogger(MarketDataServiceImpl.class);
 
@@ -85,18 +89,11 @@ public class MarketDataServiceImpl implements MarketDataService {
     }
 
     private boolean isTradeTime() {
-        // Create today's open time & close time
-        String strOpenTime = LocalDate.now().toString() + " " + openTime;
-        String strCloseTime = LocalDate.now().toString() + " " + closeTime;
-        String pattern = "yyyy-MM-dd hh:mm:ss";
-
-        LocalDateTime localOpenTime = LocalDateTime.parse(strOpenTime, DateTimeFormat.forPattern(pattern));
-        LocalDateTime localCloseTime = LocalDateTime.parse(strCloseTime, DateTimeFormat.forPattern(pattern));
-
-        LocalDateTime now = LocalDateTime.now();
-
+        LocalTime openTime = LocalTime.parse(configOpenTime);
+        LocalTime closeTime = LocalTime.parse(configCloseTime);
+        LocalTime now = LocalTime.now();
         // If now is in trade time
-        if( now.isAfter(localOpenTime) && now.isBefore(localCloseTime) ) {
+        if( now.isAfter(openTime) && now.isBefore(closeTime) ) {
             return true;
         }
         else {
