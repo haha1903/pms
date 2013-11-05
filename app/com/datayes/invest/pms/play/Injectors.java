@@ -7,6 +7,7 @@ import com.datayes.invest.pms.dao.IdGeneratorModule;
 import com.datayes.invest.pms.dao.SecurityDaoModule;
 import com.datayes.invest.pms.persist.PersistModule;
 import com.datayes.invest.pms.persist.PersistService;
+import com.datayes.invest.pms.service.ServiceModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -21,7 +22,8 @@ public class Injectors {
             new AccountBaseDaoModule(),
             new IdGeneratorModule(),
             new PersistModule(),
-            new SecurityDaoModule());
+            new SecurityDaoModule(),
+            new ServiceModule());
         
         injector = baseInjector.createChildInjector(
             new AccountExtraDaoModule());

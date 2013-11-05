@@ -5,7 +5,7 @@ import java.util.List;
 import com.datayes.invest.pms.entity.security.InstitutionIndustry;
 
 
-public interface InstitutionIndustryDao{
+public interface InstitutionIndustryDao {
 
-    List<InstitutionIndustry> findByPartyIdDataSourceName(Long partyId, String dataSourceName);
+    List<InstitutionIndustry> findByPartyIdDataSourceId(Long partyId, Integer dataSourceId);
 }

@@ -1,4 +1,4 @@
-package com.datayes.invest.pms.service.userpref
+package com.datayes.invest.pms.userpref
 
 import com.datayes.invest.pms.web.model.models.AssetNodeType
 

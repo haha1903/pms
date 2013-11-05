@@ -3,7 +3,7 @@ package controllers
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.persist.dsl.transaction
 import com.datayes.invest.pms.web.service.{ PortfolioChartService, PortfolioService }
-import com.datayes.invest.pms.service.userpref.{GroupingItem, UserPref}
+import com.datayes.invest.pms.userpref.{GroupingItem, UserPref}
 import com.datayes.invest.pms.web.model.models._
 import com.datayes.invest.pms.web.model.fastjson.asset.{Asset => FAsset, AssetNode => FAssetNode, AssetTree => FAssetTree, AssetNodeType => FAssetNodeType, AssetTreeConverter}
 import com.datayes.invest.pms.web.model.models.ModelWrites._

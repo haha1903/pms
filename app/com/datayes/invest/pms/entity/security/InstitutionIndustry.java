@@ -16,6 +16,8 @@ public class InstitutionIndustry extends EntityBase {
     
     private Long partyId;
     
+    private Integer dataSourceId;
+    
     private Character isCurrent;
     
     private String level1IndustName;
@@ -24,7 +26,6 @@ public class InstitutionIndustry extends EntityBase {
         
     }
 
-    @Id
     @Column(name = "PARTY_ID")
     public Long getPartyId() {
         return partyId;
@@ -32,6 +33,16 @@ public class InstitutionIndustry extends EntityBase {
 
     public void setPartyId(Long partyId) {
         this.partyId = partyId;
+    }
+    
+    @Id
+    @Column(name = "DATA_SOURCE_ID")
+    public Integer getDataSourceId() {
+        return dataSourceId;
+    }
+
+    public void setDataSourceId(Integer dataSourceId) {
+        this.dataSourceId = dataSourceId;
     }
 
     @Column(name = "IS_CURRENT")

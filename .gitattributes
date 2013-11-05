@@ -222,11 +222,13 @@ app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateTypeDescriptor.ja
 app/com/datayes/invest/pms/play/Global.scala -text
 app/com/datayes/invest/pms/play/Injectors.java -text
 app/com/datayes/invest/pms/play/LoggingFilter.scala -text
+app/com/datayes/invest/pms/service/ServiceModule.java -text
 app/com/datayes/invest/pms/service/calendar/CalendarService.java -text
 app/com/datayes/invest/pms/service/calendar/impl/CalendarServiceImpl.java -text
 app/com/datayes/invest/pms/service/fee/FeeService.java -text
 app/com/datayes/invest/pms/service/fee/impl/FeeServiceImpl.java -text
 app/com/datayes/invest/pms/service/industry/IndustryService.java -text
+app/com/datayes/invest/pms/service/industry/impl/IndustryServiceImpl.java -text
 app/com/datayes/invest/pms/service/marketdata/MarketDataService.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/MarketDataServiceImpl.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/cache/MarketDataCache.java -text
@@ -244,12 +246,12 @@ app/com/datayes/invest/pms/service/marketindex/MarketIndex.java -text
 app/com/datayes/invest/pms/service/marketindex/MarketIndexComponent.java -text
 app/com/datayes/invest/pms/service/marketindex/MarketIndexService.java -text
 app/com/datayes/invest/pms/service/marketindex/impl/MarketIndexServiceImpl.java -text
-app/com/datayes/invest/pms/service/userpref/UserPref.scala -text
 app/com/datayes/invest/pms/tools/importer/AccountCsvImporter.scala -text
 app/com/datayes/invest/pms/tools/importer/ImportManager.scala -text
 app/com/datayes/invest/pms/tools/importer/SimulationRunner.scala -text
 app/com/datayes/invest/pms/tools/importer/SimulationRunnerCacheFlusher.java -text
 app/com/datayes/invest/pms/tools/importer/SimulationRunnerCacheLoader.java -text
+app/com/datayes/invest/pms/userpref/UserPref.scala -text
 app/com/datayes/invest/pms/util/BeanException.java -text
 app/com/datayes/invest/pms/util/BeanUtil.java -text
 app/com/datayes/invest/pms/util/BigDecimalConstants.scala -text

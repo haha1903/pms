@@ -28,6 +28,8 @@ object DefaultValues {
   val CHANGE_YEAR_TO_DATE = 5
 
   val CURRENCY_CODE = "CNY"
+    
+  val INDUSTRY_DATA_SOURCE_ID = 9    // 申万行业分类
 
   val MARKETDATA_SCHEDULER_INTERVAL = 10 * 60 * 1000  // 10 minutes
     

@@ -8,7 +8,7 @@ import com.datayes.invest.pms.web.model.models.ModelWrites._
 import play.api.mvc._
 import javax.inject.Inject
 import com.datayes.invest.pms.web.service.DashboardService
-import com.datayes.invest.pms.service.userpref.UserPref
+import com.datayes.invest.pms.userpref.UserPref
 import play.api.libs.json.Json
 import com.datayes.invest.pms.web.sso.AuthAction
 
