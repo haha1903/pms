@@ -4,7 +4,71 @@
 
 # Index
 GET     /                                                     @controllers.Application.index
+
+# PMS
 GET     /pms                                                  @controllers.Application.pms
+
+# test
+GET     /tools                                                @controllers.Application.tools
+
+# SAML SSO
+POST    /saml/*path                                           @controllers.Application.saml(path)
+GET     /saml/*path                                           @controllers.Application.saml(path)
+
+# Account
+#GET     /account/list                                         @controllers.AccountController.list
+#GET     /account/add                                          @controllers.AccountController.add
+#GET     /account/details                                      @controllers.AccountController.details(accountId: Long)
+
+#GET     /account/deleteaccount                                @controllers.AccountController.deleteAccount(accountId: Long)
+#POST    /account/addaccount                                   @controllers.AccountController.addAccount
+#POST    /account/updateaccount                                @controllers.AccountController.updateAccount
+#POST    /account/initaccount                                  @controllers.AccountController.initAccount
+
+# JSON request for Account
+#POST    /json/account/list                                    @controllers.AccountController.jsonList
+
+# Grouping View pages
+GET     /accountMgmt/groupingView/all                         @controllers.GroupingViewController.all
+GET     /accountMgmt/groupingView/chart                       @controllers.GroupingViewController.chart(view: String, accountId: Long)
+GET     /accountMgmt/groupingView/getGroupingSetting          @controllers.GroupingViewController.getGroupingSetting
+GET     /accountMgmt/groupingView/saveGroupingSetting         @controllers.GroupingViewController.saveGroupingSetting(setting: String)
+# !!!Need to check if there is s after account!!!
+GET     /accountsMgmt/groupingView/filter/availableIndustry   @controllers.GroupingViewController.getAvailableIndustry
+
+# Dashboard
+GET     /accountsMgmt/dashboard/accountList                   @controllers.DashboardController.getAccountList
+GET     /accountsMgmt/dashboard/assetClassWeight              @controllers.DashboardController.getAssetClassWeight(accountId: Long)
+GET     /accountsMgmt/dashboard/industryWeight                @controllers.DashboardController.getIndustryWeight(accountId: Long)
+GET     /accountsMgmt/dashboard/topHoldingStock               @controllers.DashboardController.topHoldingStock(accountId: Long, number: Integer)
+GET     /accountsMgmt/dashboard/performanceOverview           @controllers.DashboardController.performanceOverview(accountId: Long)
+GET     /accountsMgmt/dashboard/netValueTrend                 @controllers.DashboardController.netValueTrend(accountId: Long, benchmarkIndexTicker: String)
+GET     /accountsMgmt/dashboard/accountOverview               @controllers.DashboardController.accountOverview(accountId: Long)
+GET     /accountsMgmt/dashboard/layoutConfig/save             @controllers.DashboardController.saveLayoutConfig(config: String)
+GET     /accountsMgmt/dashboard/layoutConfig/get              @controllers.DashboardController.getLayoutConfig
+
+GET		/accountsMgmt/summaryView							  @controllers.AccountsSummaryViewController.getSummary
+
+# Import
+POST    /importAccount/upload                                 @controllers.ImportController.uploadAccountCsv
+GET     /importAccount/status                                 @controllers.ImportController.uploadAccountCsvStatus(uuid: String)
+GET     /deleteAccount                                        @controllers.ImportController.deleteAccount(accountId: Long)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+# Test Transaction
+#GET     /transactionMgmt/initStockTransaction                 @controllers.TestTransactionController.initStockTransaction
+#POST    /transactionMgmt/execStockTransaction                 @controllers.TestTransactionController.execStockTransaction
+#GET     /transactionMgmt/refreshSettlementCash                @controllers.TestTransactionController.refreshSettlementCash
+#GET     /transactionMgmt/refreshMargin                        @controllers.TestTransactionController.refreshMargin
+
+GET     /testingOperations                                    @controllers.TestingOperationController.testingOperations
+POST    /testingOperations                                    @controllers.TestingOperationController.testingOperationsPost
+
+# Import stock index future csv
+#POST    /importer/stockIndexFutureTransaction/csv             @controllers.ImportController.importStockIndexFutureTransactionCsv
+
+# Proxy
+GET     /proxy/attribution                                    @controllers.ProxyController.attribution
+POST    /attrupload                                           @controllers.ProxyController.upload

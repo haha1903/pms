@@ -1,0 +1,63 @@
+@(host: String)
+
+@layout {
+
+    <h3>Accounts</h3>
+    
+    @*<a href="@routes.AccountController.list">Account List</a><p>*@
+
+    <h3>Dashboard links</h3>
+
+    基金列表: http://@{host}/accountsMgmt/dashboard/accountList<br>
+
+    资产配置: http://@{host}/accountsMgmt/dashboard/assetClassWeight?accountId=<br>
+
+    行业占比: http://@{host}/accountsMgmt/dashboard/industryWeight?accountId=<br>
+
+    重仓股票: http://@{host}/accountsMgmt/dashboard/topHoldingStock?accountId=&number=<br>
+
+    业绩表现: http://@{host}/accountsMgmt/dashboard/performanceOverview?accountId=<br>
+
+    净值走势: http://@{host}/accountsMgmt/dashboard/netValueTrend?accountId=&benchmarkIndexTicker=<br>
+
+    组合概况: http://@{host}/accountsMgmt/dashboard/accountOverview?accountId=<br>
+    
+    <h3>Tools</h3>
+
+    <a href="@routes.TestingOperationController.testingOperations">日初处理, 日终处理, 估值</a><p>
+    
+    <a href="@routes.GroupingViewController.all">@routes.GroupingViewController.all</a><p>
+    
+    <a href="@routes.GroupingViewController.getGroupingSetting">@routes.GroupingViewController.getGroupingSetting</a><p>
+
+    @*<a href="@routes.TestTransactionController.refreshSettlementCash">refresh settlement cash</a><p>*@
+    
+    @*<a href="@routes.TestTransactionController.refreshMargin">refresh margin</a><p>*@
+
+    @*<form method="post" action="@routes.ImportController.importStockIndexFutureTransactionCsv">
+        Import stock index future transaction csv, file name:
+        <input type="text" name="filename"/>
+        <input type="submit" value="Import"/>
+    </form>*@
+    <p>
+
+    <h3>Test Upload Account Import CSV</h3>
+    <form method="post" action="@routes.ImportController.uploadAccountCsv" enctype="multipart/form-data">
+        <input type="file" name="upload">
+        <p>
+            <input type="submit">
+        </p>
+    </form>
+
+    查看导入进度: http://@{host}/importAccount/status?uuid=<br>
+    删除组合: http://@{host}/deleteAccount?accountId=<br>
+    <p>
+
+    <h3>Test File Upload</h3>
+    <form method="post" action="@routes.ProxyController.upload" enctype="multipart/form-data">
+        <input type="file" name="upload">
+        <p>
+            <input type="submit">
+        </p>
+    </form>
+}

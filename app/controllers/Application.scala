@@ -22,9 +22,9 @@ class Application extends Controller with Logging {
     Ok(views.html.pms(pmsApiUrl, f2eHost, "10415", "通联数据", username))
   }
 
-//  def tools = AuthAction { implicit request =>
-//    Ok(views.html.tools(request.host))
-//  }
+  def tools = AuthAction { implicit request =>
+    Ok(views.html.tools(request.host))
+  }
 
   def saml(path: String) = AuthAction { implicit request =>
     BadRequest    // Fake response, all logic should be handled by AuthAction

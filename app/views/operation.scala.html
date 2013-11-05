@@ -1,0 +1,13 @@
+@layout {
+
+    <h3>Account Operations for Testing</h3>
+
+    <form method="post" action="@routes.TestingOperationController.testingOperationsPost">
+        As Of Date: <input type="text" name="asOfDate"/><br>
+        End Date (optional): <input type="text" name="endDate"/><br>
+        <input type="checkbox" name="sod" value="sod">Start of Day<br>
+        <input type="checkbox" name="valuation" value="valuation">Valuation<br>
+        <input type="checkbox" name="eod" value="eod">End of Day<br>
+        <input type="submit" value="Run"/>
+    </form>
+}
