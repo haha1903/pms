@@ -1,0 +1,24 @@
+{
+    partyId: 1,
+    parentAccountId: null,
+    countryCode: "CN",
+    currencyCode: "CNY",
+    classCode: "INVESTMENT",
+    accountNo: "123456789",
+    name: "通联数据测试虚拟基金",
+    openDate: "2013-08-05",
+    netWorth: 100000000,
+    share: 100000000,
+    positions: [
+        {
+            classCode: "CASH"
+            ledgerId: 2
+        },
+        {
+            
+        },
+        {
+
+        }
+    ]
+}

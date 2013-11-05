@@ -317,6 +317,10 @@ project/plugins.sbt -text
 public/images/favicon.png -text
 public/javascripts/jquery-1.9.0.min.js -text
 public/stylesheets/main.css -text
+sample/import/account/csv/sample.csv -text
+sample/import/account/csv/主动投资组合A.csv -text
+sample/import/account/csv/量化策略A.csv -text
+sample/import/account/json/sample-account-file.json -text
 /svnignore.exclude -text
 test/ApplicationSpec.scala -text
 test/IntegrationSpec.scala -text
