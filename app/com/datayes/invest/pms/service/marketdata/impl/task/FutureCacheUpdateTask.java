@@ -71,10 +71,15 @@ public class FutureCacheUpdateTask implements Runnable {
 
     private static Config config = Config.INSTANCE;
 
+    /*
     private static String CHANNEL = config.getString("redis.channel");
     private static String HOST = config.getString("redis.host");
     private static int PORT = config.getInt("redis.port");
-
+	*/
+    private static String CHANNEL = "future2";
+    private static String HOST = "10.20.112.103";
+    private static int PORT = 6379;
+    
     private GsonBuilder builder = new GsonBuilder();
     private Gson gson = null;
 

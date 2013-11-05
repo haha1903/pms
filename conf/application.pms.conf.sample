@@ -49,14 +49,13 @@ mds.http {
 rabbitmq {
     queue_name = "PMS_MARKETDATA_QUEUE"
     exchange_name = "rtmdd.marketData.CN"
-    equity_key = "marketData.CN.Equities"
-    future_key = "marketData.CN.Futures"
+    equity_key = "marketData.CN.Equities2"
     host = "10.20.136.21"
 }
 redis {
     host = "10.20.112.103"
     port = 6379
-    channel = "future"
+    channel = "future2"
 }
 
 

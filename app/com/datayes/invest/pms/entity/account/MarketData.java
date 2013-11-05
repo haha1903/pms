@@ -65,6 +65,32 @@ public class MarketData {
         this.receivedTime = marketData.getReceivedTime();
         this.dataType = marketData.getDataType();
     }
+    
+    @Override
+    public boolean equals(Object o) {
+    	if( !MarketData.class.isInstance(o) ) {
+    		return false;
+    	}
+    	else {
+    		MarketData marketdata = (MarketData) o;
+    		if( this.securityId.equals(marketdata.getSecurityId()) ) {
+    			if( this.asOfDate.equals(marketdata.getAsOfDate()) ) {
+    				if ( (this.price.toDouble() - marketdata.getPrice().toDouble()) < 0.0001 ) {
+    					if( (this.previousPrice.toDouble() - marketdata.getPreviousPrice().toDouble())  < 0.0001 ) {
+    						return true;
+    					}
+    				}
+    			}
+    		}
+    		
+    		return false;
+    	}    	
+    }
+    
+    @Override
+    public String toString() {
+    	return securityId + ", " + asOfDate + ", " + price + ", " + previousPrice;
+    }
 
     @Id
     @Column(name = "SECURITY_ID")

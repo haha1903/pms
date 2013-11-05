@@ -22,11 +22,17 @@ public class EquityCacheUpdateTask implements Runnable {
 
     private static Config config = Config.INSTANCE;
 
+    /*
     private static String EQUITY_KEY = config.getString("rabbitmq.exchange_name");
     private static String EXCHANGE_NAME = config.getString("rabbitmq.exchange_name");
     private static String HOST = config .getString("rabbitmq.host");
     private static String QUEUE_NAME = config.getString("rabbitmq.queue_name");
-
+	*/
+    private static String EQUITY_KEY = "marketData.CN.Equities2";
+    private static String EXCHANGE_NAME = "rtmdd.marketData.CN";
+    private static String HOST = "10.20.136.21";
+    private static String QUEUE_NAME = "PMS_MARKETDATA_QUEUE";
+    
     private static Schema stockSchema = RuntimeSchema.getSchema(Stock.class);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EquityCacheUpdateTask.class);

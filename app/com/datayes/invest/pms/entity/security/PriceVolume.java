@@ -36,6 +36,12 @@ public class PriceVolume extends EntityBase implements Serializable {
         // used by persistence
     }
 
+    public PriceVolume(Long securityId, LocalDate tradeDate, Double priceClose, Double pricePreviousClose) {
+        this.securityId = securityId;
+        this.tradeDate = tradeDate;
+        this.priceClose = priceClose;
+        this.pricePreviousClose = pricePreviousClose;
+    }
 
     @Id
     @Column(name = "SECURITY_ID")

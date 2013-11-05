@@ -7,7 +7,7 @@ import javax.persistence.TypedQuery;
 
 import com.datayes.invest.pms.dao.account.GenericAccountMasterDao;
 
-class GenericAccountMasterDaoImpl<T, K extends Serializable> extends EntityManagerProvider
+public class GenericAccountMasterDaoImpl<T, K extends Serializable> extends EntityManagerProvider
         implements GenericAccountMasterDao<T, K> {
 
     protected final Class<T> classOfEntity;

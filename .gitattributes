@@ -313,13 +313,16 @@ public/stylesheets/main.css -text
 /svnignore.exclude -text
 test/ApplicationSpec.scala -text
 test/IntegrationSpec.scala -text
+test/com/datayes/invest/pms/dao/account/MarketDataMockDaoImpl.java -text
 test/com/datayes/invest/pms/dao/security/ExchangeCalendarMockDaoImpl.java -text
 test/com/datayes/invest/pms/dao/security/GenericSecurityMasterMockDaoImpl.java -text
 test/com/datayes/invest/pms/dao/security/MarketIndexCompMockDaoImpl.java -text
 test/com/datayes/invest/pms/dao/security/MarketIndexMockDaoImpl.java -text
 test/com/datayes/invest/pms/dao/security/MarketIndexWeightMockDaoImpl.java -text
+test/com/datayes/invest/pms/dao/security/PriceVolumeMockDaoImpl.java -text
 test/com/datayes/invest/pms/service/calendar/CalendarServiceSpec.scala -text
 test/com/datayes/invest/pms/service/calendar/CalendarServiceTest.java -text
+test/com/datayes/invest/pms/service/marketdata/MarketDataServiceTest.java -text
 test/com/datayes/invest/pms/service/marketdata/impl/MarketDataServiceMockImpl.java -text
 test/com/datayes/invest/pms/util/BeanUtilTest.java -text
 test/com/datayes/invest/pms/util/Position.java -text

@@ -42,17 +42,19 @@ public class MarketDataServiceImpl implements MarketDataService {
     private CalendarService calendarService = null;
 
     private static Config config = Config.INSTANCE;
-    private static String openTime = config.getString("market.open.time");
-    private static String closeTime = config.getString("market.close.time");
-
+    //private static String openTime = config.getString("market.open.time");
+    //private static String closeTime = config.getString("market.close.time");
+    private static String openTime = "09:30:00";
+    private static String closeTime = "15:00:00";
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(MarketDataServiceImpl.class);
 
     private void loadRealTimeMarketDataFromDb() {
         List<MarketData>  snapshotList;
-        Transaction tx = Persist.beginTransaction();
+        //Transaction tx = Persist.beginTransaction();
         try {
             snapshotList = marketDataDao.findAll();
-            tx.commit();
+            //tx.commit();
 
             for(MarketData marketData : snapshotList) {
                 marketDataCache.update(marketData);
@@ -60,7 +62,7 @@ public class MarketDataServiceImpl implements MarketDataService {
         }
         catch (Exception e) {
             LOGGER.error(e.getMessage());
-            tx.rollback();
+            //tx.rollback();
         }
     }
 
@@ -150,7 +152,7 @@ public class MarketDataServiceImpl implements MarketDataService {
                     marketDataMap.put(securityId,
                         new MarketData(
                             securityId,
-                            new Timestamp(asOfDate.toDate().getTime()),
+                            new Timestamp(tradeDay.toDate().getTime()),
                             new BigDecimal(new java.math.BigDecimal(priceVolume.getPriceClose())),
                             new BigDecimal(new java.math.BigDecimal(priceVolume.getPricePreviousClose()))));
                 }
