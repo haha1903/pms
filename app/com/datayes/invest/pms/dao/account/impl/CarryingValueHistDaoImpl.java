@@ -1,5 +1,6 @@
 package com.datayes.invest.pms.dao.account.impl;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -18,8 +19,11 @@ public class CarryingValueHistDaoImpl extends GenericAccountMasterDaoImpl<Carryi
 
     @Override
     public List<CarryingValueHist> findByPositionIdListTypeIdAsOfDate(List<Long> positionIdList, Long typeId, LocalDate asOfDate) {
+        if (positionIdList == null || positionIdList.isEmpty()) {
+            return Collections.emptyList();
+        }
         Query q = getEntityManager().createQuery(
-                "from CarryingValueHist where positionId in (:positionIdList) and typeId = :typeId and asOfDate = :asOfDate");
+                "from CarryingValueHist where PK.positionId in (:positionIdList) and PK.typeId = :typeId and PK.asOfDate = :asOfDate");
         q.setParameter("positionIdList", positionIdList);
         q.setParameter("typeId", typeId);
         q.setParameter("asOfDate", asOfDate);
@@ -29,8 +33,11 @@ public class CarryingValueHistDaoImpl extends GenericAccountMasterDaoImpl<Carryi
 
     @Override
     public List<CarryingValueHist> findByPositionIdListAsOfDate(List<Long> positionIdList, LocalDate asOfDate) {
+        if (positionIdList == null || positionIdList.isEmpty()) {
+            return Collections.emptyList();
+        }
         Query q = getEntityManager().createQuery(
-                        "from CarryingValueHist where PK.positionId in :positionIdList and PK.asOfDate = :asOfDate");
+                        "from CarryingValueHist where PK.positionId in (:positionIdList) and PK.asOfDate = :asOfDate");
         q.setParameter("positionIdList", positionIdList);
         q.setParameter("asOfDate", asOfDate);
         List<CarryingValueHist> list = (List<CarryingValueHist>) q.getResultList();

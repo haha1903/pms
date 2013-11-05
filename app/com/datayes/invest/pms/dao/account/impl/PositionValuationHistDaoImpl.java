@@ -20,11 +20,11 @@ public class PositionValuationHistDaoImpl extends GenericAccountMasterDaoImpl<Po
     @Override
     public List<PositionValuationHist> findByPositionIdListTypeIdAsOfDate(List<Long> positionIdList, Long typeId, LocalDate asOfDate) {
         if (positionIdList == null || positionIdList.isEmpty()) {
-            return Collections.<PositionValuationHist>emptyList();
+            return Collections.emptyList();
         }
 
         Query q = getEntityManager().createQuery("from PositionValuationHist where " +
-                "positionId in (:positionIdList) and typeId = :typeId and asOfDate = :asOfDate");
+                "PK.positionId in (:positionIdList) and PK.typeId = :typeId and PK.asOfDate = :asOfDate");
         q.setParameter("positionIdList", positionIdList);
         q.setParameter("typeId", typeId);
         q.setParameter("asOfDate", asOfDate);
@@ -44,7 +44,7 @@ public class PositionValuationHistDaoImpl extends GenericAccountMasterDaoImpl<Po
     @Override
     public List<PositionValuationHist> findByPositionIdListAsOfDate(List<Long> positionIdList, LocalDate asOfDate) {
         if (positionIdList == null || positionIdList.isEmpty()) {
-            return Collections.<PositionValuationHist>emptyList();
+            return Collections.emptyList();
         }
 
         Query q = getEntityManager().createQuery("from PositionValuationHist where " +
