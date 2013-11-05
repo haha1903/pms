@@ -1,10 +1,10 @@
 package com.datayes.invest.pms.dao.security.impl;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.Query;
-import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 
 import org.joda.time.LocalDate;
@@ -32,20 +32,6 @@ public class PriceVolumeDaoImpl extends GenericSecurityMasterDaoImpl<PriceVolume
             return null;
         }
     }
-
-    /*
-    @Override
-    public List<PriceVolume> findBySecurityIdBetweenDates(Long securityId, LocalDate startDate, LocalDate endDate) {
-        Query q = getEntityManager().createQuery(
-                "from PriceVolume where securityId = :securityId and tradeDate >= :startDate and " +
-                "tradeDate <= :endDate");
-        q.setParameter("securityId", securityId);
-        q.setParameter("startDate", startDate);
-        q.setParameter("endDate", endDate);
-        List<PriceVolume> list = (List<PriceVolume>) q.getResultList();
-        return list;
-    }
-    */
 
     @Override
     public PriceVolume findOneBySecurityIdAfterDate(Long securityId, LocalDate afterDate) {
@@ -87,6 +73,9 @@ public class PriceVolumeDaoImpl extends GenericSecurityMasterDaoImpl<PriceVolume
     
     @Override
     public List<PriceVolume> findBySecurityIdListTradeDate(Collection<Long> securityIds, LocalDate tradeDate) {
+        if (securityIds == null || securityIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         TypedQuery<PriceVolume> q = getEntityManager().createQuery("from PriceVolume where securityId in (:securityIds) and tradeDate = :tradeDate", PriceVolume.class);
         q.setParameter("securityIds", securityIds);
         q.setParameter("tradeDate", tradeDate);

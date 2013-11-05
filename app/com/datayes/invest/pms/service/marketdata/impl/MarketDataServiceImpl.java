@@ -1,6 +1,7 @@
 package com.datayes.invest.pms.service.marketdata.impl;
 
 import java.sql.Timestamp;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -125,11 +126,8 @@ public class MarketDataServiceImpl implements MarketDataService {
                 strSecurityIds += securityIds + ", ";
             }
 
-            LOGGER.error("Cannot find Price Volume" +
-                    "for securityIds: {} on {}",
-                    strSecurityIds,
-                    tradeDay);
-            return null;
+            LOGGER.error("Cannot find Price Volume for securityIds: {} on {}", strSecurityIds, tradeDay);
+            return Collections.emptyMap();
         }
         else {
             for(Long securityId : securityIds) {
@@ -156,6 +154,9 @@ public class MarketDataServiceImpl implements MarketDataService {
 
     @Override
     public Map<Long, MarketData> getMarketData(Set<Long> securityIds, LocalDate asOfDate) {
+        if (asOfDate.equals(LocalDate.parse("2013-11-05"))) {
+            System.out.println();
+        }
         if( !initialized) {
             synchronized (this) {
                 if (!initialized) {

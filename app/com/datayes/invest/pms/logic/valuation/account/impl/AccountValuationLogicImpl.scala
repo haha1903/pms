@@ -26,6 +26,8 @@ import com.datayes.invest.pms.util.DefaultValues
 import com.datayes.invest.pms.entity.account.AccountValuationHist
 import com.datayes.invest.pms.entity.account.PositionValuationHist
 import com.datayes.invest.pms.entity.account.CarryingValueHist
+import com.datayes.invest.pms.dao.account.AccountValuationInitDao
+import com.datayes.invest.pms.util.BigDecimalConstants
 
 class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
 
@@ -34,6 +36,9 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
 
   @Inject
   private var accountValuationHistDao: AccountValuationHistDao = null
+  
+  @Inject
+  private var accountValuationInitDao: AccountValuationInitDao = null
 
   @Inject
   private var carryingValueHistDao: CarryingValueHistDao = null
@@ -185,8 +190,7 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
     val list = getPositionValuation(positions, ledgerType, accValType)
 
     if (list.isEmpty) {
-      logger.warn("Cannot find any position in Ledger Type Id: {} for Account Id: {} on {}",
-        ledgerType, accountId, asOfDate.toString)
+      logger.warn("Cannot find position of ledger {} in account (id = {}) on {}", ledgerType, accountId, asOfDate)
       BigDecimal(0)
     } else {
       val amount = AccountValuationCalc.calculatePosition(list)
@@ -525,16 +529,18 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
     if (hist != null) {
       hist.getValueAmount
     } else {
-      //      val initHist = accountValuationInitDao.findByAccountId(accountId)
-      //      if (null == initHist) {
-      //        logger.error("Cannot find net worth for account id: " + accountId +
-      //          " either in ACCCOUNT_VALUATION_HIST or in ACCOUNT_VALUATION_INIT" +
-      //          " on " + asOfDate.toString())
-      //        BigDecimal(0)
-      //      } else {
-      //        initHist.getValueAmount
-      //      }
-      BigDecimal("0")
+      logger.error("Failed to find net worth of account (id = {}) on {}", accountId, asOfDate)
+      BigDecimalConstants.ZERO
+    }
+  }
+  
+  private def findInitNetWorth(accountId: Long): BigDecimal = {
+    val initHist = accountValuationInitDao.findByAccountId(accountId)
+    if (null == initHist) {
+      logger.error("Failed to find initial net worth of account (id = {})", accountId)
+      BigDecimalConstants.ZERO
+    } else {
+      initHist.getValueAmount();
     }
   }
 
@@ -547,19 +553,23 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
     val accValType = AccountValuationType.DAILY_RETURN
 
     val presentNetWorth = findNetWorth(account.getId, asOfDate)
-    val previousNetWorth = findNetWorth(account.getId, asOfDate.minusDays(1))
+    val previousDate = asOfDate.minusDays(1)
+    val previousNetWorth = if (account.getOpenDate().toLocalDate().equals(asOfDate)) {
+      findInitNetWorth(account.getId)
+    } else {
+      findNetWorth(account.getId, asOfDate.minusDays(1))
+    }
 
     val dailyReturn = {
-      if (0 == previousNetWorth) {
-        logger.error("Net Worth on previous day of " + asOfDate + " is zero, please check the data")
-        BigDecimal(0)
-      } else {
+      if (previousNetWorth != 0) {
         //每日回报率 = （期末净值 + 当日资金流出 (赎回或者分红）） / （前一日净值+当日资金流入（申购、追加资金等）) - 1
         AccountValuationCalc.calculateDailyReturn(
           presentNetWorth,
           BigDecimal(0),
           previousNetWorth,
           BigDecimal(0))
+      } else {
+        BigDecimalConstants.ZERO
       }
     }
 
