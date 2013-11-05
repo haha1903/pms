@@ -199,7 +199,8 @@ app/com/datayes/invest/pms/logic/valuation/account/AccountValuationLogicFactory.
 app/com/datayes/invest/pms/logic/valuation/account/impl/AccountValuationCalc.scala -text
 app/com/datayes/invest/pms/logic/valuation/account/impl/AccountValuationLogicImpl.scala -text
 app/com/datayes/invest/pms/logic/valuation/position/PositionValuationLogic.scala -text
-app/com/datayes/invest/pms/logic/valuation/position/impl/MarketValuationEngineImpl.scala -text
+app/com/datayes/invest/pms/logic/valuation/position/PositionValuationLogicFactory.scala -text
+app/com/datayes/invest/pms/logic/valuation/position/impl/MarketValuationLogic.scala -text
 app/com/datayes/invest/pms/mgmt/AccountDeleteHelper.java -text
 app/com/datayes/invest/pms/mgmt/AccountManager.java -text
 app/com/datayes/invest/pms/persist/Persist.java -text
@@ -220,13 +221,13 @@ app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateTimeTypeDescripto
 app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateType.java -text
 app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateTypeDescriptor.java -text
 app/com/datayes/invest/pms/play/Global.scala -text
-app/com/datayes/invest/pms/play/Injectors.java -text
 app/com/datayes/invest/pms/play/LoggingFilter.scala -text
+app/com/datayes/invest/pms/play/SystemInjectors.java -text
 app/com/datayes/invest/pms/service/ServiceModule.java -text
 app/com/datayes/invest/pms/service/calendar/CalendarService.java -text
 app/com/datayes/invest/pms/service/calendar/impl/CalendarServiceImpl.java -text
 app/com/datayes/invest/pms/service/fee/FeeService.java -text
-app/com/datayes/invest/pms/service/fee/impl/FeeServiceImpl.java -text
+app/com/datayes/invest/pms/service/fee/impl/FeeServiceImpl.scala -text
 app/com/datayes/invest/pms/service/industry/IndustryService.java -text
 app/com/datayes/invest/pms/service/industry/impl/IndustryServiceImpl.java -text
 app/com/datayes/invest/pms/service/marketdata/MarketDataService.java -text
@@ -299,6 +300,8 @@ app/views/tools.scala.html -text
 conf/META-INF/persistence.xml -text
 conf/application.conf -text
 conf/application.pms.conf.sample -text
+conf/ehcache.xml -text
+conf/logger.xml -text
 conf/routes -text
 database/README.md -text
 database/data/AccountMasterBasic.sql -text

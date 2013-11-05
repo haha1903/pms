@@ -7,6 +7,8 @@ import scala.collection.concurrent
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.util.progress.{ProgressStatus, ProgressReport, ProgressListener, ProgressEvent}
 import com.google.inject.Inject
+import com.datayes.invest.pms.play.SystemInjectors
+import com.datayes.invest.pms.dao.account.cacheimpl.cache.CacheWorkspace
 
 
 class ImportManager extends ProgressListener with Logging {
@@ -30,7 +32,11 @@ class ImportManager extends ProgressListener with Logging {
       val openDate = account.getOpenDate
       val estimateTimeInMinutes = calcEstimateTime(openDate.toLocalDate, today)
 
-      val runner = new SimulationRunner(account.getId, today)
+      val injector = SystemInjectors.INSTANCE.getImporterInjector()
+      val runner = injector.getInstance(classOf[SimulationRunner])
+      runner.setAccount(account)
+      runner.setEndDate(today)
+      
       runner.addProgressListener(this)
       val startTime = System.currentTimeMillis()
       progresses.put(runner.uuid, new ProgressReport(ProgressStatus.NOT_STARTED, startTime, 0, 0L))

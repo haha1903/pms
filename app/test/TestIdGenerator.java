@@ -4,13 +4,13 @@ import com.datayes.invest.pms.dao.account.AccountDao;
 import com.datayes.invest.pms.dao.account.IdGenerator;
 import com.datayes.invest.pms.persist.Persist;
 import com.datayes.invest.pms.persist.Transaction;
-import com.datayes.invest.pms.play.Injectors;
+import com.datayes.invest.pms.play.SystemInjectors;
 import com.google.inject.Injector;
 
 public class TestIdGenerator {
 
     public static void main(String[] args) {
-        Injectors injectors = new Injectors();
+        SystemInjectors injectors = SystemInjectors.INSTANCE;
         Injector injector = injectors.getInjector();
         
         AccountDao accountDao = injector.getInstance(AccountDao.class);

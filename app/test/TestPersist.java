@@ -36,7 +36,7 @@ public class TestPersist {
         accountDao.update(account);
         System.out.println(account);
         
-        Transaction tx2 = Persist.beginTransaction(PersistUnit.SECURITY_MASTER);
+        Transaction tx2 = Persist.beginTransaction();
         
         Security security = securityDao.findById(1L);
         ExchangeCalendar exchangeCalendar = exchangeCalendarDao.findPreviousDaysByExchangeCode(new LocalDate(2013, 9, 19), "XSHG", 1).get(0);

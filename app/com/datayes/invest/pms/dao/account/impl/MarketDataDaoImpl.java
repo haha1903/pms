@@ -17,7 +17,7 @@ public class MarketDataDaoImpl extends GenericAccountMasterDaoImpl<MarketData, L
     @Override
     public MarketData findBySecurityId(Long securityId) {
         Query q = getEntityManager().createQuery(
-                "from MarketDataSnapshot where securityId = :securityId");
+                "from MarketData where securityId = :securityId");
         q.setParameter("securityId", securityId);
 
         List<MarketData> list = (List<MarketData>) q.getResultList();
@@ -31,8 +31,7 @@ public class MarketDataDaoImpl extends GenericAccountMasterDaoImpl<MarketData, L
 
     @Override
     public List<MarketData> findAll() {
-        Query q = getEntityManager().createQuery(
-                "from MarketDataSnapshot");
+        Query q = getEntityManager().createQuery("from MarketData");
 
         List<MarketData> list = (List<MarketData>) q.getResultList();
         return list;

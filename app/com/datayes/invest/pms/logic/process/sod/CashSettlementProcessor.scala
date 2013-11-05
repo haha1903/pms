@@ -105,7 +105,7 @@ class CashSettlementProcessor extends Processor with Logging {
     val ledgerTypeId = ledgerType.getDbValue
     val position = cashPositionDao.findByAccountIdLedgerId(accountId, ledgerTypeId)
     if (position == null) {
-      logger.error("account id = #{}, {} can not be null", accountId, ledgerType)
+      logger.error("account id = #{}, position of ledger {} is null", accountId, ledgerType)
       return null
     }
     val positionHist = positionHistDao.findByPositionIdAsOfDate(position.getId, asOfDate)

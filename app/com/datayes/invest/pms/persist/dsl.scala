@@ -6,11 +6,9 @@ import javax.persistence.EntityTransaction
 
 
 package object dsl extends Logging {
-  
-  def transaction[R](op: => R): R = transaction(PersistUnit.ACCOUNT_MASTER)(op)
 
-  def transaction[R](pu: PersistUnit)(op: => R): R = {
-    val tx: Transaction = Persist.beginTransaction(pu)
+  def transaction[R](op: => R): R = {
+    val tx: Transaction = Persist.beginTransaction()
     try {
       val r = op
       tx.commit()

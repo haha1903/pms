@@ -1,5 +1,7 @@
 package com.datayes.invest.pms.persist.hibernate;
 
+import java.util.EnumMap;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
 
@@ -8,59 +10,50 @@ import com.datayes.invest.pms.persist.Transaction;
 
 public class TransactionImpl implements Transaction {
     
-    private final PersistUnit persistUnit;
+    private EnumMap<PersistUnit, EntityManager> entityManagers = new EnumMap<>(PersistUnit.class);
     
-    private EntityManager em;
-    
-    TransactionImpl(PersistUnit persistUnit) {
-        this.persistUnit = persistUnit;
-    }
-
     @Override
     public void commit() {
-        if (em == null) {
-            return;
-        }
         try {
-            EntityTransaction etx = em.getTransaction();
-            if (etx != null && etx.isActive()) {
-                etx.commit();
+            for (PersistUnit unit : entityManagers.keySet()) {
+                EntityManager em = entityManagers.get(unit);
+                EntityTransaction etx = em.getTransaction();
+                if (etx != null && etx.isActive()) {
+                    etx.commit();
+                }
+                em.close();
             }
-            em.close();
         } finally {
-            PersistServiceImpl.removeTransaction(this);
+            PersistServiceImpl.removeTransaction();
         }
     }
 
     @Override
     public void rollback() {
-        if (em == null) {
-            return;
-        }
         try {
-            EntityTransaction etx = em.getTransaction();
-            if (etx != null && etx.isActive()) {
-                etx.rollback();
+            for (PersistUnit unit : entityManagers.keySet()) {
+                EntityManager em = entityManagers.get(unit);
+                EntityTransaction etx = em.getTransaction();
+                if (etx != null && etx.isActive()) {
+                    etx.rollback();
+                }
+                em.close();
             }
-            em.close();
         } finally {
-            PersistServiceImpl.removeTransaction(this);
+            PersistServiceImpl.removeTransaction();
         }
     }
 
-    public EntityManager getEntityManager() {
+    public EntityManager getEntityManager(PersistUnit unit) {
+        EntityManager em = entityManagers.get(unit);
         if (em != null) {
             return em;
         }
-        em = PersistServiceImpl.getEntityManagerFactory(persistUnit).createEntityManager();
-        if (! persistUnit.isReadOnly()) {
+        em = PersistServiceImpl.getEntityManagerFactory(unit).createEntityManager();
+        entityManagers.put(unit, em);
+        if (! unit.isReadOnly()) {
             em.getTransaction().begin();
         }
         return em;
     }
-    
-    PersistUnit getPersistUnit() {
-        return persistUnit;
-    }
-
 }

@@ -161,7 +161,8 @@ public class BeanUtil {
         Integer.class,
         Long.class,
         String.class,
-        BigDecimal.class
+        BigDecimal.class,
+        scala.math.BigDecimal.class
     };
 
     private static boolean isJavaBaseClass(Class clazz) {

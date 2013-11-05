@@ -14,19 +14,17 @@ import com.datayes.invest.pms.entity.account.SecurityPosition;
 
 public class PositionDaoCacheImpl implements PositionDao {
     
-    @Inject
-    private CacheWorkspace cacheWorkspace;
-
     @Override
     public List<Position> findByAccountId(Long accountId) {
+        CacheWorkspace cacheWs = CacheWorkspace.current();
         List<Position> positions = new ArrayList<Position>();
-        for (Object obj : cacheWorkspace.get(CashPosition.class).getAll()) {
+        for (Object obj : cacheWs.get(CashPosition.class).getAll()) {
             CashPosition p = (CashPosition) obj;
             if (p.getAccountId().equals(accountId)) {
                 positions.add(p);
             }
         }
-        for (Object obj : cacheWorkspace.get(SecurityPosition.class).getAll()) {
+        for (Object obj : cacheWs.get(SecurityPosition.class).getAll()) {
             SecurityPosition p = (SecurityPosition) obj;
             if (p.getAccountId().equals(accountId)) {
                 positions.add(p);

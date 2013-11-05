@@ -12,12 +12,8 @@ public class Persist {
     }
     
     public static Transaction beginTransaction() {
-        return beginTransaction(PersistUnit.ACCOUNT_MASTER);
-    }
-    
-    public static Transaction beginTransaction(PersistUnit unit) {
         check();
-        Transaction tx = persistService.beginTransaction(unit);
+        Transaction tx = persistService.beginTransaction();
         return tx;
     }
     

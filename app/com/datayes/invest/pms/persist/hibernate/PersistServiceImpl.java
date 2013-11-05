@@ -1,8 +1,6 @@
 package com.datayes.invest.pms.persist.hibernate;
 
 import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.Stack;
 
 import javax.persistence.EntityManagerFactory;
 
@@ -14,7 +12,7 @@ import com.datayes.invest.pms.persist.Transaction;
 
 public class PersistServiceImpl implements PersistService {
 
-    private static final ThreadLocal<Stack<TransactionImpl>> transactionsThreadLocal = new ThreadLocal<>();
+    private static final ThreadLocal<TransactionImpl> transactionThreadLocal = new ThreadLocal<>();
     
     private static final EnumMap<PersistUnit, EntityManagerFactory> entityManagerFactories = new EnumMap<>(PersistUnit.class);
 
@@ -24,45 +22,26 @@ public class PersistServiceImpl implements PersistService {
     }
     
     @Override
-    public Transaction beginTransaction(PersistUnit persistUnit) {
-        
-        Stack<TransactionImpl> stack = getStack();
-        
-        // Check if a transaction for the persist unit already exists in current thread
-        int size = stack.size();
-        for (int i = 0; i < size; i++) {
-            TransactionImpl tx = stack.get(i);
-            if (tx.getPersistUnit() == persistUnit) {
-                throw new PersistException("Failed to begin transaction. Transaction for " + persistUnit +
-                    " already exists in current thread");
-            }
+    public Transaction beginTransaction() {
+        if (transactionThreadLocal.get() != null) {
+            throw new PersistException("Transaction already exists in current thread. Cannot begin transaction.");
         }
-        
-        TransactionImpl tx = new TransactionImpl(persistUnit);
-        
-        stack.push(tx);
+        TransactionImpl tx = new TransactionImpl();
+        transactionThreadLocal.set(tx);
         return tx;
     }
 
     @Override
     public Transaction currentTransaction() {
-        Stack<TransactionImpl> stack = getStack();
-        if (stack == null || stack.empty()) {
-            return null;
-        }
-        TransactionImpl tx = stack.peek();
+        Transaction tx = transactionThreadLocal.get();
         return tx;
     }
     
-    static void removeTransaction(TransactionImpl tx) {
-        Stack<TransactionImpl> stack = getStack();
-        Iterator<TransactionImpl> iter = stack.iterator();
-        while (iter.hasNext()) {
-            TransactionImpl t = iter.next();
-            if (t == tx) {
-                iter.remove();
-            }
+    static void removeTransaction() {
+        if (transactionThreadLocal.get() == null) {
+            throw new PersistException("No transaction exists in current thread. Cannot not remove transaction.");
         }
+        transactionThreadLocal.remove();
     }
     
     static EntityManagerFactory getEntityManagerFactory(PersistUnit unit) {
@@ -76,14 +55,5 @@ public class PersistServiceImpl implements PersistService {
             }
         }
         return emf;
-    }
-
-    private static Stack<TransactionImpl> getStack() {
-        Stack<TransactionImpl> stack = transactionsThreadLocal.get();
-        if (stack == null) {
-            stack = new Stack<TransactionImpl>();
-            transactionsThreadLocal.set(stack);
-        }
-        return stack;
     }
 }

@@ -2,7 +2,7 @@ package com.datayes.invest.pms.persist;
 
 public interface PersistService {
     
-    Transaction beginTransaction(PersistUnit unit);
+    Transaction beginTransaction();
     
     Transaction currentTransaction();
     

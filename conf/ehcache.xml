@@ -1,0 +1,24 @@
+<ehcache>
+	<diskStore path="java.io.tmpdir" />
+	<defaultCache maxEntriesLocalHeap="10000" timeToIdleSeconds="1800" timeToLiveSeconds="1800" statistics="true" />
+	<cache name="com.datayes.invest.platform.model.security.Party" maxEntriesLocalHeap="10000" eternal="true"
+		statistics="true" />
+	<cache name="com.datayes.invest.platform.model.security.MarketIndexWeight" maxEntriesLocalHeap="10000" eternal="true"
+		statistics="true" />
+	<cache name="com.datayes.invest.platform.model.security.MarketIndex" maxEntriesLocalHeap="10000" eternal="true"
+		statistics="true" />
+	<cache name="com.datayes.invest.platform.model.security.Security" maxEntriesLocalHeap="10000" eternal="true"
+		statistics="true" />
+	<cache name="com.datayes.invest.platform.model.security.EquityDividend" maxEntriesLocalHeap="10000" eternal="true"
+		statistics="true" />
+	<cache name="com.datayes.invest.platform.model.security.Industry" maxEntriesLocalHeap="10000" eternal="true"
+		statistics="true" />
+	<cache name="com.datayes.invest.platform.model.security.InstitutionIndustry" maxEntriesLocalHeap="10000" eternal="true"
+		statistics="true" />
+	<cache name="com.datayes.invest.platform.model.security.MarketIndexComp" maxEntriesLocalHeap="10000" eternal="true"
+		statistics="true" />
+	<cache name="com.datayes.invest.platform.model.security.Country" maxEntriesLocalHeap="10000" eternal="true"
+		statistics="true" />
+	<cache name="com.datayes.invest.platform.model.security.Currency" maxEntriesLocalHeap="10000" eternal="true"
+		statistics="true" />
+</ehcache>

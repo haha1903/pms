@@ -31,7 +31,7 @@ object Global extends WithFilters(new LoggingFilter) with Logging {
   }
   
   private def createInjectors(): Unit = {
-    val injectors = new Injectors()
+    val injectors = SystemInjectors.INSTANCE;
     injector = injectors.getInjector()
     importerInjector = injectors.getImporterInjector()
   }

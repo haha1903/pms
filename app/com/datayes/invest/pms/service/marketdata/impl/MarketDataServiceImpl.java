@@ -30,7 +30,7 @@ import javax.inject.Inject;
 public class MarketDataServiceImpl implements MarketDataService {
 
     private MarketDataCache marketDataCache = new MarketDataCache();
-    private boolean isInit = false;
+    private boolean initialized = false;
 
     @Inject
     private MarketDataDao marketDataDao = null;
@@ -51,18 +51,13 @@ public class MarketDataServiceImpl implements MarketDataService {
 
     private void loadRealTimeMarketDataFromDb() {
         List<MarketData>  snapshotList;
-        //Transaction tx = Persist.beginTransaction();
         try {
             snapshotList = marketDataDao.findAll();
-            //tx.commit();
-
             for(MarketData marketData : snapshotList) {
                 marketDataCache.update(marketData);
             }
-        }
-        catch (Exception e) {
-            LOGGER.error(e.getMessage());
-            //tx.rollback();
+        } catch (Exception e) {
+            LOGGER.error("Exception occurred when loading realtime market data from db", e);
         }
     }
 
@@ -163,11 +158,11 @@ public class MarketDataServiceImpl implements MarketDataService {
 
     @Override
     public Map<Long, MarketData> getMarketData(Set<Long> securityIds, LocalDate asOfDate) {
-        if( !isInit) {
+        if( !initialized) {
             synchronized (this) {
-                if (!isInit) {
+                if (!initialized) {
                     startRealTimeTask();
-                    isInit = true;
+                    initialized = true;
                 }
             }
         }

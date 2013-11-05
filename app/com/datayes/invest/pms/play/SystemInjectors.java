@@ -11,13 +11,15 @@ import com.datayes.invest.pms.service.ServiceModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-public class Injectors {
+public class SystemInjectors {
+    
+    public static SystemInjectors INSTANCE = new SystemInjectors();
     
     private Injector injector;
     
     private Injector importerInjector;
 
-    public Injectors() {
+    private SystemInjectors() {
         Injector baseInjector = Guice.createInjector(
             new AccountBaseDaoModule(),
             new IdGeneratorModule(),
