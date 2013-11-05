@@ -296,7 +296,6 @@ app/views/pms.scala.html -text
 app/views/tools.scala.html -text
 conf/META-INF/persistence.xml -text
 conf/application.conf -text
-conf/application.pms.conf -text
 conf/application.pms.conf.sample -text
 conf/routes -text
 database/README.md -text
