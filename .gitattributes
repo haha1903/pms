@@ -278,7 +278,11 @@ app/com/datayes/invest/pms/web/service/FilterHelper.scala -text
 app/com/datayes/invest/pms/web/service/PortfolioChartService.scala -text
 app/com/datayes/invest/pms/web/service/PortfolioService.scala -text
 app/com/datayes/invest/pms/web/service/SingleAssetLoader.scala -text
+app/com/datayes/invest/pms/web/servlet/Play2Servlet25.scala -text
 app/com/datayes/invest/pms/web/sso/AuthAction.scala -text
+app/com/datayes/invest/pms/web/sso/SamlActionTrait.scala -text
+app/com/datayes/invest/pms/web/sso/SamlHelper.java -text
+app/com/datayes/invest/pms/web/sso/UserContextHandler.scala -text
 app/controllers/AccountsSummaryViewController.scala -text
 app/controllers/Application.scala -text
 app/controllers/AsOfDateSupport.scala -text
@@ -339,3 +343,4 @@ test/com/datayes/invest/pms/util/BeanUtilTest.java -text
 test/com/datayes/invest/pms/util/Position.java -text
 test/com/datayes/invest/pms/util/PositionHist.java -text
 test/com/datayes/invest/pms/util/SecurityPosition.java -text
+war/WEB-INF/web.xml -text
