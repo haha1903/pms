@@ -72,3 +72,9 @@ POST    /testingOperations                                    @controllers.Testi
 # Proxy
 GET     /proxy/attribution                                    @controllers.ProxyController.attribution
 POST    /attrupload                                           @controllers.ProxyController.upload
+
+#Cache Observation
+GET     /debug/monitorCache                                   @controllers.CacheObservationController.monitorCache
+GET     /debug/monitorCacheData                               @controllers.CacheObservationController.monitorCacheData
+GET     /debug/monitorCacheSize                               @controllers.CacheObservationController.monitorCacheSize
+GET     /debug/monitorCacheMissingId                          @controllers.CacheObservationController.monitorCacheMissingId

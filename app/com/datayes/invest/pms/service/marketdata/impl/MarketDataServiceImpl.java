@@ -208,4 +208,12 @@ public class MarketDataServiceImpl implements MarketDataService {
 
         return null;
     }
+
+    public Map<Long, MarketData> getMarketDataCache() {
+        return marketDataCache.getRealTimeCache();
+    }
+
+    public Map<Long, LocalDateTime> getCacheMissingSecurityId() {
+        return marketDataCache.getCacheMissingSecurityId();
+    }
 }

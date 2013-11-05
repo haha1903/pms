@@ -282,6 +282,7 @@ app/com/datayes/invest/pms/web/sso/AuthAction.scala -text
 app/controllers/AccountsSummaryViewController.scala -text
 app/controllers/Application.scala -text
 app/controllers/AsOfDateSupport.scala -text
+app/controllers/CacheObservationController.scala -text
 app/controllers/DashboardController.scala -text
 app/controllers/GroupingViewController.scala -text
 app/controllers/ImportController.scala -text
@@ -294,6 +295,7 @@ app/test/TestIdGenerator.java -text
 app/test/TestPersist.java -text
 app/views/index.scala.html -text
 app/views/layout.scala.html -text
+app/views/monitor.scala.html -text
 app/views/operation.scala.html -text
 app/views/pms.scala.html -text
 app/views/tools.scala.html -text
