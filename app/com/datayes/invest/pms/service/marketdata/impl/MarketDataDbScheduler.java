@@ -13,18 +13,18 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TimerTask;
 
-    class MarketDataDbScheduler extends TimerTask {
+class MarketDataDbScheduler extends TimerTask {
 
     private MarketDataCache marketDataCache = null;
 
-    @Inject
     private MarketDataDao marketDataDao = null;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MarketDataDbScheduler.class);
 
 
-    public MarketDataDbScheduler(MarketDataCache marketDataCache) {
+    public MarketDataDbScheduler(MarketDataCache marketDataCache, MarketDataDao marketDataDao) {
         this.marketDataCache = marketDataCache;
+        this.marketDataDao = marketDataDao;
     }
 
     private void saveMarketData(MarketData marketData) {
@@ -40,7 +40,7 @@ import java.util.TimerTask;
 
     @Override
     public void run() {
-        LOGGER.info("DB Scheduler begins");
+        LOGGER.debug("Market data DB Scheduler started");
 
         Transaction tx = Persist.beginTransaction();
         try {
@@ -54,9 +54,10 @@ import java.util.TimerTask;
             }
 
             tx.commit();
+            LOGGER.info("Market data DB Scheduler finished");
         }
         catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             tx.rollback();
         }
     }

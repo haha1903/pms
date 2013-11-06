@@ -124,11 +124,8 @@ public class MarketDataServiceImpl implements MarketDataService {
 
         // Create new timer for scheduling to update Market Data
         Timer timer = new Timer();
-        timer.schedule(
-                new MarketDataDbScheduler(marketDataCache),
-                DefaultValues.MARKETDATA_SCHEDULER_INTERVAL(),
-                DefaultValues.MARKETDATA_SCHEDULER_INTERVAL());
-
+        MarketDataDbScheduler scheduler = new MarketDataDbScheduler(marketDataCache, marketDataDao);
+        timer.schedule(scheduler, 0, DefaultValues.MARKETDATA_SCHEDULER_INTERVAL());
     }
 
     private boolean isTradeTime() {

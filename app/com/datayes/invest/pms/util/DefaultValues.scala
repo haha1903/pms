@@ -31,7 +31,7 @@ object DefaultValues {
     
   val INDUSTRY_DATA_SOURCE_ID = 9    // 申万行业分类
 
-  val MARKETDATA_SCHEDULER_INTERVAL = 10 * 60 * 1000  // 10 minutes
+  val MARKETDATA_SCHEDULER_INTERVAL = 60 * 1000  // 1 minute
     
   val PMS_SOURCE_TRANSACTION_ID  = "0"
     

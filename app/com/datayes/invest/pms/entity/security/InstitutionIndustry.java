@@ -26,6 +26,7 @@ public class InstitutionIndustry extends EntityBase {
         
     }
 
+    @Id
     @Column(name = "PARTY_ID")
     public Long getPartyId() {
         return partyId;
@@ -35,7 +36,6 @@ public class InstitutionIndustry extends EntityBase {
         this.partyId = partyId;
     }
     
-    @Id
     @Column(name = "DATA_SOURCE_ID")
     public Integer getDataSourceId() {
         return dataSourceId;

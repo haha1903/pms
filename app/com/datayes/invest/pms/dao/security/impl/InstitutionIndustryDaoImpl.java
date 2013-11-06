@@ -13,11 +13,10 @@ public class InstitutionIndustryDaoImpl extends EntityManagerProvider
     @Override
     public List<InstitutionIndustry> findByPartyIdDataSourceId(Long partyId, Integer dataSourceId) {
         // TODO data source name does not work. When it's in the query, no result returned
-        TypedQuery<InstitutionIndustry> q = getEntityManager().createQuery("select i from InstitutionIndustry i where " +
-            "i.partyId = :partyId and i.dataSourceId = :dataSourceId and i.isCurrent = '1'", InstitutionIndustry.class);
+        TypedQuery<InstitutionIndustry> q = getEntityManager().createQuery("from InstitutionIndustry where " +
+            "partyId = :partyId and dataSourceId = :dataSourceId and isCurrent = '1'", InstitutionIndustry.class);
         q.setParameter("partyId", partyId);
         q.setParameter("dataSourceId", dataSourceId);
-        q.setHint("org.hibernate.cacheable", true);
         
         List<InstitutionIndustry> list = q.getResultList();
         return list;
