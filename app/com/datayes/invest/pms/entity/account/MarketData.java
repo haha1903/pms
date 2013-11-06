@@ -2,23 +2,23 @@ package com.datayes.invest.pms.entity.account;
 
 import org.hibernate.annotations.Proxy;
 import org.joda.time.LocalDateTime;
+
+import com.datayes.invest.pms.util.BeanUtil;
+
 import scala.math.BigDecimal;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 
 
-@SuppressWarnings("serial")
 @Entity
 @Table(name = "MARKET_DATA")
 @Proxy(lazy = false)
-public class MarketData {
-    public static final int EQUITY = 1;
-    public static final int FUTURE = 2;
+public class MarketData implements Cloneable {
 
     private Long securityId;
     
-    private Timestamp asOfDate;
+    private Timestamp timestamp;
     
     private BigDecimal price;
     
@@ -26,70 +26,21 @@ public class MarketData {
 
     private LocalDateTime lastUpdate;
 
-    @Transient
-    private LocalDateTime receivedTime;
+    private Timestamp receivedTime;
 
-    @Transient
-    private int dataType;
+    private String source = null;
+    
+    private MarketData() {
+    }
 
     public MarketData(Long securityId,
-                      Timestamp asOfDate,
+                      Timestamp timestamp,
                       BigDecimal price,
                       BigDecimal previousPrice) {
         this.securityId = securityId;
-        this.asOfDate = asOfDate;
+        this.timestamp = timestamp;
         this.price = price;
         this.previousPrice = previousPrice;
-        this.receivedTime = LocalDateTime.now();
-        this.dataType = 0;
-    }
-
-    public MarketData(Long securityId,
-                      Timestamp asOfDate,
-                      BigDecimal price,
-                      BigDecimal previousPrice,
-                      int dataType) {
-        this.securityId = securityId;
-        this.asOfDate = asOfDate;
-        this.price = price;
-        this.previousPrice = previousPrice;
-        this.receivedTime = LocalDateTime.now();
-        this.dataType = dataType;
-    }
-
-    public MarketData(MarketData marketData) {
-        this.securityId = marketData.getSecurityId();
-        this.asOfDate = marketData.getAsOfDate();
-        this.price = marketData.getPrice();
-        this.previousPrice = marketData.getPreviousPrice();
-        this.receivedTime = marketData.getReceivedTime();
-        this.dataType = marketData.getDataType();
-    }
-    
-    @Override
-    public boolean equals(Object o) {
-    	if( !MarketData.class.isInstance(o) ) {
-    		return false;
-    	}
-    	else {
-    		MarketData marketdata = (MarketData) o;
-    		if( this.securityId.equals(marketdata.getSecurityId()) ) {
-    			if( this.asOfDate.equals(marketdata.getAsOfDate()) ) {
-    				if ( (this.price.toDouble() - marketdata.getPrice().toDouble()) < 0.0001 ) {
-    					if( (this.previousPrice.toDouble() - marketdata.getPreviousPrice().toDouble())  < 0.0001 ) {
-    						return true;
-    					}
-    				}
-    			}
-    		}
-    		
-    		return false;
-    	}    	
-    }
-    
-    @Override
-    public String toString() {
-    	return securityId + ", " + asOfDate + ", " + price + ", " + previousPrice;
     }
 
     @Id
@@ -102,13 +53,13 @@ public class MarketData {
         this.securityId = securityId;
     }
 
-    @Column(name = "AS_OF_DATE")
-    public Timestamp getAsOfDate() {
-        return asOfDate;
+    @Column(name = "TIMESTAMP")
+    public Timestamp getTimestamp() {
+        return timestamp;
     }
 
-    public void setAsOfDate(Timestamp asOfDate) {
-        this.asOfDate = asOfDate;
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     @Column(name = "PRICE")
@@ -138,21 +89,36 @@ public class MarketData {
         this.lastUpdate = lastUpdate;
     }
 
-    @Transient
-    public LocalDateTime getReceivedTime() {
+    @Column(name = "RECEIVED_TIME")
+    public Timestamp getReceivedTime() {
         return receivedTime;
     }
 
-    public void setReceivedTime(LocalDateTime receivedTime) {
+    public void setReceivedTime(Timestamp receivedTime) {
         this.receivedTime = receivedTime;
     }
 
-    @Transient
-    public int getDataType() {
-        return dataType;
+    @Column(name = "SOURCE")
+    public String getSource() {
+        return source;
     }
 
-    public void setDataType(int dataType) {
-        this.dataType = dataType;
+    public void setSource(String source) {
+        this.source = source;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        return BeanUtil.equals(this, o);
+    }
+    
+    @Override
+    public String toString() {
+        return BeanUtil.toString(this);
+    }
+
+    @Override
+    public MarketData clone() {
+        return BeanUtil.clone(this);
     }
 }

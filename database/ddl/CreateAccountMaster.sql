@@ -523,7 +523,7 @@ create table SEC_TRANSACTION
    SECURITY_ID          bigint not null,
    AMOUNT               decimal(31,11),
    INTEREST             decimal(31,11),
-   ASSET_CLASS_ID       int,          
+   ASSET_CLASS_ID       int,
    AVG_PRICE            decimal(31,11),
    SETTLE_CURR_CD       char(3),
    TRADER_ID            bigint,
@@ -935,12 +935,14 @@ create table POSITION_INIT
 /*
  *  MARKET_DATA
  */
-create table MARKET_DATA        
+create table MARKET_DATA
 (
-   SECURITY_ID		bigint not null PRIMARY KEY,
-   AS_OF_DATE		datetime,
-   PRICE		decimal(31, 11),
-   PREVIOUS_PRICE	decimal(31, 11),
+   SECURITY_ID          bigint not null PRIMARY KEY,
+   TIMESTAMP            datetime,
+   PRICE                decimal(31, 11),
+   PREVIOUS_PRICE       decimal(31, 11),
+   RECEIVED_TIME        datetime,
+   SOURCE               varchar(30),
    LAST_UPDATE		timestamp not null default current_timestamp on update current_timestamp
 )DEFAULT CHARACTER SET=utf8;
 

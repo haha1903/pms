@@ -1,11 +1,10 @@
-package com.datayes.invest.pms.service.marketdata.impl.task;
+package com.datayes.invest.pms.service.marketdata.impl;
 
 
 import com.datayes.invest.pms.dao.account.MarketDataDao;
 import com.datayes.invest.pms.entity.account.MarketData;
 import com.datayes.invest.pms.persist.Persist;
 import com.datayes.invest.pms.persist.Transaction;
-import com.datayes.invest.pms.service.marketdata.impl.cache.MarketDataCache;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TimerTask;
 
-public class MarketDataDbScheduler extends TimerTask {
+    class MarketDataDbScheduler extends TimerTask {
 
     private MarketDataCache marketDataCache = null;
 

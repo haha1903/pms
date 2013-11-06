@@ -178,6 +178,8 @@ public class BeanUtil {
     }
 
     private static final String[] SKIP_PACKAGES = new String[] {
+        "java.util",
+        "java.sql",
         "org.joda.time"
     };
     

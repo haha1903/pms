@@ -41,11 +41,6 @@ jupitar.jms {
     url = "tcp://trading4-dev.datayes.com:61666"
     topic = "Topic.Tiger.ClientUpdate"
 }
-
-mds.http {
-    host = "trading4-dev.datayes.com"
-    port = 8080
-}
 rabbitmq {
     queue_name = "PMS_MARKETDATA_QUEUE"
     exchange_name = "rtmdd.marketData.CN"

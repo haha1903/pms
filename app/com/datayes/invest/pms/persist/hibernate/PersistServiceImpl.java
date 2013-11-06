@@ -30,6 +30,14 @@ public class PersistServiceImpl implements PersistService {
         transactionThreadLocal.set(tx);
         return tx;
     }
+    
+    @Override
+    public Transaction getTransaction() {
+        if (transactionThreadLocal.get() == null) {
+            return beginTransaction();
+        }
+        return new DummyTransactionImpl();
+    }
 
     @Override
     public Transaction currentTransaction() {

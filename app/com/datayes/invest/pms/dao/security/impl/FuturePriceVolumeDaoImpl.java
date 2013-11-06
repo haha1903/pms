@@ -3,6 +3,7 @@ package com.datayes.invest.pms.dao.security.impl;
 import java.util.List;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.joda.time.LocalDate;
 
@@ -30,21 +31,6 @@ public class FuturePriceVolumeDaoImpl extends GenericSecurityMasterDaoImpl<Futur
             return null;
         }
     }
-
-    /*
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<FuturePriceVolume> findBySecurityIdBetweenDates(Long securityId, LocalDate startDate,
-                    LocalDate endDate) {
-        Query q = getEntityManager().createQuery(
-                        "from FuturePriceVolume where securityId = :securityId and tradeDate >= :startDate and "
-                                        + "tradeDate <= :endDate");
-        q.setParameter("securityId", securityId);
-        q.setParameter("startDate", startDate);
-        q.setParameter("endDate", endDate);
-        List<FuturePriceVolume> list = (List<FuturePriceVolume>) q.getResultList();
-        return list;
-    }*/
 
     @Override
     public FuturePriceVolume findOneBySecurityIdAfterDate(Long securityId, LocalDate afterDate) {
@@ -74,6 +60,15 @@ public class FuturePriceVolumeDaoImpl extends GenericSecurityMasterDaoImpl<Futur
 //        q.setMaxResults(StaticDatas.LIMIT_DAY_FINDING());
 
         List<FuturePriceVolume> list = (List<FuturePriceVolume>) q.getResultList();
+        return list;
+    }
+
+    @Override
+    public List<FuturePriceVolume> findByTradeDate(LocalDate tradeDate) {
+        TypedQuery<FuturePriceVolume> q = getEntityManager().createQuery(
+            "from FuturePriceVolume where tradeDate = :tradeDate", FuturePriceVolume.class);
+        q.setParameter("tradeDate", tradeDate);
+        List<FuturePriceVolume> list = q.getResultList();
         return list;
     }
 }

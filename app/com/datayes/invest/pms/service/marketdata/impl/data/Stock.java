@@ -147,5 +147,3 @@ public class Stock extends Head implements Serializable {
 				+ "]";
 	}
 }
-
-

@@ -17,6 +17,12 @@ public class Persist {
         return tx;
     }
     
+    public static Transaction getTransaction() {
+        check();
+        Transaction tx = persistService.getTransaction();
+        return tx;
+    }
+    
     public static Transaction currentTransaction() {
         check();
         Transaction tx = persistService.currentTransaction();

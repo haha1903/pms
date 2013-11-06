@@ -21,55 +21,96 @@ import scala.math.BigDecimal;
 
 import com.datayes.invest.pms.config.Config;
 import com.datayes.invest.pms.dao.account.MarketDataDao;
+import com.datayes.invest.pms.dao.security.FuturePriceVolumeDao;
 import com.datayes.invest.pms.dao.security.PriceVolumeDao;
+import com.datayes.invest.pms.dao.security.SecurityDao;
 import com.datayes.invest.pms.entity.account.MarketData;
+import com.datayes.invest.pms.entity.security.FuturePriceVolume;
 import com.datayes.invest.pms.entity.security.PriceVolume;
+import com.datayes.invest.pms.persist.Persist;
+import com.datayes.invest.pms.persist.Transaction;
 import com.datayes.invest.pms.service.calendar.CalendarService;
 import com.datayes.invest.pms.service.marketdata.MarketDataService;
-import com.datayes.invest.pms.service.marketdata.impl.cache.MarketDataCache;
-import com.datayes.invest.pms.service.marketdata.impl.task.EquityCacheUpdateTask;
-import com.datayes.invest.pms.service.marketdata.impl.task.FutureCacheUpdateTask;
-import com.datayes.invest.pms.service.marketdata.impl.task.MarketDataDbScheduler;
+import com.datayes.invest.pms.service.marketdata.impl.data.Converter;
 import com.datayes.invest.pms.util.DefaultValues;
 
 public class MarketDataServiceImpl implements MarketDataService {
 
-    private MarketDataCache marketDataCache = new MarketDataCache();
-    private boolean isInitialized = false;
-
-    @Inject
-    private MarketDataDao marketDataDao = null;
-
-    @Inject
-    private PriceVolumeDao priceVolumeDao = null;
-
-    @Inject
-    private CalendarService calendarService = null;
-
     private static Config config = Config.INSTANCE;
     
-//    private static String configOpenTime = config.getString("market.open.time");
-//    private static String configCloseTime = config.getString("market.close.time");
-    private static String configOpenTime = "09:30:00";
-    private static String configCloseTime = "15:00:00";
+    private static String configOpenTime = config.getString("market.open.time");
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(MarketDataServiceImpl.class);
+    private static String configCloseTime = config.getString("market.close.time");
 
-    private void loadRealTimeMarketDataFromDb() {
-        List<MarketData>  snapshotList;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MarketDataServiceImpl.class);
+    
+
+    @Inject
+    private CalendarService calendarService;
+    
+    @Inject
+    private FuturePriceVolumeDao futurePriceVolumeDao;
+    
+    @Inject
+    private MarketDataDao marketDataDao;
+
+    @Inject
+    private PriceVolumeDao priceVolumeDao;
+    
+    @Inject
+    private SecurityDao securityDao;
+
+
+    private MarketDataCache marketDataCache = new MarketDataCache();
+    
+    private boolean isInitialized = false;
+    
+
+    private void preloadCache() {
+        LOGGER.info("Preloading market data cache");
+        Transaction tx = Persist.getTransaction();
         try {
-            snapshotList = marketDataDao.findAll();
-            for(MarketData marketData : snapshotList) {
-                marketDataCache.update(marketData);
+            LocalDate lastTradeDate = calendarService.previousTradeDay(LocalDate.now());
+            Map<Long, MarketData> buffer = new HashMap<Long, MarketData>();
+            
+            // First load from securitymaster's PRICE_VOLUME and FUT_PRICEVOLUME
+            List<PriceVolume> priceVolumes = priceVolumeDao.findByTradeDate(lastTradeDate);
+            for (PriceVolume p : priceVolumes) {
+                MarketData md = Converter.toMarketData(p);
+                md.setSource("PRICE_VOLUME");
+                buffer.put(p.getSecurityId(), md);
             }
+            
+            List<FuturePriceVolume> futurePriceVolumes = futurePriceVolumeDao.findByTradeDate(lastTradeDate);
+            for (FuturePriceVolume p : futurePriceVolumes) {
+                MarketData md = Converter.toMarketData(p);
+                md.setSource("FUTURE_PRICEVOLUME");
+                buffer.put(p.getSecurityId(), md);
+            }
+            
+            // Then load from accountmaster's MARKET_DATA
+            List<MarketData>  snapshotList = marketDataDao.findAll();
+            for(MarketData md : snapshotList) {
+                buffer.put(md.getSecurityId(), md);
+            }
+            
+            // Add to cache
+            for (MarketData md : buffer.values()) {
+                marketDataCache.update(md);
+            }
+            
+            tx.commit();
         } catch (Exception e) {
             LOGGER.error("Exception occurred when loading realtime market data from db", e);
+            tx.rollback();
         }
     }
+    
+    
 
     private void initialize() {
         // load real time market data from MarketData table in Db
-        loadRealTimeMarketDataFromDb();
+        preloadCache();
 
         // Create new thread for receiving stock data
         EquityCacheUpdateTask equityCacheUpdateTask = new EquityCacheUpdateTask(marketDataCache);
@@ -154,9 +195,6 @@ public class MarketDataServiceImpl implements MarketDataService {
 
     @Override
     public Map<Long, MarketData> getMarketData(Set<Long> securityIds, LocalDate asOfDate) {
-        if (asOfDate.equals(LocalDate.parse("2013-11-05"))) {
-            System.out.println();
-        }
         if( !isInitialized) {
             synchronized (this) {
                 if (!isInitialized) {
@@ -164,6 +202,9 @@ public class MarketDataServiceImpl implements MarketDataService {
                     isInitialized = true;
                 }
             }
+        }
+        if (securityIds == null || securityIds.isEmpty()) {
+            return Collections.emptyMap();
         }
 
         Map<Long, MarketData> marketdataMap = new HashMap<>();

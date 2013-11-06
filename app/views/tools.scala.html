@@ -2,9 +2,8 @@
 
 @layout {
 
-    <h3>Accounts</h3>
-    
-    @*<a href="@routes.AccountController.list">Account List</a><p>*@
+    <h3>Debug and Monitor</h3>
+    <a href="@controllers.debug.routes.MarketDataServiceMonitorController.monitor">Market Data Service</a>
 
     <h3>Dashboard links</h3>
 
@@ -24,23 +23,12 @@
     
     <h3>Tools</h3>
 
-    <a href="@routes.TestingOperationController.testingOperations">日初处理, 日终处理, 估值</a><p>
+    @*<a href="@routes.TestingOperationController.testingOperations">日初处理, 日终处理, 估值</a><p>*@
     
     <a href="@routes.GroupingViewController.all">@routes.GroupingViewController.all</a><p>
     
     <a href="@routes.GroupingViewController.getGroupingSetting">@routes.GroupingViewController.getGroupingSetting</a><p>
 
-    <a href="@routes.CacheObservationController.monitorCache">Monitor Market Data Cache</a><p>
-
-    @*<a href="@routes.TestTransactionController.refreshSettlementCash">refresh settlement cash</a><p>*@
-    
-    @*<a href="@routes.TestTransactionController.refreshMargin">refresh margin</a><p>*@
-
-    @*<form method="post" action="@routes.ImportController.importStockIndexFutureTransactionCsv">
-        Import stock index future transaction csv, file name:
-        <input type="text" name="filename"/>
-        <input type="submit" value="Import"/>
-    </form>*@
     <p>
 
     <h3>Test Upload Account Import CSV</h3>

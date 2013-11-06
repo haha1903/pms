@@ -15,4 +15,6 @@ public interface FuturePriceVolumeDao extends GenericSecurityMasterDao<FuturePri
     FuturePriceVolume findOneBySecurityIdAfterDate(Long securityId, LocalDate afterDate);
 
     List<FuturePriceVolume> findSomeBySecurityIdInPeriod(Long securityId, LocalDate startDate, LocalDate endDate);
+    
+    List<FuturePriceVolume> findByTradeDate(LocalDate tradeDate);
 }
