@@ -26,11 +26,7 @@ import com.datayes.invest.pms.util.BeanUtil;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class AccountValuationHist extends EntityBase {
     
-    private Long accountId;
-    
-    private Long typeId;
-    
-    private LocalDate asOfDate;
+    private PK pk;
     
     private BigDecimal valueAmount;
     
@@ -43,53 +39,29 @@ public class AccountValuationHist extends EntityBase {
         // used by persistence library
     }
     
-    public AccountValuationHist(Long _accountId, Long _typeId, LocalDate _asOfDate, BigDecimal _valueAmount,
-                    String _currencyCode, LocalDateTime _adjustTs) {
-        this.accountId = _accountId;
-        this.typeId = _typeId;
-        this.asOfDate = _asOfDate;
+    public AccountValuationHist(PK pk, BigDecimal _valueAmount, String _currencyCode, LocalDateTime _adjustTs) {
+        this.pk = pk;
         this.valueAmount = _valueAmount;
         this.currencyCode = _currencyCode;
         this.adjustTs = _adjustTs;
     }
     
-    public AccountValuationHist(AccountValuationHist accountValuationHist) {
-        this.accountId = accountValuationHist.getAccountId();
-        this.typeId = accountValuationHist.getTypeId();
-        this.asOfDate = accountValuationHist.getAsOfDate();
-        this.valueAmount = accountValuationHist.getValueAmount();
-        this.currencyCode = accountValuationHist.getCurrencyCode();
-        this.adjustTs = accountValuationHist.getAdjustTs();
-    }
+//    public AccountValuationHist(AccountValuationHist accountValuationHist) {
+//        this.accountId = accountValuationHist.getAccountId();
+//        this.typeId = accountValuationHist.getTypeId();
+//        this.asOfDate = accountValuationHist.getAsOfDate();
+//        this.valueAmount = accountValuationHist.getValueAmount();
+//        this.currencyCode = accountValuationHist.getCurrencyCode();
+//        this.adjustTs = accountValuationHist.getAdjustTs();
+//    }
 
     @Id
-    @Column(name = "ACCOUNT_ID")
-    public Long getAccountId() {
-        return accountId;
+    public PK getPK() {
+        return pk;
     }
-
-    public void setAccountId(Long accountId) {
-        this.accountId = accountId;
-    }
-
-    @Id
-    @Column(name = "ACC_VAL_TYPE_ID")
-    public Long getTypeId() {
-        return typeId;
-    }
-
-    public void setTypeId(Long typeId) {
-        this.typeId = typeId;
-    }
-
-    @Id
-    @Column(name = "AS_OF_DATE")
-    public LocalDate getAsOfDate() {
-        return asOfDate;
-    }
-
-    public void setAsOfDate(LocalDate asOfDate) {
-        this.asOfDate = asOfDate;
+    
+    private void setPK(PK pk) {
+        this.pk = pk;
     }
 
     @Column(name = "VALUE_AMOUNT")

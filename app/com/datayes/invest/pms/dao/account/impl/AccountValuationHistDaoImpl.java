@@ -19,8 +19,8 @@ public class AccountValuationHistDaoImpl extends GenericAccountMasterDaoImpl<Acc
     public List<AccountValuationHist> findByAccountIdTypeIdBeforeDate(
             Long accountId, Long typeId, LocalDate beforeDate) {
         Query q = getEntityManager().createQuery(
-            "from AccountValuationHist where accountId = :accountId and typeId = :typeId " +
-            "and asOfDate <= :beforeDate order by asOfDate asc");
+            "from AccountValuationHist where PK.accountId = :accountId and PK.typeId = :typeId " +
+            "and PK.asOfDate <= :beforeDate order by asOfDate asc");
         q.setParameter("accountId", accountId);
         q.setParameter("typeId", typeId);
         q.setParameter("beforeDate", beforeDate);
@@ -31,7 +31,7 @@ public class AccountValuationHistDaoImpl extends GenericAccountMasterDaoImpl<Acc
 
     public void deleteByAccountId(Long accountId) {
         Query q = getEntityManager().createQuery(
-                "delete from AccountValuationHist where accountId = :accountId");
+                "delete from AccountValuationHist where PK.accountId = :accountId");
         q.setParameter("accountId", accountId);
         q.executeUpdate();
     }
@@ -39,7 +39,7 @@ public class AccountValuationHistDaoImpl extends GenericAccountMasterDaoImpl<Acc
     @Override
     public List<AccountValuationHist> findByAccountIdAsOfDate(Long accountId, LocalDate asOfDate) {
         Query q = getEntityManager().createQuery(
-                        "from AccountValuationHist where accountId = :accountId and asOfDate = :asOfDate");
+                        "from AccountValuationHist where PK.accountId = :accountId and PK.asOfDate = :asOfDate");
         q.setParameter("accountId", accountId);
         q.setParameter("asOfDate", asOfDate);
         List<AccountValuationHist> list = q.getResultList();

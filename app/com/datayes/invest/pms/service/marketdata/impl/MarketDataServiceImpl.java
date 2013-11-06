@@ -35,7 +35,7 @@ import com.datayes.invest.pms.util.DefaultValues;
 public class MarketDataServiceImpl implements MarketDataService {
 
     private MarketDataCache marketDataCache = new MarketDataCache();
-    private boolean initialized = false;
+    private boolean isInitialized = false;
 
     @Inject
     private MarketDataDao marketDataDao = null;
@@ -67,7 +67,7 @@ public class MarketDataServiceImpl implements MarketDataService {
         }
     }
 
-    private void startRealTimeTask() {
+    private void initialize() {
         // load real time market data from MarketData table in Db
         loadRealTimeMarketDataFromDb();
 
@@ -157,11 +157,11 @@ public class MarketDataServiceImpl implements MarketDataService {
         if (asOfDate.equals(LocalDate.parse("2013-11-05"))) {
             System.out.println();
         }
-        if( !initialized) {
+        if( !isInitialized) {
             synchronized (this) {
-                if (!initialized) {
-                    startRealTimeTask();
-                    initialized = true;
+                if (!isInitialized) {
+                    initialize();
+                    isInitialized = true;
                 }
             }
         }

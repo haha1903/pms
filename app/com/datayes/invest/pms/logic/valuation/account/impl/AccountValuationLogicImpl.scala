@@ -636,16 +636,10 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
     val hist = accountValuationHistDao.findById(pk)
 
     if (null == hist) {
-      val newHist = new AccountValuationHist(accountId,
-        accValType.getDbValue,
-        asOfDate,
-        amount,
-        currencyCode,
-        adjustTs //ADJUSTE_TS
-        )
+      val pk = new AccountValuationHist.PK(accountId, accValType.getDbValue(), asOfDate)
+      val newHist = new AccountValuationHist(pk, amount, currencyCode, adjustTs) //ADJUSTE_TS
       accountValuationHistDao.save(newHist)
     } else {
-      hist.setAsOfDate(asOfDate)
       hist.setCurrencyCode(currencyCode)
       hist.setValueAmount(amount)
       hist.setAdjustTs(adjustTs) //ADJUSTE_TS

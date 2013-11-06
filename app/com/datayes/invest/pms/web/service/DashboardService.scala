@@ -393,7 +393,7 @@ class DashboardService extends Logging {
     val accValHists = accountValuationHistDao.findByAccountIdTypeIdBeforeDate(accountId,
       accValType.getDbValue, sinceDate)
     val hists = accValHists.map {
-      h => (h.getAsOfDate, h.getValueAmount)
+      h => (h.getPK.getAsOfDate, h.getValueAmount)
     }
     logger.debug("{} net value hists loaded for account #{} before date {}, earliest hist: {}",
       hists.size, accountId, sinceDate, hists.headOption)
@@ -412,7 +412,7 @@ class DashboardService extends Logging {
       if (h != null && h.getValueAmount != null) {
         valueAccu = valueAccu * (h.getValueAmount + 1)
       }
-      (h.getAsOfDate, valueAccu - 1)
+      (h.getPK.getAsOfDate, valueAccu - 1)
     }
     logger.debug("{} net value hists loaded for account #{} before date {}, earliest hist: {}",
       fundReturnHists.size, accountId, beforeDate, fundReturnHists.headOption)

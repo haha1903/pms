@@ -60,7 +60,7 @@ public class SimulationRunnerCacheLoader {
 	private void loadAccountValuationHists(CacheWorkspace cacheWorkspace, Long accountId, LocalDate asOfDate) {
 		List<AccountValuationHist> hists = accountValuationHistDao.findByAccountIdAsOfDate(accountId, asOfDate);
 		for (AccountValuationHist h : hists) {
-			Key key = new Key(h.getAccountId(), h.getTypeId(), h.getAsOfDate());
+			Key key = new Key(h.getPK());
 			cacheWorkspace.get(AccountValuationHist.class).preload(key, h);
 		}
 	}

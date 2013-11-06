@@ -19,7 +19,7 @@ hibernate.show_sql = false
 # Host information
 #
 pms {
-    api.url = "http://10.20.102.158:9000"
+    api.url = "http://localhost:9000"
     f2e.host = "f2e01-dev.datayes.com"
 }
 

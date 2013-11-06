@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 usage() {
-    echo "Usage: $0 [-u USER] [-p PASSWORD] [-h HOST] [-P PORT] ACCOUNT_MASTER_DATABASE [SECURITY_MASTER_DATABASE]"
+    echo "Usage: $0 [-u USER] [-p PASSWORD] [-h HOST] [-P PORT] ACCOUNT_MASTER_DATABASE"
     exit
 }
 
@@ -67,13 +67,16 @@ MYSQL_CMD="mysql $DB_USER_ARG $DB_PASSWD_ARG $DB_HOST_ARG $DB_PORT_ARG"
 echo MYSQL_CMD: $MYSQL_CMD
 
 #
-# Drop databases
+# Drop database
 #
 echo
 echo "Dropping account master database..."
 time $MYSQL_CMD --execute "drop database if exists $ACCOUNT_MASTER_DATABASE"
 echo $?
 
+#
+# Create database
+#
 echo
 echo "Creating account master database..."
 time $MYSQL_CMD --execute "create database $ACCOUNT_MASTER_DATABASE"
@@ -81,9 +84,8 @@ if [ $? != 0 ]; then
     exit -1
 fi
 
-
 #
-# Create schemas
+# Create schema
 #
 echo
 echo "Creating AccountMaster schema..."
@@ -92,6 +94,9 @@ if [ $? != 0 ]; then
     exit -1
 fi
 
+#
+# Import basic data
+#
 echo
 echo "Importing AccountMaster basic data..."
 time $MYSQL_CMD --database $ACCOUNT_MASTER_DATABASE < ./data/AccountMasterBasic.sql

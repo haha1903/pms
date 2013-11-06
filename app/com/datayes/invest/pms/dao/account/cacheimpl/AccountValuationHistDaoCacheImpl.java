@@ -16,7 +16,7 @@ public class AccountValuationHistDaoCacheImpl extends DaoCacheImpl<AccountValuat
 	
 	@Override
 	public AccountValuationHist findById(AccountValuationHist.PK pk) {
-	    Key key = key(pk.getAccountId(), pk.getTypeId(), pk.getAsOfDate());
+	    Key key = new Key(pk);
 	    return getCache().get(key);
 	}
 
@@ -27,8 +27,8 @@ public class AccountValuationHistDaoCacheImpl extends DaoCacheImpl<AccountValuat
 
 	@Override
     public void update(AccountValuationHist entity) {
-	    Key key = key(entity);
-		getCache().put(key(entity), entity);
+	    Key key = new Key(entity.getPK());
+		getCache().put(key, entity);
     }
 
     @Override
@@ -45,13 +45,4 @@ public class AccountValuationHistDaoCacheImpl extends DaoCacheImpl<AccountValuat
     public void deleteByAccountId(Long accountId) {
         throw new UnsupportedOperationException();
     }
-    
-    private Key key(Long accountId, Long typeId, LocalDate asOfDate) {
-        return new Key(accountId, typeId, asOfDate);
-    }
-
-    private Key key(AccountValuationHist entity) {
-        return key(entity.getAccountId(), entity.getTypeId(), entity.getAsOfDate());
-    }
-
 }

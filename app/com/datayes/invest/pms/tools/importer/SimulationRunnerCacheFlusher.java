@@ -121,7 +121,8 @@ public class SimulationRunnerCacheFlusher {
 			Key key = iter.next();
 			Element e = (Element) cache.getElement(key);
 			AccountValuationHist vh = (AccountValuationHist) e.getValue();
-			if (vh.getAccountId() != accountId || !vh.getAsOfDate().equals(asOfDate)) {
+			AccountValuationHist.PK pk = vh.getPK();
+			if (pk.getAccountId() != accountId || ! pk.getAsOfDate().equals(asOfDate)) {
 				continue;
 			}
 			if (e.getState() == Element.State.CREATED) {
