@@ -56,8 +56,13 @@ class RunProcessController extends Controller with Logging {
     endDateOpt match {
       case Some(endDate) =>
         if (asOfDate.compareTo(endDate) > 0) {
-          throw new RuntimeException("End date cannot be earlier than As of date (start date)")
+          throw new RuntimeException("End date " + endDate + " is earlier than As of date (start date) " + asOfDate)
         }
+        val today = LocalDate.now()
+        if (endDate.isAfter(today)) {
+          throw new RuntimeException("End date " + endDate + " is later than current date " + today)
+        }
+        
         var date = asOfDate
         while (date.isBefore(endDate) || date.isEqual(endDate)) {
           processSingleDay(date, sodOpt, valuationOpt, eodOpt)
