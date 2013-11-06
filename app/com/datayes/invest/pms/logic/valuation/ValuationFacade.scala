@@ -16,6 +16,7 @@ class ValuationFacade {
   private var positionValuationLogicFactory: PositionValuationLogicFactory = null
   
   def valuate(account: Account, asOfDate: LocalDate): Unit = {
+    // TODO how to synchronize for valuation?
     for (t <- PositionValuationType.values()) {
       val logic = positionValuationLogicFactory.get(t)
       logic.process(account, asOfDate);

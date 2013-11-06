@@ -38,8 +38,8 @@ GET     /importAccount/status                                 @controllers.Impor
 GET     /deleteAccount                                        @controllers.ImportController.deleteAccount(accountId: Long)
 
 # Proxy
-GET     /proxy/attribution                                     @controllers.ProxyController.attribution
-POST    /attrupload                                            @controllers.ProxyController.upload
+GET     /proxy/attribution                                    @controllers.ProxyController.attribution
+POST    /attrupload                                           @controllers.ProxyController.upload
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
@@ -51,6 +51,9 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # test
 GET     /tools                                                @controllers.Application.tools
+GET     /tools/process                                        @controllers.tools.RunProcessController.runProcess
+POST    /tools/process                                        @controllers.tools.RunProcessController.runProcessPost
+
 
 #Cache Observation
 GET     /debug/mds/monitor                                    @controllers.debug.MarketDataServiceMonitorController.monitor

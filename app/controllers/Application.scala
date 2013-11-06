@@ -23,7 +23,7 @@ class Application extends Controller with Logging {
   }
 
   def tools = AuthAction { implicit request =>
-    Ok(views.html.tools(request.host))
+    Ok(views.html.tools.main(request.host))
   }
 
   def saml(path: String) = AuthAction { implicit request =>

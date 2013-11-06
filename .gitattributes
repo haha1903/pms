@@ -297,8 +297,8 @@ app/controllers/DashboardController.scala -text
 app/controllers/GroupingViewController.scala -text
 app/controllers/ImportController.scala -text
 app/controllers/ProxyController.scala -text
-app/controllers/TestingOperationController.scala -text
 app/controllers/debug/MarketDataServiceMonitorController.scala -text
+app/controllers/tools/RunProcessController.scala -text
 app/controllers/util/DecimalWriters.scala -text
 app/controllers/util/Jsonp.scala -text
 app/net/jcip/annotations/NotThreadSafe.java -text
@@ -307,9 +307,9 @@ app/test/TestPersist.java -text
 app/views/debug/mds.scala.html -text
 app/views/index.scala.html -text
 app/views/layout.scala.html -text
-app/views/operation.scala.html -text
 app/views/pms.scala.html -text
-app/views/tools.scala.html -text
+app/views/tools/main.scala.html -text
+app/views/tools/run_process.scala.html -text
 conf/META-INF/persistence.xml -text
 conf/application.conf -text
 conf/application.pms.conf.sample -text
