@@ -61,7 +61,7 @@ redis {
 system {
     running.mode = NORMAL       # NORMAL or NO_DAEMON
     scheduler.interval = 600    # in seconds
-    valuation.interval = 900    # in seconds
+    valuation.interval = 60    # in seconds
 }
 
 

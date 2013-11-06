@@ -20,7 +20,7 @@ public class AccountValuationHistDaoImpl extends GenericAccountMasterDaoImpl<Acc
             Long accountId, Long typeId, LocalDate beforeDate) {
         Query q = getEntityManager().createQuery(
             "from AccountValuationHist where PK.accountId = :accountId and PK.typeId = :typeId " +
-            "and PK.asOfDate <= :beforeDate order by asOfDate asc");
+            "and PK.asOfDate <= :beforeDate order by PK.asOfDate asc");
         q.setParameter("accountId", accountId);
         q.setParameter("typeId", typeId);
         q.setParameter("beforeDate", beforeDate);

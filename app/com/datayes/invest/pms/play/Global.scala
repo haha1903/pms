@@ -12,6 +12,8 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 import com.google.inject.Stage
 import com.datayes.invest.pms.persist.PersistService
+import com.datayes.invest.pms.system.SystemInjectors;
+import com.datayes.invest.platform.system.SystemScheduler
 
 object Global extends WithFilters(new LoggingFilter) with Logging {
 
@@ -23,17 +25,22 @@ object Global extends WithFilters(new LoggingFilter) with Logging {
   private lazy val schedulerInterval = Config.INSTANCE.getLong("system.scheduler.interval")
   
   private var injector: Injector = null
-  
-  private var importerInjector: Injector = null
+
 
   override def onStart(app: Application): Unit = {
     createInjectors()
+    initializeSystem()
+  }
+  
+  private def initializeSystem() {
+    val scheduler = injector.getInstance(classOf[SystemScheduler])
+    val thread = new Thread(scheduler)
+    thread.start()
   }
   
   private def createInjectors(): Unit = {
     val injectors = SystemInjectors.INSTANCE;
     injector = injectors.getInjector()
-    importerInjector = injectors.getImporterInjector()
   }
   
   private var controllerMap = Map[Class[_], Any]()

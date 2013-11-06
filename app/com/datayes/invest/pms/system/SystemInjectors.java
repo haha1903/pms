@@ -1,4 +1,4 @@
-package com.datayes.invest.pms.play;
+package com.datayes.invest.pms.system;
 
 import com.datayes.invest.pms.dao.AccountBaseDaoModule;
 import com.datayes.invest.pms.dao.AccountExtraDaoCacheModule;

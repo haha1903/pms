@@ -119,6 +119,7 @@ app/com/datayes/invest/pms/dbtype/CashTransactionType.java -text
 app/com/datayes/invest/pms/dbtype/DbValue.java -text
 app/com/datayes/invest/pms/dbtype/FutureDeliveryMethod.java -text
 app/com/datayes/invest/pms/dbtype/FutureType.java -text
+app/com/datayes/invest/pms/dbtype/IdName.java -text
 app/com/datayes/invest/pms/dbtype/LedgerType.java -text
 app/com/datayes/invest/pms/dbtype/PositionClass.java -text
 app/com/datayes/invest/pms/dbtype/PositionValuationType.java -text
@@ -194,6 +195,7 @@ app/com/datayes/invest/pms/logic/transaction/impl/RepoTransactionLogic.scala -te
 app/com/datayes/invest/pms/logic/transaction/impl/StockIndexFutureTransactionLogic.scala -text
 app/com/datayes/invest/pms/logic/transaction/impl/StockTradeTransactionLogic.scala -text
 app/com/datayes/invest/pms/logic/transaction/impl/TransactionLogicBase.scala -text
+app/com/datayes/invest/pms/logic/valuation/ValuationFacade.scala -text
 app/com/datayes/invest/pms/logic/valuation/account/AccountValuationLogic.scala -text
 app/com/datayes/invest/pms/logic/valuation/account/AccountValuationLogicFactory.scala -text
 app/com/datayes/invest/pms/logic/valuation/account/impl/AccountValuationCalc.scala -text
@@ -223,7 +225,6 @@ app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateType.java -text
 app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateTypeDescriptor.java -text
 app/com/datayes/invest/pms/play/Global.scala -text
 app/com/datayes/invest/pms/play/LoggingFilter.scala -text
-app/com/datayes/invest/pms/play/SystemInjectors.java -text
 app/com/datayes/invest/pms/service/ServiceModule.java -text
 app/com/datayes/invest/pms/service/calendar/CalendarService.java -text
 app/com/datayes/invest/pms/service/calendar/impl/CalendarServiceImpl.java -text
@@ -247,6 +248,11 @@ app/com/datayes/invest/pms/service/marketindex/MarketIndex.java -text
 app/com/datayes/invest/pms/service/marketindex/MarketIndexComponent.java -text
 app/com/datayes/invest/pms/service/marketindex/MarketIndexService.java -text
 app/com/datayes/invest/pms/service/marketindex/impl/MarketIndexServiceImpl.java -text
+app/com/datayes/invest/pms/system/SystemInjectors.java -text
+app/com/datayes/invest/pms/system/SystemScheduler.scala -text
+app/com/datayes/invest/pms/system/TransactionProcess.scala -text
+app/com/datayes/invest/pms/system/TransactionThread.scala -text
+app/com/datayes/invest/pms/system/ValuationThread.scala -text
 app/com/datayes/invest/pms/tools/importer/AccountCsvImporter.scala -text
 app/com/datayes/invest/pms/tools/importer/ImportManager.scala -text
 app/com/datayes/invest/pms/tools/importer/SimulationRunner.scala -text
@@ -316,6 +322,7 @@ database/ddl/CreateAccountMaster.sql -text
 database/refresh_db.sh -text
 database/testing-script-taot/accountmaster_refresh.sh -text
 database/testing-script-taot/delete_positions.sh -text
+lib/jupiter.jar -text svneol=unset#unset
 project/Build.scala -text
 project/build.properties -text
 project/plugins.sbt -text

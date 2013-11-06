@@ -42,6 +42,9 @@ public class PersistServiceImpl implements PersistService {
     @Override
     public Transaction currentTransaction() {
         Transaction tx = transactionThreadLocal.get();
+        if (tx == null) {
+            throw new PersistException("No transaction exists in current thread.");
+        }
         return tx;
     }
     

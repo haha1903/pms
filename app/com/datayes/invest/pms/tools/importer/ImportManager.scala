@@ -7,7 +7,7 @@ import scala.collection.concurrent
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.util.progress.{ProgressStatus, ProgressReport, ProgressListener, ProgressEvent}
 import com.google.inject.Inject
-import com.datayes.invest.pms.play.SystemInjectors
+import com.datayes.invest.pms.system.SystemInjectors
 import com.datayes.invest.pms.dao.account.cacheimpl.cache.CacheWorkspace
 
 

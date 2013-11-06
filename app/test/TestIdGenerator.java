@@ -4,7 +4,7 @@ import com.datayes.invest.pms.dao.account.AccountDao;
 import com.datayes.invest.pms.dao.account.IdGenerator;
 import com.datayes.invest.pms.persist.Persist;
 import com.datayes.invest.pms.persist.Transaction;
-import com.datayes.invest.pms.play.SystemInjectors;
+import com.datayes.invest.pms.system.SystemInjectors;
 import com.google.inject.Injector;
 
 public class TestIdGenerator {
