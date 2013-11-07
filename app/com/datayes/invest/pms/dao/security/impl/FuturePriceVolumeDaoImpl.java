@@ -1,7 +1,8 @@
 package com.datayes.invest.pms.dao.security.impl;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -74,7 +75,10 @@ public class FuturePriceVolumeDaoImpl extends GenericSecurityMasterDaoImpl<Futur
     }
 
     @Override
-    public List<FuturePriceVolume> findBySecurityIdListTradeDate(Set<Long> securityIds, LocalDate tradeDate) {
+    public List<FuturePriceVolume> findBySecurityIdListTradeDate(Collection<Long> securityIds, LocalDate tradeDate) {
+        if (securityIds == null || securityIds.isEmpty()) {
+            return Collections.emptyList();
+        }
         TypedQuery<FuturePriceVolume> query = getEntityManager().createQuery(
             "from FuturePriceVolume where securityId in (:securityIds) and tradeDate = :tradeDate", FuturePriceVolume.class);
         query.setParameter("securityIds", securityIds);

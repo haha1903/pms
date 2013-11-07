@@ -62,7 +62,6 @@ public class FuturePriceVolume extends EntityBase implements Serializable {
         this.securityId = securityId;
     }
 
-    @Id
     @Column(name = "trade_date")
     public LocalDate getTradeDate() {
         return tradeDate;
