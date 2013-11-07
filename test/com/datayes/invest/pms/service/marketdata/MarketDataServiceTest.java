@@ -12,6 +12,7 @@ import com.datayes.invest.pms.entity.security.PriceVolume;
 import com.datayes.invest.pms.service.calendar.CalendarService;
 import com.datayes.invest.pms.service.calendar.impl.CalendarServiceImpl;
 import com.datayes.invest.pms.service.marketdata.impl.MarketDataServiceImpl;
+import com.datayes.invest.pms.service.marketdata.impl.Source;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -73,8 +74,8 @@ public class MarketDataServiceTest {
     private Long securityId1 = 2l;
     private Long securityId2 = 4l;
 
-    private MarketData marketDataFor2 = new MarketData(securityId1, new Timestamp(tradeDay.toDate().getTime()), new BigDecimal(new java.math.BigDecimal(5.2d)), new BigDecimal(new java.math.BigDecimal(4.9d)));
-    private MarketData marketDataFor4 = new MarketData(securityId2, new Timestamp(tradeDay.toDate().getTime()), new BigDecimal(new java.math.BigDecimal(10.1d)), new BigDecimal(new java.math.BigDecimal(10.7d)));
+    private MarketData marketDataFor2 = new MarketData(securityId1, new Timestamp(tradeDay.toDate().getTime()), new BigDecimal(new java.math.BigDecimal(5.2d)), new BigDecimal(new java.math.BigDecimal(4.9d)), null, Source.MQ.toString());
+    private MarketData marketDataFor4 = new MarketData(securityId2, new Timestamp(tradeDay.toDate().getTime()), new BigDecimal(new java.math.BigDecimal(10.1d)), new BigDecimal(new java.math.BigDecimal(10.7d)), null, Source.MQ.toString());
 
     @Test
     public void testGetMarketData() {
