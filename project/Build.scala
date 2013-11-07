@@ -41,7 +41,7 @@ object ApplicationBuild extends Build {
     Play2WarPlugin.play2WarSettings: _*
   ).settings(
     Play2WarKeys.servletVersion := "2.5",
-    Play2WarKeys.targetName := Some(appName)
+    Play2WarKeys.targetName := Some(appName + "_" + appVersion)
   ).settings(
     credentials += Credentials(Path.userHome / ".sbt" / ".credentials"),
     resolvers += "datayes" at artifactoryUrl + "/libs-release",
