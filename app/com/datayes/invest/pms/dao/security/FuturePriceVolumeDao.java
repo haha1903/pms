@@ -1,6 +1,7 @@
 package com.datayes.invest.pms.dao.security;
 
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.LocalDate;
 
@@ -17,4 +18,6 @@ public interface FuturePriceVolumeDao extends GenericSecurityMasterDao<FuturePri
     List<FuturePriceVolume> findSomeBySecurityIdInPeriod(Long securityId, LocalDate startDate, LocalDate endDate);
     
     List<FuturePriceVolume> findByTradeDate(LocalDate tradeDate);
+    
+    List<FuturePriceVolume> findBySecurityIdListTradeDate(Set<Long> securityIds, LocalDate tradeDate);
 }

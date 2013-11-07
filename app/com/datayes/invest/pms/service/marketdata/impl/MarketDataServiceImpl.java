@@ -25,8 +25,11 @@ import com.datayes.invest.pms.dao.security.FuturePriceVolumeDao;
 import com.datayes.invest.pms.dao.security.PriceVolumeDao;
 import com.datayes.invest.pms.dao.security.SecurityDao;
 import com.datayes.invest.pms.entity.account.MarketData;
+import com.datayes.invest.pms.entity.security.Equity;
+import com.datayes.invest.pms.entity.security.Future;
 import com.datayes.invest.pms.entity.security.FuturePriceVolume;
 import com.datayes.invest.pms.entity.security.PriceVolume;
+import com.datayes.invest.pms.entity.security.Security;
 import com.datayes.invest.pms.persist.Persist;
 import com.datayes.invest.pms.persist.Transaction;
 import com.datayes.invest.pms.service.calendar.CalendarService;
@@ -103,8 +106,6 @@ public class MarketDataServiceImpl implements MarketDataService {
             tx.rollback();
         }
     }
-    
-    
 
     private void initialize() {
         // load real time market data from MarketData table in Db
@@ -139,49 +140,67 @@ public class MarketDataServiceImpl implements MarketDataService {
         }
     }
 
-    private PriceVolume findPriceVolume(Long securityId, List<PriceVolume> priceVolumes) {
-        for(PriceVolume priceVolume : priceVolumes) {
-            if(priceVolume.getSecurityId().equals(securityId)) {
-                return priceVolume;
+    private Map<Long, MarketData> getHistoryMarketDataFromDb(Set<Long> securityIds, LocalDate asOfDate) {
+        if (securityIds == null || securityIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        
+        // Split securityIds by type
+        Set<Long> equityIds = new HashSet<>();
+        Set<Long> futureIds = new HashSet<>();
+        for (Long sid : securityIds) {
+            Security security = securityDao.findById(sid);
+            if (security instanceof Equity) {
+                equityIds.add(sid);
+            } else if (security instanceof Future) {
+                futureIds.add(sid);
             }
         }
-        return null;
-    }
-
-    private Map<Long, MarketData> getHistoryMarketDataFromDb(Set<Long> securityIds, LocalDate asOfDate) {
-        Map<Long, MarketData> marketDataMap = new HashMap<>();
 
         // Get last trade day
         LocalDate tradeDay = calendarService.sameOrPreviousTradeDay(asOfDate);
-        List<PriceVolume> priceVolumes = priceVolumeDao.findBySecurityIdListTradeDate(securityIds, tradeDay);
-
-        if( null == priceVolumes || priceVolumes.isEmpty() ) {
-            // Get security id list as a string
-            String strSecurityIds = "";
-            for(Long securityId : securityIds) {
-                strSecurityIds += securityIds + ", ";
-            }
-
-            LOGGER.error("Cannot find Price Volume for securityIds: {} on {}", strSecurityIds, tradeDay);
+        
+        Map<Long, MarketData> equityDataMap = loadEquityMarketDataFromDb(equityIds, tradeDay);
+        Map<Long, MarketData> futureDataMap = loadFutureMarketDataFromDb(futureIds, tradeDay);
+        
+        Map<Long, MarketData> marketDataMap = new HashMap<>();
+        marketDataMap.putAll(equityDataMap);
+        marketDataMap.putAll(futureDataMap);
+        
+        // Compare security ids to determine not-found prices
+        Set<Long> notFound = new HashSet<>(securityIds);
+        notFound.removeAll(marketDataMap.keySet());
+        if (notFound != null && ! notFound.isEmpty()) {
+            LOGGER.warn("Unable to find price volume for the following securities: " + notFound);
+        }
+        
+        return marketDataMap;
+    }
+    
+    private Map<Long, MarketData> loadEquityMarketDataFromDb(Set<Long> securityIds, LocalDate tradeDate) {
+        List<PriceVolume> priceVolumes = priceVolumeDao.findBySecurityIdListTradeDate(securityIds, tradeDate);
+        if (priceVolumes == null || priceVolumes.isEmpty()) {
             return Collections.emptyMap();
         }
-        else {
-            for(Long securityId : securityIds) {
-                PriceVolume priceVolume = findPriceVolume(securityId, priceVolumes);
-
-                // Check if any input security is found in PriceVolume
-                if( null == priceVolume) {
-                    LOGGER.warn("Cannot find Price Volume for securityId: {} on {}",
-                            securityId,
-                            tradeDay);
-                }
-                else {
-                    MarketData md = Converter.toMarketData(priceVolume);
-                    marketDataMap.put(securityId, md);
-                }
-            }
-            return marketDataMap;
+        Map<Long, MarketData> map = new HashMap<Long, MarketData>();
+        for (PriceVolume pv : priceVolumes) {
+            MarketData md = Converter.toMarketData(pv);
+            map.put(pv.getSecurityId(), md);
         }
+        return map;
+    }
+    
+    private Map<Long, MarketData> loadFutureMarketDataFromDb(Set<Long> securityIds, LocalDate tradeDate) {
+        List<FuturePriceVolume> priceVolumes = futurePriceVolumeDao.findBySecurityIdListTradeDate(securityIds, tradeDate);
+        if (priceVolumes == null || priceVolumes.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Map<Long, MarketData> map = new HashMap<Long, MarketData>();
+        for (FuturePriceVolume pv : priceVolumes) {
+            MarketData md = Converter.toMarketData(pv);
+            map.put(pv.getSecurityId(), md);
+        }
+        return map;
     }
 
     @Override
