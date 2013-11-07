@@ -94,8 +94,6 @@ proxy {
 # Logger
 #
 logger {
-    application = INFO
-    com.datayes.invest.platform = DEBUG
+    com.datayes.invest = DEBUG
     controllers = INFO
-    play = INFO
 }
