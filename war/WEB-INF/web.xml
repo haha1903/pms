@@ -4,10 +4,10 @@
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
         version="2.5">
 
-  <display-name>Play! invest-platform-web</display-name>
+  <display-name>pms</display-name>
 
   <listener>
-      <listener-class>com.datayes.invest.platform.servlet.Play2Servlet25</listener-class>
+      <listener-class>com.datayes.invest.pms.web.servlet.Play2Servlet25</listener-class>
   </listener>
 
   <servlet>
