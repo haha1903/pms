@@ -24,7 +24,7 @@ class EquityCacheUpdateTask implements Runnable {
 
     private static Config config = Config.INSTANCE;
 
-    private static String EQUITY_KEY = config.getString("rabbitmq.exchange_name");
+    private static String EQUITY_KEY = config.getString("rabbitmq.equity_key");
     private static String EXCHANGE_NAME = config.getString("rabbitmq.exchange_name");
     private static String HOST = config .getString("rabbitmq.host");
     private static String QUEUE_NAME = config.getString("rabbitmq.queue_name");
@@ -94,7 +94,7 @@ class EquityCacheUpdateTask implements Runnable {
                 QueueingConsumer.Delivery delivery = consumer.nextDelivery();
                 String routingKey = delivery.getEnvelope().getRoutingKey();
 
-                if(EQUITY_KEY == routingKey) {
+                if(EQUITY_KEY.equals(routingKey)) {
                     // Deserialize message
                     byte[] buff = Base64.decodeBase64(delivery.getBody());
                     Stock stock = new Stock();
