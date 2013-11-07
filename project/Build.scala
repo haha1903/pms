@@ -8,14 +8,16 @@ object ApplicationBuild extends Build {
   val appName         = "pms"
   val appVersion      = "1.0-SNAPSHOT"
 
-  private val hibernateVersion = "4.2.6.Final"
+  val hibernateVersion = "4.2.6.Final"
+  val protostuffVersion = "1.0.7"
+    
+  val artifactoryUrl = "http://artifactory.datayes.com/artifactory"
 
   val appDependencies = Seq(
     "com.alibaba" % "fastjson" % "1.1.35",
-    "com.dyuproject.protostuff" % "protostuff-core" % "1.0.7",
-    "com.dyuproject.protostuff" % "protostuff-runtime" % "1.0.7",
+    "com.dyuproject.protostuff" % "protostuff-core" % protostuffVersion,
+    "com.dyuproject.protostuff" % "protostuff-runtime" % protostuffVersion,
     "com.datayes.paas.sso" % "datayes-sso" % "1.0.1" withSources,
-    // "com.github.scopt" %% "scopt" % "3.1.0",
     "com.google.code.gson" % "gson" % "2.2.4",
     "com.google.inject" % "guice" % "3.0",
     "com.google.inject.extensions" % "guice-assistedinject" % "3.0",
@@ -40,12 +42,9 @@ object ApplicationBuild extends Build {
   ).settings(
     Play2WarKeys.servletVersion := "2.5",
     Play2WarKeys.targetName := Some(appName)
-    // Play2WarKeys.explodedJar := true
-  ).settings(
-    //resolvers += "sonatype-public" at "https://oss.sonatype.org/content/groups/public"
   ).settings(
     credentials += Credentials(Path.userHome / ".sbt" / ".credentials"),
-    resolvers += "datayes" at "http://artifactory.datayes.com/artifactory/libs-release",
-    publishTo := Some("dist" at "http://artifactory.datayes.com/artifactory/invest-platform-release")
+    resolvers += "datayes" at artifactoryUrl + "/libs-release",
+    publishTo := Some("dist" at artifactoryUrl + "/invest-platform-release")
   )
 }
