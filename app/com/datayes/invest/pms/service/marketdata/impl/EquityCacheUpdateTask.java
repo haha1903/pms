@@ -102,8 +102,6 @@ class EquityCacheUpdateTask implements Runnable {
 
                     // Update cache
                     MarketData md = Converter.toMarketData(stock);
-                    md.setReceivedTime(new Timestamp(System.currentTimeMillis()));
-                    md.setSource("MQ");
                     marketDataCache.update(md);
                 }
             } catch (InterruptedException e) {

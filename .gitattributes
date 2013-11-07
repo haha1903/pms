@@ -239,6 +239,7 @@ app/com/datayes/invest/pms/service/marketdata/impl/FutureMarketDataListener.java
 app/com/datayes/invest/pms/service/marketdata/impl/MarketDataCache.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/MarketDataDbScheduler.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/MarketDataServiceImpl.java -text
+app/com/datayes/invest/pms/service/marketdata/impl/Source.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Book.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Converter.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Future.java -text

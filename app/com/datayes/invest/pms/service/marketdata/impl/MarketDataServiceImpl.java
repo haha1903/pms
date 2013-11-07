@@ -77,14 +77,12 @@ public class MarketDataServiceImpl implements MarketDataService {
             List<PriceVolume> priceVolumes = priceVolumeDao.findByTradeDate(lastTradeDate);
             for (PriceVolume p : priceVolumes) {
                 MarketData md = Converter.toMarketData(p);
-                md.setSource("PRICE_VOLUME");
                 buffer.put(p.getSecurityId(), md);
             }
             
             List<FuturePriceVolume> futurePriceVolumes = futurePriceVolumeDao.findByTradeDate(lastTradeDate);
             for (FuturePriceVolume p : futurePriceVolumes) {
                 MarketData md = Converter.toMarketData(p);
-                md.setSource("FUTURE_PRICEVOLUME");
                 buffer.put(p.getSecurityId(), md);
             }
             
@@ -178,12 +176,8 @@ public class MarketDataServiceImpl implements MarketDataService {
                             tradeDay);
                 }
                 else {
-                    marketDataMap.put(securityId,
-                        new MarketData(
-                            securityId,
-                            new Timestamp(tradeDay.toDate().getTime()),
-                            new BigDecimal(new java.math.BigDecimal(priceVolume.getPriceClose())),
-                            new BigDecimal(new java.math.BigDecimal(priceVolume.getPricePreviousClose()))));
+                    MarketData md = Converter.toMarketData(priceVolume);
+                    marketDataMap.put(securityId, md);
                 }
             }
             return marketDataMap;

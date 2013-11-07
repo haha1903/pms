@@ -23,10 +23,10 @@ public class MarketData implements Cloneable {
     private BigDecimal price;
     
     private BigDecimal previousPrice;
-
-    private LocalDateTime lastUpdate;
-
+    
     private Timestamp receivedTime;
+
+    private Timestamp lastUpdate;
 
     private String source = null;
     
@@ -36,11 +36,15 @@ public class MarketData implements Cloneable {
     public MarketData(Long securityId,
                       Timestamp timestamp,
                       BigDecimal price,
-                      BigDecimal previousPrice) {
+                      BigDecimal previousPrice,
+                      Timestamp receivedTime,
+                      String source) {
         this.securityId = securityId;
         this.timestamp = timestamp;
         this.price = price;
         this.previousPrice = previousPrice;
+        this.receivedTime = receivedTime;
+        this.source = source;
     }
 
     @Id
@@ -81,11 +85,11 @@ public class MarketData implements Cloneable {
     }
 
     @Column(name = "LAST_UPDATE")
-    public LocalDateTime getLastUpdate() {
+    public Timestamp getLastUpdate() {
         return lastUpdate;
     }
 
-    public void setLastUpdate(LocalDateTime lastUpdate) {
+    public void setLastUpdate(Timestamp lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 

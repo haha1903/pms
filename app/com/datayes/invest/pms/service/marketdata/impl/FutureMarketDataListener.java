@@ -30,8 +30,6 @@ public class FutureMarketDataListener extends JedisPubSub {
     public void onMessage(String channel, String message) {
         Future future = gson.fromJson(message, Future.class);
         MarketData md = Converter.toMarketData(future);
-        md.setReceivedTime(new Timestamp(System.currentTimeMillis()));
-        md.setSource("REDIS");
         marketDataCache.update(md);
     }
 

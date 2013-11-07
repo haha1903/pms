@@ -7,6 +7,7 @@ import scala.math.BigDecimal;
 import com.datayes.invest.pms.entity.account.MarketData;
 import com.datayes.invest.pms.entity.security.FuturePriceVolume;
 import com.datayes.invest.pms.entity.security.PriceVolume;
+import com.datayes.invest.pms.service.marketdata.impl.Source;
 import com.datayes.invest.pms.util.BigDecimalConstants;
 
 
@@ -27,8 +28,9 @@ public class Converter {
         BigDecimal price = new BigDecimal(java.math.BigDecimal.valueOf(dPrice));
         BigDecimal prevPrice = new BigDecimal(java.math.BigDecimal.valueOf(stock.getPrevClosePrice()));
         Timestamp ts = new Timestamp(stock.getTimestamp());
+        Timestamp now = new Timestamp(System.currentTimeMillis());
 
-        return new MarketData(stock.getSecID(), ts, price, prevPrice);
+        return new MarketData(stock.getSecID(), ts, price, prevPrice, now, Source.MQ.toString());
     }
 
     public static MarketData toMarketData(Future future) {
@@ -40,8 +42,9 @@ public class Converter {
             BigDecimal price = new BigDecimal(java.math.BigDecimal.valueOf(future.getLastPrice()));
             BigDecimal prevPrice = new BigDecimal(java.math.BigDecimal.valueOf(future.getPreSettlePrice()));
             Timestamp ts = new Timestamp(future.getTimestamp());
+            Timestamp now = new Timestamp(System.currentTimeMillis());
             
-            return new MarketData(future.getSecID(),ts, price, prevPrice);
+            return new MarketData(future.getSecID(),ts, price, prevPrice, now, Source.REDIS.toString());
         }
         else {
             return null;
@@ -53,7 +56,7 @@ public class Converter {
         Timestamp ts = new Timestamp(pv.getTradeDate().toDate().getTime());
         BigDecimal price = new BigDecimal(java.math.BigDecimal.valueOf(pv.getPriceClose()));
         BigDecimal prevPrice = new BigDecimal(java.math.BigDecimal.valueOf(pv.getPricePreviousClose()));
-        MarketData md = new MarketData(pv.getSecurityId(), ts, price, prevPrice);
+        MarketData md = new MarketData(pv.getSecurityId(), ts, price, prevPrice, null, Source.PRICE_VOLUME.toString());
         return md;
     }
     
@@ -62,7 +65,7 @@ public class Converter {
         Timestamp ts = new Timestamp(pv.getTradeDate().toDate().getTime());
         BigDecimal price = pv.getPriceSettle();
         BigDecimal prevPrice = pv.getPricePreviousClose();
-        MarketData md = new MarketData(pv.getSecurityId(), ts, price, prevPrice);
+        MarketData md = new MarketData(pv.getSecurityId(), ts, price, prevPrice, null, Source.FUT_PRICEVOLUME.toString());
         return md;
     }
 }
