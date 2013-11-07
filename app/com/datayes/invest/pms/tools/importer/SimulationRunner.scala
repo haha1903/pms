@@ -99,7 +99,6 @@ class SimulationRunner extends Thread with Logging {
       sodProcess.process(account, d)
       eodProcess.process(account, d)
       
-
       cacheFlusher.flush(cacheWs, account.getId, d.minusDays(1))
 
       d = d.plusDays(1)
