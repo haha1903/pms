@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 usage() {
-    echo "Usage: $0 -g ARTIFACT_ID -g GROUP_ID -v VERSION"
+    echo "Usage: $0 -g GROUP_ID -a ARTIFACT_ID -v VERSION"
     exit
 }
 
@@ -52,7 +52,7 @@ if [ ! -f $PMS_WAR ]; then
     exit -1
 fi
 
-rm -rf $PMS_JENKINS $PMS_JENKINS.war
+rm -rf $PMS_JENKINS artifactory
 mkdir -p $PMS_JENKINS
 cd $PMS_JENKINS
 
@@ -84,6 +84,7 @@ EOF
 #
 cd ..
 echo "Re-packaging $PMS_JENKINS.war..."
-jar -cf $PMS_JENKINS.war $PMS_JENKINS
+mkdir artifactory
+jar -cf artifactory/$PMS_JENKINS.war $PMS_JENKINS
 
 echo "Done re-packaing for jenkins/artifactory."
