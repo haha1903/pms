@@ -59,25 +59,6 @@
 							</arguments>
 						</configuration>
 					</execution>
-					<execution>
-						<id>repackage war</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>jenkins/jenkins_package.sh</executable>
-							<workingDirectory>.</workingDirectory>
-							<arguments>
-								<argument>-g</argument>
-								<argument>${groupId}</argument>
-								<argument>-a</argument>
-								<argument>${artifactId}</argument>
-								<argument>-v</argument>
-								<argument>${version}</argument>
-							</arguments>
-						</configuration>
-					</execution>
 				</executions>
 			</plugin>
 

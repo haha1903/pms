@@ -323,8 +323,6 @@ database/ddl/CreateAccountMaster.sql -text
 database/refresh_db.sh -text
 database/testing-script-taot/accountmaster_refresh.sh -text
 database/testing-script-taot/delete_positions.sh -text
-jenkins/jenkins_package.sh -text
-jenkins/pom.properties -text
 lib/jupiter.jar -text svneol=unset#unset
 /pom.xml -text
 project/Build.scala -text
