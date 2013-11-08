@@ -82,9 +82,8 @@ EOF
 #
 # Re-package the war
 #
-cd ..
 echo "Re-packaging $PMS_JENKINS.war..."
-mkdir artifactory
-jar -cf artifactory/$PMS_JENKINS.war $PMS_JENKINS
+mkdir ../artifactory
+jar -cf ../artifactory/$PMS_JENKINS.war *
 
 echo "Done re-packaing for jenkins/artifactory."
