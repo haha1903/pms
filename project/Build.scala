@@ -6,7 +6,7 @@ import com.github.play2war.plugin.{ Play2WarKeys, Play2WarPlugin }
 object ApplicationBuild extends Build {
 
   val appName         = "pms"
-  val appVersion      = "1.0-SNAPSHOT"
+  val appVersion      = "SNAPSHOT"
 
   val hibernateVersion = "4.2.6.Final"
   val protostuffVersion = "1.0.7"
@@ -41,7 +41,7 @@ object ApplicationBuild extends Build {
     Play2WarPlugin.play2WarSettings: _*
   ).settings(
     Play2WarKeys.servletVersion := "2.5",
-    Play2WarKeys.targetName := Some(appName + "_" + appVersion)
+    Play2WarKeys.targetName := Some(appName)
   ).settings(
     credentials += Credentials(Path.userHome / ".sbt" / ".credentials"),
     resolvers += "datayes" at artifactoryUrl + "/libs-release",
