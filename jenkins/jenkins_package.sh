@@ -77,6 +77,7 @@ cat > META-INF/maven/$GROUP_ID/$ARTIFACT_ID/pom.xml <<EOF
     <artifactId>$ARTIFACT_ID</artifactId>
     <version>$VERSION</version>
     <packaging>war</packaging>
+</project>
 EOF
 
 #
