@@ -40,41 +40,43 @@ class SystemScheduler extends TimerTask with Logging {
 
   override def run(): Unit = {
     try {
-      val now = LocalDateTime.now
-      // 15 minutes later than market close time
-      val endTime = getMarketCloseTime().plusMinutes(15)
+      while ( true ) {
+        val now = LocalDateTime.now
+        // 15 minutes later than market close time
+        val endTime = getMarketCloseTime().plusMinutes(15)
 
-      if ( !now.toLocalDate.equals(execDate) ) {
-        execDate = now.toLocalDate
-        sodFlag = false
-        eodFlag = false
-      }
-
-      if ( !sodFlag ) {
-        logger.info("Do start of day process on {}", now)
-
-        processStartOfDay()
-        sodFlag = true
-        if ( !isInitialized ) {
-
-
-          startTransactionThread()
-          startValuationThread()
-          isInitialized = true
-          logger.info("init the system successfully!")
+        if ( !now.toLocalDate.equals(execDate) ) {
+          execDate = now.toLocalDate
+          sodFlag = false
+          eodFlag = false
         }
-      }
-      if ( !eodFlag ) {
-        if ( now.toLocalTime.isAfter(endTime) ) {
-          logger.info("Do end of day process on {}", now)
 
-          processEndOfDay()
-          eodFlag = true
+        if ( !sodFlag ) {
+          logger.info("Do start of day process on {}", now)
+
+          processStartOfDay()
+          sodFlag = true
+          if ( !isInitialized ) {
+
+
+            startTransactionThread()
+            startValuationThread()
+            isInitialized = true
+            logger.info("init the system successfully!")
+          }
         }
-      }
+        if ( !eodFlag ) {
+          if ( now.toLocalTime.isAfter(endTime) ) {
+            logger.info("Do end of day process on {}", now)
 
-      // Wait a minute
-      Thread.sleep(60 * 1000)
+            processEndOfDay()
+            eodFlag = true
+          }
+        }
+
+        // Wait a minute
+        Thread.sleep(60 * 1000)
+      }
     } catch {
       case e: Throwable =>
         logger.error(e.getMessage, e)
