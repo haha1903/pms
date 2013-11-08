@@ -5,10 +5,8 @@ import com.datayes.invest.pms.system.ValuationThread
 import com.datayes.invest.pms.system.TransactionThread
 import com.datayes.invest.pms.persist.dsl.transaction
 import java.util.TimerTask
-import org.joda.time.LocalTime
-import org.joda.time.LocalDate
+import org.joda.time.{LocalDateTime, LocalTime, LocalDate}
 import com.datayes.invest.pms.config.Config
-import com.datayes.invest.pms.logic.process.SODProcess
 import javax.inject.Inject
 import com.datayes.invest.pms.logic.process.SODProcess
 import com.datayes.invest.pms.dao.account.AccountDao
@@ -17,6 +15,10 @@ import com.datayes.invest.pms.logic.process.EODProcess
 
 
 class SystemScheduler extends TimerTask with Logging {
+
+  private var sodFlag = false
+  private var eodFlag = false
+  private var execDate: LocalDate = LocalDate.now
   
   @Inject
   private var accountDao: AccountDao = null
@@ -34,42 +36,57 @@ class SystemScheduler extends TimerTask with Logging {
   private var transactionThread: TransactionThread = null
   
   private var isInitialized: Boolean = false
-  
-  def run(): Unit = {
+
+
+  override def run(): Unit = {
     try {
-      var now = LocalTime.now
-      val startTime = getMarketOpenTime
-      val endTime = getMarketCloseTime
-      val asOfDate = LocalDate.now
-      if (now.compareTo(startTime) > 0
-              && now.compareTo(endTime) < 0
-              && !isInitialized) {
-        isInitialized = true
-        initializeSystem(asOfDate)
-      } else if (now.compareTo(endTime) > 0 && isInitialized) {
-        isInitialized = false
-        shutdownSystem(asOfDate)
-      } else {
-        logger.debug("system is normal or has shutdown on {}", asOfDate)
+      val now = LocalDateTime.now
+      // 15 minutes later than market close time
+      val endTime = getMarketCloseTime().plusMinutes(15)
+
+      if ( !now.toLocalDate.equals(execDate) ) {
+        execDate = now.toLocalDate
+        sodFlag = false
+        eodFlag = false
       }
+
+      if ( !sodFlag ) {
+        logger.info("Do start of day process on {}", now)
+
+        processStartOfDay()
+        sodFlag = true
+        if ( !isInitialized ) {
+
+
+          startTransactionThread()
+          startValuationThread()
+          isInitialized = true
+          logger.info("init the system successfully!")
+        }
+      }
+      if ( !eodFlag ) {
+        if ( now.toLocalTime.isAfter(endTime) ) {
+          logger.info("Do end of day process on {}", now)
+
+          processEndOfDay()
+          eodFlag = true
+        }
+      }
+
+      // Wait a minute
+      Thread.sleep(60 * 1000)
     } catch {
-      case e: Throwable => logger.error(e.getMessage, e)
+      case e: Throwable =>
+        logger.error(e.getMessage, e)
     }
   }
-  
-  private def getMarketOpenTime(): LocalTime = {
-    val marketOpenTime = Config.INSTANCE.getString("market.open.time")
-    new LocalTime(marketOpenTime)
-  }
-  
+
   private def getMarketCloseTime(): LocalTime = {
     val marketCloseTime = Config.INSTANCE.getString("market.close.time")
     new LocalTime(marketCloseTime)
   }
-  
-  private def initializeSystem(asOfDate: LocalDate): Unit = {
-    logger.info("Start init the system process on {} (before market open)", asOfDate)
 
+  private def processStartOfDay(): Unit = {
     transaction {
       val today = LocalDate.now
       val accounts = accountDao.findEffectiveAccounts(today)
@@ -77,13 +94,19 @@ class SystemScheduler extends TimerTask with Logging {
         sodProcess.process(a, today)
       }
     }
-
-    startTransactionThread()
-    startValuationThread()
-    
-    logger.info("init the system successfully!")
   }
-  
+
+  private def processEndOfDay(): Unit = {
+    transaction {
+      val today = LocalDate.now
+      val accounts = accountDao.findEffectiveAccounts(today)
+      for (a <- accounts) {
+        eodProcess.process(a, today)
+      }
+    }
+  }
+
+  @deprecated
   private def shutdownSystem(asOfDate: LocalDate): Unit = {
     logger.info("Start shut down the system process on {} (after market close)", asOfDate)
     
@@ -102,15 +125,17 @@ class SystemScheduler extends TimerTask with Logging {
         eodProcess.process(a, today)
       }
     }
-    
+
     logger.info("shut down the system successfully!")
   }
   
   private def startTransactionThread(): Unit = {
+    logger.info("Start transaction thread on {}", execDate)
     new Thread(transactionThread).start
   }
   
   private def startValuationThread(): Unit = {
+    logger.info("Start valuation thread on {}", execDate)
     new Thread(valuationThread).start
   }
 }
