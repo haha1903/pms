@@ -74,7 +74,7 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
 
   override def process(account: Account, asOfDate: LocalDate): Unit = {
     this.asOfDate = asOfDate
-    logger.info("Doing account valuation for as of date {}", asOfDate)
+    logger.info("Doing account valuation for account {} on {}", account.getId(), asOfDate)
     doProcess(account)
   }
 

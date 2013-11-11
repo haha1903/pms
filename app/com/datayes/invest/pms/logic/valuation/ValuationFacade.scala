@@ -6,8 +6,9 @@ import com.datayes.invest.pms.logic.valuation.position.PositionValuationLogicFac
 import com.datayes.invest.pms.entity.account.Account
 import org.joda.time.LocalDate
 import com.datayes.invest.pms.dbtype.PositionValuationType
+import com.datayes.invest.pms.logging.Logging
 
-class ValuationFacade {
+class ValuationFacade extends Logging {
 
   @Inject
   private var accountValuationLogicFactory: AccountValuationLogicFactory = null

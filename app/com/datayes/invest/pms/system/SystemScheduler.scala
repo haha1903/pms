@@ -4,7 +4,6 @@ import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.system.ValuationThread
 import com.datayes.invest.pms.system.TransactionThread
 import com.datayes.invest.pms.persist.dsl.transaction
-import java.util.TimerTask
 import org.joda.time.{LocalDateTime, LocalTime, LocalDate}
 import com.datayes.invest.pms.config.Config
 import javax.inject.Inject
@@ -14,7 +13,7 @@ import scala.collection.JavaConversions._
 import com.datayes.invest.pms.logic.process.EODProcess
 
 
-class SystemScheduler extends TimerTask with Logging {
+class SystemScheduler extends Runnable with Logging {
 
   private var sodFlag = false
   private var eodFlag = false
@@ -52,22 +51,20 @@ class SystemScheduler extends TimerTask with Logging {
         }
 
         if ( !sodFlag ) {
-          logger.info("Do start of day process on {}", now)
+          logger.info("Run start of day process on {}", now)
 
           processStartOfDay()
           sodFlag = true
           if ( !isInitialized ) {
-
-
             startTransactionThread()
             startValuationThread()
             isInitialized = true
-            logger.info("init the system successfully!")
+            logger.info("System initialized")
           }
         }
         if ( !eodFlag ) {
           if ( now.toLocalTime.isAfter(endTime) ) {
-            logger.info("Do end of day process on {}", now)
+            logger.info("Run end of day process on {}", now)
 
             processEndOfDay()
             eodFlag = true
@@ -90,20 +87,18 @@ class SystemScheduler extends TimerTask with Logging {
 
   private def processStartOfDay(): Unit = {
     transaction {
-      val today = LocalDate.now
-      val accounts = accountDao.findEffectiveAccounts(today)
+      val accounts = accountDao.findEffectiveAccounts(execDate)
       for (a <- accounts) {
-        sodProcess.process(a, today)
+        sodProcess.process(a, execDate)
       }
     }
   }
 
   private def processEndOfDay(): Unit = {
     transaction {
-      val today = LocalDate.now
-      val accounts = accountDao.findEffectiveAccounts(today)
+      val accounts = accountDao.findEffectiveAccounts(execDate)
       for (a <- accounts) {
-        eodProcess.process(a, today)
+        eodProcess.process(a, execDate)
       }
     }
   }
@@ -128,7 +123,7 @@ class SystemScheduler extends TimerTask with Logging {
       }
     }
 
-    logger.info("shut down the system successfully!")
+    logger.info("System shut down")
   }
   
   private def startTransactionThread(): Unit = {

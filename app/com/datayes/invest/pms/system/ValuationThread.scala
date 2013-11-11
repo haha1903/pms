@@ -25,20 +25,21 @@ class ValuationThread extends Runnable with Logging {
   def run(): Unit = {
     logger.info("Valuation thread started")
     this.running = true
-    val timer = new Timer
     while(running) {
       try {
-          val asOfDate = LocalDate.now
-          transaction {
-            val accounts = accountDao.findEffectiveAccounts(asOfDate)
-            for (a <- accounts) {
-              valuationFacade.valuate(a, asOfDate)
-            }
+        val asOfDate = LocalDate.now
+        logger.info("Start valuation process at {}", asOfDate)
+        transaction {
+          val accounts = accountDao.findEffectiveAccounts(asOfDate)
+          for (a <- accounts) {
+            valuationFacade.valuate(a, asOfDate)
           }
+        }
       } catch {
         case th: Throwable =>
           logger.error("Exception occurred in valuation thread", th)
       } finally {
+        logger.info("Valuation process finished. Sleep for {} seconds", valuationInterval)
         Thread.sleep(valuationInterval * 1000)
       }
     }

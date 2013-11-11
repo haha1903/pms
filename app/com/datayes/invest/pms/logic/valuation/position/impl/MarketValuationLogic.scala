@@ -84,7 +84,7 @@ class MarketValuationLogic extends PositionValuationLogic with Logging {
   }
   
   private def preloadMarketData(positions: java.util.List[Position], asOfDate: LocalDate): Unit = {
-    logger.info("Preloading equity market data for market valuation on {}", asOfDate)
+    logger.debug("Preloading equity market data for market valuation on {}", asOfDate)
     val securityIds = new HashSet[JLong]
     for (p <- positions) {
       p match {
