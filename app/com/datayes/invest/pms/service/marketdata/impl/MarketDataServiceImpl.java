@@ -40,9 +40,9 @@ public class MarketDataServiceImpl implements MarketDataService {
 
     private static Config config = Config.INSTANCE;
     
-    private static String configOpenTime = config.getString("market.open.time");
+    private static final LocalTime marketOpenTime = config.getLocalTime("market.open.time");
     
-    private static String configCloseTime = config.getString("market.close.time");
+    private static final LocalTime marketCloseTime = config.getLocalTime("market.close.time");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MarketDataServiceImpl.class);
     
@@ -129,20 +129,18 @@ public class MarketDataServiceImpl implements MarketDataService {
         timer.schedule(scheduler, 0, DefaultValues.MARKETDATA_SCHEDULER_INTERVAL());
     }
 
-    private boolean isTradeTime() {
-        LocalTime openTime = LocalTime.parse(configOpenTime);
-        LocalTime closeTime = LocalTime.parse(configCloseTime);
-        LocalTime now = LocalTime.now();
-        // If now is in trade time
-        if( now.isAfter(openTime) && now.isBefore(closeTime) ) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
+//    private boolean isTradeTime() {
+//        LocalTime now = LocalTime.now();
+//        // If now is in trade time
+//        if( now.isAfter(openTime) && now.isBefore(closeTime) ) {
+//            return true;
+//        }
+//        else {
+//            return false;
+//        }
+//    }
 
-    private Map<Long, MarketData> getHistoryMarketDataFromDb(Set<Long> securityIds, LocalDate asOfDate) {
+    private Map<Long, MarketData> getHistoryMarketDataFromDb(Set<Long> securityIds, LocalDate tradeDate) {
         if (securityIds == null || securityIds.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -158,12 +156,9 @@ public class MarketDataServiceImpl implements MarketDataService {
                 futureIds.add(sid);
             }
         }
-
-        // Get last trade day
-        LocalDate tradeDay = calendarService.sameOrPreviousTradeDay(asOfDate);
         
-        Map<Long, MarketData> equityDataMap = loadEquityMarketDataFromDb(equityIds, tradeDay);
-        Map<Long, MarketData> futureDataMap = loadFutureMarketDataFromDb(futureIds, tradeDay);
+        Map<Long, MarketData> equityDataMap = loadEquityMarketDataFromDb(equityIds, tradeDate);
+        Map<Long, MarketData> futureDataMap = loadFutureMarketDataFromDb(futureIds, tradeDate);
         
         Map<Long, MarketData> marketDataMap = new HashMap<>();
         marketDataMap.putAll(equityDataMap);
@@ -204,9 +199,25 @@ public class MarketDataServiceImpl implements MarketDataService {
         }
         return map;
     }
-
-    @Override
-    public Map<Long, MarketData> getMarketData(Set<Long> securityIds, LocalDate asOfDate) {
+    
+    private Map<Long, MarketData> getMarketDateFromCache(Set<Long> securityIds) {
+        Map<Long, MarketData> marketdataMap = new HashMap<>();
+        for(Long securityId : securityIds) {
+            MarketData md = marketDataCache.findRealTimeMarketData(securityId);
+            // find marketdata in real time cache
+            if( md != null ) {
+                marketdataMap.put(securityId, md);
+            }
+            else {
+                LOGGER.error("Cannot find Real time Marketdata for Security Id: {} in cache, " +
+                        "now trying to find in Database",
+                        securityId);
+            }
+        }
+        return marketdataMap;
+    }
+    
+    private void maybeInitialize() {
         if( !isInitialized) {
             synchronized (this) {
                 if (!isInitialized) {
@@ -215,37 +226,35 @@ public class MarketDataServiceImpl implements MarketDataService {
                 }
             }
         }
+    }
+
+    @Override
+    public Map<Long, MarketData> getMarketData(Set<Long> securityIds, LocalDate asOfDate) {
+        
+        maybeInitialize();
+        
         if (securityIds == null || securityIds.isEmpty()) {
             return Collections.emptyMap();
         }
 
-        Map<Long, MarketData> marketdataMap = new HashMap<>();
-
-        // It is today, get real time market data
-        if( LocalDate.now().equals(asOfDate) ) {
-            if( isTradeTime() ){
-                // Loop on every security id
-                for(Long securityId : securityIds) {
-                    MarketData md = marketDataCache.findRealTimeMarketData(securityId);
-                    // find marketdata in real time cache
-                    if( md != null ) {
-                        marketdataMap.put(securityId, md);
-                    }
-                    else {
-                        LOGGER.error("Cannot find Real time Marketdata for Security Id: {} in cache, " +
-                                "now trying to find in Database",
-                                securityId);
-                    }
-                }
-                return marketdataMap;
-            }
-            else {  // if it's not trade time, then find in Price Volume
-                return getHistoryMarketDataFromDb(securityIds, asOfDate);
+        LocalDateTime now = LocalDateTime.now();
+        
+        if (asOfDate.isBefore(now.toLocalDate())) {
+            LocalDate tradeDate = calendarService.sameOrPreviousTradeDay(asOfDate);
+            return getHistoryMarketDataFromDb(securityIds, tradeDate);
+        }
+        
+        if (asOfDate.isEqual(now.toLocalDate())) {
+            if (now.toLocalTime().isBefore(marketOpenTime)) {
+                LocalDate tradeDate = calendarService.previousTradeDay(asOfDate);
+                return getHistoryMarketDataFromDb(securityIds, tradeDate);
+            } else {
+                return getMarketDateFromCache(securityIds);
             }
         }
-        else { // If it's not today, then find in Price Volume
-            return getHistoryMarketDataFromDb(securityIds, asOfDate);
-        }
+        
+        LOGGER.error("Cannot get market data of a future date ({})", asOfDate);
+        return Collections.emptyMap();
     }
 
     @Override

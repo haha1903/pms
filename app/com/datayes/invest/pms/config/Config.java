@@ -1,5 +1,7 @@
 package com.datayes.invest.pms.config;
 
+import org.joda.time.LocalTime;
+
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
 
@@ -57,6 +59,20 @@ public class Config {
     public String getString(String path, String defaultValue) {
         try {
             return getString(path);
+        } catch (ConfigException.Missing e) {
+            return defaultValue;
+        }
+    }
+    
+    public LocalTime getLocalTime(String path) {
+        String s = underlying.getString(path);
+        LocalTime lt = LocalTime.parse(s);
+        return lt;
+    }
+    
+    public LocalTime getLocalTime(String path, LocalTime defaultValue) {
+        try {
+            return getLocalTime(path);
         } catch (ConfigException.Missing e) {
             return defaultValue;
         }
