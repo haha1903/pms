@@ -67,8 +67,59 @@ public class MarketDataServiceImpl implements MarketDataService {
     
     private boolean isInitialized = false;
     
+    
     protected MarketDataServiceImpl() {
         System.out.println("init");
+    }
+    
+    @Override
+    public Map<Long, MarketData> getMarketData(Set<Long> securityIds, LocalDate asOfDate) {
+        
+        maybeInitialize();
+        
+        if (securityIds == null || securityIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        LocalDateTime now = LocalDateTime.now();
+        
+        if (asOfDate.isBefore(now.toLocalDate())) {
+            LocalDate tradeDate = calendarService.sameOrPreviousTradeDay(asOfDate);
+            return getHistoryMarketDataFromDb(securityIds, tradeDate);
+        }
+        
+        if (asOfDate.isEqual(now.toLocalDate())) {
+            if (now.toLocalTime().isBefore(marketOpenTime)) {
+                LocalDate tradeDate = calendarService.previousTradeDay(asOfDate);
+                return getHistoryMarketDataFromDb(securityIds, tradeDate);
+            } else {
+                return getMarketDateFromCache(securityIds);
+            }
+        }
+        
+        LOGGER.error("Cannot get market data of a future date ({})", asOfDate);
+        return Collections.emptyMap();
+    }
+
+    @Override
+    public MarketData getMarketData(Long securityId, LocalDate asOfDate) {
+        Set<Long> securityIds = new HashSet<>();
+        securityIds.add(securityId);
+
+        Map<Long, MarketData> marketDataMap = getMarketData(securityIds, asOfDate);
+        if( marketDataMap != null && !marketDataMap.isEmpty()) {
+            return marketDataMap.get(securityId);
+        }
+
+        return null;
+    }
+
+    public Map<Long, MarketData> getMarketDataCache() {
+        return marketDataCache.getRealTimeCache();
+    }
+
+    public Map<Long, LocalDateTime> getCacheMissingSecurityId() {
+        return marketDataCache.getCacheMissingSecurityId();
     }
 
     private void preloadCache() {
@@ -226,55 +277,5 @@ public class MarketDataServiceImpl implements MarketDataService {
                 }
             }
         }
-    }
-
-    @Override
-    public Map<Long, MarketData> getMarketData(Set<Long> securityIds, LocalDate asOfDate) {
-        
-        maybeInitialize();
-        
-        if (securityIds == null || securityIds.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        LocalDateTime now = LocalDateTime.now();
-        
-        if (asOfDate.isBefore(now.toLocalDate())) {
-            LocalDate tradeDate = calendarService.sameOrPreviousTradeDay(asOfDate);
-            return getHistoryMarketDataFromDb(securityIds, tradeDate);
-        }
-        
-        if (asOfDate.isEqual(now.toLocalDate())) {
-            if (now.toLocalTime().isBefore(marketOpenTime)) {
-                LocalDate tradeDate = calendarService.previousTradeDay(asOfDate);
-                return getHistoryMarketDataFromDb(securityIds, tradeDate);
-            } else {
-                return getMarketDateFromCache(securityIds);
-            }
-        }
-        
-        LOGGER.error("Cannot get market data of a future date ({})", asOfDate);
-        return Collections.emptyMap();
-    }
-
-    @Override
-    public MarketData getMarketData(Long securityId, LocalDate asOfDate) {
-        Set<Long> securityIds = new HashSet<>();
-        securityIds.add(securityId);
-
-        Map<Long, MarketData> marketDataMap = getMarketData(securityIds, asOfDate);
-        if( marketDataMap != null && !marketDataMap.isEmpty()) {
-            return marketDataMap.get(securityId);
-        }
-
-        return null;
-    }
-
-    public Map<Long, MarketData> getMarketDataCache() {
-        return marketDataCache.getRealTimeCache();
-    }
-
-    public Map<Long, LocalDateTime> getCacheMissingSecurityId() {
-        return marketDataCache.getCacheMissingSecurityId();
     }
 }
