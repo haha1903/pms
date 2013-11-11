@@ -3,10 +3,12 @@ package com.datayes.invest.pms.dao.account.impl;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import javax.inject.Singleton;
 import javax.persistence.TypedQuery;
 
 import com.datayes.invest.pms.dao.account.IdGenerator;
 
+@Singleton
 public class IdGeneratorImpl extends EntityManagerProvider implements IdGenerator {
     
     private final Object nextPositionIdLock = new Object();

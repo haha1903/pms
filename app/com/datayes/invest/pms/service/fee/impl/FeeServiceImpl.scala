@@ -15,8 +15,9 @@ import java.util.LinkedList
 import scala.math.BigDecimal
 import java.lang.{ Long => JLong }
 import com.datayes.invest.pms.util.BigDecimalConstants
+import javax.inject.Singleton
 
-
+@Singleton
 class FeeServiceImpl extends FeeService with Logging {
 
   @Inject

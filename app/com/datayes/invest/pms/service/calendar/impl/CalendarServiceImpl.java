@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class CalendarServiceImpl implements CalendarService {
     @Inject
     private ExchangeCalendarDao exchangeCalendarDao;

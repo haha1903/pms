@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import com.datayes.invest.pms.dao.security.IndustryDao;
 import com.datayes.invest.pms.dao.security.InstitutionIndustryDao;
@@ -16,6 +17,7 @@ import com.datayes.invest.pms.entity.security.Security;
 import com.datayes.invest.pms.util.DefaultValues;
 import com.datayes.invest.pms.service.industry.IndustryService;
 
+@Singleton
 public class IndustryServiceImpl implements IndustryService {
     
     @Inject

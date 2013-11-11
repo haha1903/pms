@@ -2,6 +2,7 @@ package com.datayes.invest.pms.persist.hibernate;
 
 import java.util.EnumMap;
 
+import javax.inject.Singleton;
 import javax.persistence.EntityManagerFactory;
 
 import com.datayes.invest.pms.persist.Persist;
@@ -10,6 +11,7 @@ import com.datayes.invest.pms.persist.PersistService;
 import com.datayes.invest.pms.persist.PersistUnit;
 import com.datayes.invest.pms.persist.Transaction;
 
+@Singleton
 public class PersistServiceImpl implements PersistService {
 
     private static final ThreadLocal<TransactionImpl> transactionThreadLocal = new ThreadLocal<>();

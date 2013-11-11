@@ -1,6 +1,5 @@
 package com.datayes.invest.pms.service.marketdata.impl;
 
-import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,14 +9,13 @@ import java.util.Set;
 import java.util.Timer;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.LocalTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import scala.math.BigDecimal;
 
 import com.datayes.invest.pms.config.Config;
 import com.datayes.invest.pms.dao.account.MarketDataDao;
@@ -37,6 +35,7 @@ import com.datayes.invest.pms.service.marketdata.MarketDataService;
 import com.datayes.invest.pms.service.marketdata.impl.data.Converter;
 import com.datayes.invest.pms.util.DefaultValues;
 
+@Singleton
 public class MarketDataServiceImpl implements MarketDataService {
 
     private static Config config = Config.INSTANCE;
@@ -68,6 +67,9 @@ public class MarketDataServiceImpl implements MarketDataService {
     
     private boolean isInitialized = false;
     
+    protected MarketDataServiceImpl() {
+        System.out.println("init");
+    }
 
     private void preloadCache() {
         LOGGER.info("Preloading market data cache");
