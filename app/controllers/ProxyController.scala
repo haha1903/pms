@@ -35,7 +35,7 @@ class ProxyController extends Controller with Jsonp with Logging {
 
     val response = WS.url(attributionHost).
       withHeaders(CONTENT_TYPE -> "application/x-www-form-urlencoded").
-      withQueryString(queryStrings: _*).withQueryString("clientid" -> clientId).
+      withQueryString(queryStrings: _*).withQueryString("clientId" -> clientId).
       withQueryString("odbc" -> odbcName).get
 
     val json = try {
