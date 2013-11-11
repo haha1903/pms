@@ -1,4 +1,4 @@
-package com.datayes.invest.platform.system
+package com.datayes.invest.pms.system
 
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.system.ValuationThread

@@ -12,8 +12,8 @@ import com.google.inject.Guice
 import com.google.inject.Injector
 import com.google.inject.Stage
 import com.datayes.invest.pms.persist.PersistService
-import com.datayes.invest.pms.system.SystemInjectors;
-import com.datayes.invest.platform.system.SystemScheduler
+import com.datayes.invest.pms.system.SystemInjectors
+import com.datayes.invest.pms.system.SystemScheduler
 
 object Global extends WithFilters(new LoggingFilter) with Logging {
 
