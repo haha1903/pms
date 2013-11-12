@@ -6,7 +6,7 @@
 	<artifactId>pms</artifactId>
 	<name>pms</name>
 	<packaging>jar</packaging>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.0.4-SNAPSHOT</version>
 
 	<properties>
 	    <play.cmd>/opt/play/play</play.cmd>
