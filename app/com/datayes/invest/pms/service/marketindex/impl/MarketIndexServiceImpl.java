@@ -1,122 +1,106 @@
 package com.datayes.invest.pms.service.marketindex.impl;
 
-import com.datayes.invest.pms.dao.security.MarketIndexCompDao;
-import com.datayes.invest.pms.dao.security.MarketIndexDao;
-import com.datayes.invest.pms.dao.security.MarketIndexWeightDao;
-import com.datayes.invest.pms.entity.security.MarketIndexComp;
-import com.datayes.invest.pms.entity.security.MarketIndexWeight;
-import com.datayes.invest.pms.persist.Persist;
-import com.datayes.invest.pms.persist.Transaction;
-import com.datayes.invest.pms.service.marketindex.MarketIndex;
-import com.datayes.invest.pms.service.marketindex.MarketIndexComponent;
-import com.datayes.invest.pms.service.marketindex.MarketIndexService;
-import com.google.inject.Inject;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jboss.netty.util.internal.ConcurrentHashMap;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.*;
+import scala.math.BigDecimal;
 
-class LoadWorker implements Callable<MarketIndex> {
+import com.datayes.invest.pms.dao.security.MarketIndexDao;
+import com.datayes.invest.pms.service.calendar.CalendarService;
+import com.datayes.invest.pms.service.marketindex.MarketIndexService;
+import com.datayes.invest.pms.util.BigDecimalConstants;
 
-    private Long marketIndexId;
-
-    @Inject
-    private MarketIndexDao marketIndexDao = null;
-
-    @Inject
-    private MarketIndexCompDao marketIndexCompDao = null;
-
-    @Inject
-    private MarketIndexWeightDao marketIndexWeightDao = null;
-
-
-    public LoadWorker(Long marketIndexId) {
-        this.marketIndexId = marketIndexId;
-    }
-
-    private Map<Long, MarketIndexComponent> createComponentMap(List<MarketIndexComponent> list) {
-        Map<Long, MarketIndexComponent> map = new HashMap<>();
-
-        for(MarketIndexComponent component : list) {
-            map.put(component.getSecurityId(), component);
-        }
-
-        return map;
-    }
-
-
-    private MarketIndex doload() {
-        com.datayes.invest.pms.entity.security.MarketIndex index = marketIndexDao.findById(marketIndexId);
-        if(null == index) {
-            return null;
-        }
-        else {
-            List<MarketIndexComp> compEntities = marketIndexCompDao.findCurrentByMarketIndexId(marketIndexId);
-            List<MarketIndexComponent> components = new LinkedList<>();
-
-            for(MarketIndexComp comp : compEntities) {
-                MarketIndexWeight miw = marketIndexWeightDao
-                        .findLatestByMarketIndexIdSecurityId(marketIndexId, comp.getSecurityId());
-
-                Double weight;
-                if(null == miw) {
-                    weight = 0.0d;
-                }
-                else {
-                    weight = miw.getWeight();
-                }
-
-                components.add(new MarketIndexComponent(comp.getSecurityId(), weight));
-            }
-
-            return new MarketIndex(marketIndexId, index.getName(), createComponentMap(components));
-        }
-    }
-
-    @Override
-    public MarketIndex call() throws Exception {
-        Transaction tx1 = Persist.beginTransaction();
-
-        MarketIndex marketIndex = doload();
-
-        tx1.commit();
-
-        return marketIndex;
-    }
-}
-
+@Singleton
 public class MarketIndexServiceImpl implements MarketIndexService {
-    private Map<Long, MarketIndex> cache = new HashMap<>();
+	
+	private static final List<String> indexList = Arrays.asList(
+			"HSSLL",    // 沪深300
+			"SZWL",     // 上证50
+			"SZYBL",    // 上证180
+			"ZZWLL"     // 中证500
+			);
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(MarketIndexServiceImpl.class);
+	
+	@Inject
+	private CalendarService calendarService;
+	
+	@Inject
+	private MarketIndexDao marketIndexDao;
+	
+	private ConcurrentMap<CacheKey, MarketIndex> indexCache = new ConcurrentHashMap<>();
 
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
+	@Override
+	public List<String> getIndexes() {
+		return indexList;
+	}
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MarketIndexServiceImpl.class);
+	@Override
+	public BigDecimal getIndexWeight(String index, LocalDate asOfDate, Long securityId) {
+		if (! checkIndex(index) ) {
+		    LOGGER.warn("{} is not a valid market index");
+		    return BigDecimalConstants.ZERO();
+		}
+		
+		// Need to use data of previous trade day because today's data might not be ready yet
+		LocalDate tradeDate = calendarService.previousTradeDay(asOfDate);
+		
+		CacheKey key = new CacheKey(index, tradeDate);
+		MarketIndex marketIndex = indexCache.get(key);
+		if (marketIndex == null) {
+			MarketIndex newMarketIndex = loadMarketIndex(index, tradeDate);
+			if (newMarketIndex != null) {
+				marketIndex = indexCache.putIfAbsent(key, newMarketIndex);
+				if (marketIndex == null) {
+					marketIndex = newMarketIndex;
+				}
+			}
+		}
+		
+		if (marketIndex == null || marketIndex.getComponents() == null || marketIndex.getComponents().isEmpty()) {
+			return BigDecimalConstants.ZERO();
+		}
+		
+		MarketIndexComponent comp = marketIndex.getComponents().get(securityId);
+		if (comp == null || comp.getWeight() == null) {
+			return BigDecimalConstants.ZERO();
+		}
+		
+		return comp.getWeight();
+	}
 
-
-    private MarketIndex load(Long marketIndexId) throws ExecutionException, InterruptedException {
-        Future<MarketIndex> f = executor.submit(new LoadWorker(marketIndexId));
-
-        return f.get();
-    }
-
-    @Override
-    public MarketIndex get(Long marketIndexId) {
-        MarketIndex marketIndex = cache.get(marketIndexId);
-        if(null == marketIndex) {
-            try {
-                marketIndex = load(marketIndexId);
-                cache.put(marketIndexId, marketIndex);
-            }
-            catch (ExecutionException | InterruptedException e) {
-                LOGGER.error(e.getMessage());
-                marketIndex = null;
-            }
-        }
-
-        return marketIndex;
-    }
+	private MarketIndex loadMarketIndex(String index, LocalDate asOfDate) {
+		List<com.datayes.invest.pms.entity.security.MarketIndex> list = marketIndexDao.findByMarketIndexEndDate(index, asOfDate);
+		Map<Long, MarketIndexComponent> components = new HashMap<>();
+		if (list == null || list.isEmpty()) {
+			return new MarketIndex(index, components);
+		}
+		
+		for (com.datayes.invest.pms.entity.security.MarketIndex mi : list) {
+		    // Divide weightedRatio by 100 since it's in percent form 
+		    BigDecimal weight = mi.getWeightedRatio().$div(BigDecimalConstants.HUNDRED());
+			MarketIndexComponent comp = new MarketIndexComponent(mi.getSecurityId(), weight);
+			components.put(mi.getSecurityId(), comp);
+		}
+		MarketIndex marketIndex = new MarketIndex(index, components);
+		return marketIndex;
+	}
+	
+	private boolean checkIndex(String index) {
+		if (! indexList.contains(index)) {
+			return false;
+		}
+		return true;
+	}
 }

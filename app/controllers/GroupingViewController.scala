@@ -30,9 +30,10 @@ class GroupingViewController extends Controller with AsOfDateSupport with Jsonp 
     val grouping = userPref.getPortfolioGroupingSetting
     val asOfDateOpt = getAsOfDateOpt
     val filterParam = getFilterParam
+    val benchmarkIndexOpt = req.getQueryString("benchmarkIndex")
     val assetTree = asOfDateOpt match {
       case Some(asOfDate) => transaction {
-        portfolioService.getAssetTree(asOfDate, grouping, filterParam)
+        portfolioService.getAssetTree(asOfDate, grouping, filterParam, benchmarkIndexOpt)
       }
       case None => AssetTree(AssetNodeType.root, "root", "root", Seq.empty[AssetNode])
     }

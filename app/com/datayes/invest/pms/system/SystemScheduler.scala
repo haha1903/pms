@@ -1,8 +1,6 @@
 package com.datayes.invest.pms.system
 
 import com.datayes.invest.pms.logging.Logging
-import com.datayes.invest.pms.system.ValuationThread
-import com.datayes.invest.pms.system.TransactionThread
 import com.datayes.invest.pms.persist.dsl.transaction
 import org.joda.time.{LocalDateTime, LocalTime, LocalDate}
 import com.datayes.invest.pms.config.Config
@@ -101,29 +99,6 @@ class SystemScheduler extends Runnable with Logging {
         eodProcess.process(a, execDate)
       }
     }
-  }
-
-  @deprecated
-  private def shutdownSystem(asOfDate: LocalDate): Unit = {
-    logger.info("Start shut down the system process on {} (after market close)", asOfDate)
-    
-    if (valuationThread != null) {
-      valuationThread.running = false
-    }
-    
-    if (transactionThread != null) {
-      transactionThread.closeSession
-    }
-
-    transaction {
-      val today = LocalDate.now
-      val accounts = accountDao.findEffectiveAccounts(today)
-      for (a <- accounts) {
-        eodProcess.process(a, today)
-      }
-    }
-
-    logger.info("System shut down")
   }
   
   private def startTransactionThread(): Unit = {

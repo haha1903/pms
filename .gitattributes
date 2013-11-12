@@ -86,9 +86,7 @@ app/com/datayes/invest/pms/dao/security/FuturePriceVolumeDao.java -text
 app/com/datayes/invest/pms/dao/security/GenericSecurityMasterDao.java -text
 app/com/datayes/invest/pms/dao/security/IndustryDao.java -text
 app/com/datayes/invest/pms/dao/security/InstitutionIndustryDao.java -text
-app/com/datayes/invest/pms/dao/security/MarketIndexCompDao.java -text
 app/com/datayes/invest/pms/dao/security/MarketIndexDao.java -text
-app/com/datayes/invest/pms/dao/security/MarketIndexWeightDao.java -text
 app/com/datayes/invest/pms/dao/security/PriceVolumeDao.java -text
 app/com/datayes/invest/pms/dao/security/RepoDao.java -text
 app/com/datayes/invest/pms/dao/security/SecurityDao.java -text
@@ -103,9 +101,7 @@ app/com/datayes/invest/pms/dao/security/impl/FuturePriceVolumeDaoImpl.java -text
 app/com/datayes/invest/pms/dao/security/impl/GenericSecurityMasterDaoImpl.java -text
 app/com/datayes/invest/pms/dao/security/impl/IndustryDaoImpl.java -text
 app/com/datayes/invest/pms/dao/security/impl/InstitutionIndustryDaoImpl.java -text
-app/com/datayes/invest/pms/dao/security/impl/MarketIndexCompDaoImpl.java -text
 app/com/datayes/invest/pms/dao/security/impl/MarketIndexDaoImpl.java -text
-app/com/datayes/invest/pms/dao/security/impl/MarketIndexWeightDaoImpl.java -text
 app/com/datayes/invest/pms/dao/security/impl/PriceVolumeDaoImpl.java -text
 app/com/datayes/invest/pms/dao/security/impl/RepoDaoImpl.java -text
 app/com/datayes/invest/pms/dao/security/impl/SecurityDaoImpl.java -text
@@ -166,8 +162,6 @@ app/com/datayes/invest/pms/entity/security/FuturePriceVolume.java -text
 app/com/datayes/invest/pms/entity/security/Industry.java -text
 app/com/datayes/invest/pms/entity/security/InstitutionIndustry.java -text
 app/com/datayes/invest/pms/entity/security/MarketIndex.java -text
-app/com/datayes/invest/pms/entity/security/MarketIndexComp.java -text
-app/com/datayes/invest/pms/entity/security/MarketIndexWeight.java -text
 app/com/datayes/invest/pms/entity/security/PriceVolume.java -text
 app/com/datayes/invest/pms/entity/security/Repo.java -text
 app/com/datayes/invest/pms/entity/security/Security.java -text
@@ -245,9 +239,10 @@ app/com/datayes/invest/pms/service/marketdata/impl/data/Converter.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Future.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Head.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Stock.java -text
-app/com/datayes/invest/pms/service/marketindex/MarketIndex.java -text
-app/com/datayes/invest/pms/service/marketindex/MarketIndexComponent.java -text
 app/com/datayes/invest/pms/service/marketindex/MarketIndexService.java -text
+app/com/datayes/invest/pms/service/marketindex/impl/CacheKey.java -text
+app/com/datayes/invest/pms/service/marketindex/impl/MarketIndex.java -text
+app/com/datayes/invest/pms/service/marketindex/impl/MarketIndexComponent.java -text
 app/com/datayes/invest/pms/service/marketindex/impl/MarketIndexServiceImpl.java -text
 app/com/datayes/invest/pms/system/SystemInjectors.java -text
 app/com/datayes/invest/pms/system/SystemScheduler.scala -text
@@ -341,9 +336,6 @@ test/IntegrationSpec.scala -text
 test/com/datayes/invest/pms/dao/account/MarketDataMockDaoImpl.java -text
 test/com/datayes/invest/pms/dao/security/ExchangeCalendarMockDaoImpl.java -text
 test/com/datayes/invest/pms/dao/security/GenericSecurityMasterMockDaoImpl.java -text
-test/com/datayes/invest/pms/dao/security/MarketIndexCompMockDaoImpl.java -text
-test/com/datayes/invest/pms/dao/security/MarketIndexMockDaoImpl.java -text
-test/com/datayes/invest/pms/dao/security/MarketIndexWeightMockDaoImpl.java -text
 test/com/datayes/invest/pms/dao/security/PriceVolumeMockDaoImpl.java -text
 test/com/datayes/invest/pms/service/calendar/CalendarServiceSpec.scala -text
 test/com/datayes/invest/pms/service/calendar/CalendarServiceTest.java -text

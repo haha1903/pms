@@ -9,4 +9,6 @@ object BigDecimalConstants {
   val EPSILON = BigDecimal("0.0000000001")
 
   val PRICE_EPSILON = BigDecimal("0.0001")
+  
+  val HUNDRED = BigDecimal("100")
 }

@@ -61,7 +61,7 @@ class DashboardService extends Logging {
   }
 
   def getAssetClassWeight(accountId: Long, asOfDate: LocalDate): Seq[AssetClassWeight] = {
-    val securityAssets = assetsLoader.loadAssets(accountId, asOfDate)
+    val securityAssets = assetsLoader.loadAssets(accountId, asOfDate, None)
     val cashAsset = loadCashAsset(accountId, asOfDate)
     val allAssets = cashAsset :: securityAssets.toList
     val assetClassWeights = allAssets.groupBy(a => a.assetClass).map { case (assetClass, assets) =>
@@ -117,7 +117,7 @@ class DashboardService extends Logging {
   }
 
   def getIndustryWeight(accountId: Long, asOfDate: LocalDate): IndustryWeightTree = {
-    val allAssets = assetsLoader.loadAssets(accountId, asOfDate)
+    val allAssets = assetsLoader.loadAssets(accountId, asOfDate, None)
     val industryWeights = allAssets.groupBy(a => a.industry).map { case (industry, assets) =>
       var obj = IndustryWeightLeaf(industry)
       for (a <- assets) {
@@ -144,7 +144,7 @@ class DashboardService extends Logging {
   }
   
   def gettopHoldingStock(accountId: Long, number: Integer, asOfDate: LocalDate): TopHoldingStock = {
-    val allAssets = assetsLoader.loadAssets(accountId, asOfDate).filter(p => filterFuture(p))
+    val allAssets = assetsLoader.loadAssets(accountId, asOfDate, None).filter(p => filterFuture(p))
     var totalMarketValue = allAssets.foldLeft(BigDecimal(0))(_ + _.marketValue)
     var topAssetList = allAssets.sortWith(_.marketValue > _.marketValue).take(number)
     var topHoldingMarketValue = topAssetList.foldLeft(BigDecimal(0))(_ + _.marketValue)

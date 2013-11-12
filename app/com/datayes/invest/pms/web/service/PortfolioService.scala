@@ -25,9 +25,9 @@ class PortfolioService extends Logging {
   // TODO Temporary variables for testing
   private var _totalNumOfPositions = 0
 
-  def getAssetTree(asOfDate: LocalDate, groupings: List[AssetNodeType.Type], filterParam: FilterParam): AssetTree = {
+  def getAssetTree(asOfDate: LocalDate, groupings: List[AssetNodeType.Type], filterParam: FilterParam, benchmarkIndexNameOpt: Option[String]): AssetTree = {
     val accounts = accountDao.findEffectiveAccounts(asOfDate)
-    val allValidAssets = accounts.flatMap(a => assetsLoader.loadAssets(a.getId, asOfDate)).filter { asset =>
+    val allValidAssets = accounts.flatMap(a => assetsLoader.loadAssets(a.getId, asOfDate, benchmarkIndexNameOpt)).filter { asset =>
       asset.assetClass != AssetClassType.future && asset.assetClass != AssetClassType.cash &&
       asset.assetClass != AssetClassType.none
     }

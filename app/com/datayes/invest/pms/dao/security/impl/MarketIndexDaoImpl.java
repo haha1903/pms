@@ -5,15 +5,19 @@ import com.datayes.invest.pms.entity.security.MarketIndex;
 
 import java.util.List;
 
-public class MarketIndexDaoImpl extends GenericSecurityMasterDaoImpl<MarketIndex, Long> implements MarketIndexDao {
+import javax.persistence.TypedQuery;
 
-    protected MarketIndexDaoImpl() {
-        super(MarketIndex.class);
-    }
+import org.joda.time.LocalDate;
 
-    public List<MarketIndex> findAll() {
-        List<MarketIndex> list = (List<MarketIndex>) enableCache(getEntityManager().createQuery(
-            "from MarketIndex")).getResultList();
-        return list;
-    }
+public class MarketIndexDaoImpl extends EntityManagerProvider implements MarketIndexDao {
+
+	@Override
+	public List<MarketIndex> findByMarketIndexEndDate(String marketIndex, LocalDate endDate) {
+		TypedQuery<MarketIndex> query = getEntityManager().createQuery(
+				"from MarketIndex where marketIndex = :marketIndex and endDate = :endDate", MarketIndex.class);
+		query.setParameter("marketIndex", marketIndex);
+		query.setParameter("endDate", endDate);
+		List<MarketIndex> list = query.getResultList();
+		return list;
+	}
 }

@@ -7,6 +7,8 @@ import com.datayes.invest.pms.dbtype.TradeSide
 
 object DefaultValues {
   
+  val BENCHMARK_MARKET_INDEX = "HSSLL"
+  
   val CALENDAR_FIND_NUMBER = 14
 
   val CALENDAR_FIND_RATIO = 1.5

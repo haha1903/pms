@@ -21,6 +21,7 @@ import com.datayes.invest.pms.util.DefaultValues
 import com.datayes.invest.pms.entity.account.PositionHist
 import com.datayes.invest.pms.entity.account.PositionValuationHist
 import com.datayes.invest.pms.service.industry.IndustryService
+import com.datayes.invest.pms.service.marketindex.MarketIndexService
 
 class AssetsLoader extends Logging {
 
@@ -38,6 +39,9 @@ class AssetsLoader extends Logging {
   
   @Inject
   private var marketDataService: MarketDataService = null
+  
+  @Inject
+  private var marketIndexService: MarketIndexService = null
 
   @Inject
   private var positionDao: PositionDao = null
@@ -58,7 +62,7 @@ class AssetsLoader extends Logging {
   private var securityPositionDao: SecurityPositionDao = null
 
 
-  def loadAssets(accountId: Long, asOfDate: LocalDate): Seq[Asset] = {
+  def loadAssets(accountId: Long, asOfDate: LocalDate, benchmarkIndexOpt: Option[String]): Seq[Asset] = {
     logger.debug("Loading assets from account #{} on as of date {}", accountId, asOfDate)
     val positions = securityPositionDao.findByAccountId(accountId)
     if (positions == null) {
@@ -80,9 +84,11 @@ class AssetsLoader extends Logging {
         carryingValueHistOpt = carryingValueHistMap.get(positionId),
         positionValuationHistOpt = positionValuationHistMap.get(positionId),
         previousPositionValuationHistOpt = prevPositionValuationHistMap.get(positionId),
+        benchmarkIndexOpt = benchmarkIndexOpt,
         asOfDate = asOfDate,
         marketDataService = marketDataService,
         industryService = industryService,
+        marketIndexService = marketIndexService,
         securityDao = securityDao
       )
 

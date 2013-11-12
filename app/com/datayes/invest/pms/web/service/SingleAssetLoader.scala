@@ -18,12 +18,14 @@ import com.datayes.invest.pms.entity.security.Repo
 import com.datayes.invest.pms.web.model.models.AssetClassType
 import com.datayes.invest.pms.util.BigDecimalConstants
 import com.datayes.invest.pms.service.industry.IndustryService
+import com.datayes.invest.pms.service.marketindex.MarketIndexService
+import com.datayes.invest.pms.util.DefaultValues
 
 class SingleAssetLoader(position: Position, positionHistOpt: Option[PositionHist],
     carryingValueHistOpt: Option[CarryingValueHist], positionValuationHistOpt: Option[PositionValuationHist],
-    previousPositionValuationHistOpt: Option[PositionValuationHist],
+    previousPositionValuationHistOpt: Option[PositionValuationHist], benchmarkIndexOpt: Option[String],
     asOfDate: LocalDate, marketDataService: MarketDataService, industryService: IndustryService,
-    securityDao: SecurityDao) extends Logging {
+    marketIndexService: MarketIndexService, securityDao: SecurityDao) extends Logging {
   
   def load(): Option[Asset] = {
     position match {
@@ -76,7 +78,11 @@ class SingleAssetLoader(position: Position, positionHistOpt: Option[PositionHist
 
     // Industry
     asset.industry = industryService.getIndustryBySecurityId(security.getId)
-
+    
+    // Benchmark index weight
+    val benchmarkIndex = benchmarkIndexOpt.getOrElse(DefaultValues.BENCHMARK_MARKET_INDEX)
+    asset.benchmarkIndexWeight = marketIndexService.getIndexWeight(benchmarkIndex, asOfDate, security.getId)
+    
     // Position valuation history
     // TODO optimize this
     val valHist = positionValuationHistOpt.getOrElse(null)

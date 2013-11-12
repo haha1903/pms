@@ -1,7 +1,5 @@
 package com.datayes.invest.pms.web.model.fastjson.asset;
 
-import java.math.BigDecimal;
-
 public abstract class AssetNode {
 
     public final AssetNodeType type;

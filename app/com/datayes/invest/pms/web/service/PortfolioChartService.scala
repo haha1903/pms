@@ -37,7 +37,7 @@ class PortfolioChartService extends Logging {
   }
 
   private def getIndustryChartData(accountId: Long, asOfDate: LocalDate, filterParam: FilterParam): List[(String, BigDecimal)] = {
-    val assets = assetsLoader.loadAssets(accountId, asOfDate)
+    val assets = assetsLoader.loadAssets(accountId, asOfDate, None)
     val filteredAssets = FilterHelper.filterAssets(assets, filterParam)
     val industrySums = filteredAssets.groupBy(_.industry).map { case (industry, assets) =>
       val valueSum = sum(assets.map(_.marketValue))
