@@ -239,6 +239,7 @@ app/com/datayes/invest/pms/service/marketdata/impl/data/Converter.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Future.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Head.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Stock.java -text
+app/com/datayes/invest/pms/service/marketindex/Index.java -text
 app/com/datayes/invest/pms/service/marketindex/MarketIndexService.java -text
 app/com/datayes/invest/pms/service/marketindex/impl/CacheKey.java -text
 app/com/datayes/invest/pms/service/marketindex/impl/MarketIndex.java -text

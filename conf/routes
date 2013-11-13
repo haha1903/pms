@@ -14,6 +14,7 @@ GET     /saml/*path                                           @controllers.Appli
 
 # Grouping View pages
 GET     /accountMgmt/groupingView/all                         @controllers.GroupingViewController.all
+GET     /accountMgmt/groupingView/availableBenchmarkIndexes   @controllers.GroupingViewController.availableBenchmarkIndexes
 GET     /accountMgmt/groupingView/chart                       @controllers.GroupingViewController.chart(view: String, accountId: Long)
 GET     /accountMgmt/groupingView/getGroupingSetting          @controllers.GroupingViewController.getGroupingSetting
 GET     /accountMgmt/groupingView/saveGroupingSetting         @controllers.GroupingViewController.saveGroupingSetting(setting: String)

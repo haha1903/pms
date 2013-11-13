@@ -6,12 +6,12 @@ import java.util.Map;
 
 public class MarketIndex {
 
-	private final String name;
+	private final String id;
 	
 	private final Map<Long, MarketIndexComponent> components;
 
-	public MarketIndex(String name, Map<Long, MarketIndexComponent> components) {
-		this.name = name;
+	public MarketIndex(String id, Map<Long, MarketIndexComponent> components) {
+		this.id = id;
 		this.components = copy(components);
 	}
 	
@@ -20,8 +20,8 @@ public class MarketIndex {
 		return Collections.unmodifiableMap(map);
 	}
 
-	public String getName() {
-		return name;
+	public String getId() {
+		return id;
 	}
 
 	public Map<Long, MarketIndexComponent> getComponents() {

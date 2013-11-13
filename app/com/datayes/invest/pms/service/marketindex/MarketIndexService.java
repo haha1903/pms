@@ -8,7 +8,7 @@ import scala.math.BigDecimal;
 
 public interface MarketIndexService {
 
-    List<String> getIndexes();
+    List<Index> getIndexes();
     
-    BigDecimal getIndexWeight(String indexName, LocalDate asOfDate, Long securityId);
+    BigDecimal getIndexWeight(String indexId, LocalDate asOfDate, Long securityId);
 }

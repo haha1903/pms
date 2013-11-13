@@ -1,21 +1,32 @@
 package controllers
 
+import scala.collection.JavaConversions._
+
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.persist.dsl.transaction
-import com.datayes.invest.pms.web.service.{ PortfolioChartService, PortfolioService }
-import com.datayes.invest.pms.userpref.{GroupingItem, UserPref}
+import com.datayes.invest.pms.service.marketindex.MarketIndexService
+import com.datayes.invest.pms.userpref.GroupingItem
+import com.datayes.invest.pms.userpref.UserPref
+import com.datayes.invest.pms.web.model.fastjson.asset.{AssetNode => FAssetNode}
+import com.datayes.invest.pms.web.model.fastjson.asset.{AssetNodeType => FAssetNodeType}
+import com.datayes.invest.pms.web.model.fastjson.asset.{AssetTree => FAssetTree}
+import com.datayes.invest.pms.web.model.fastjson.asset.AssetTreeConverter
 import com.datayes.invest.pms.web.model.models._
-import com.datayes.invest.pms.web.model.fastjson.asset.{Asset => FAsset, AssetNode => FAssetNode, AssetTree => FAssetTree, AssetNodeType => FAssetNodeType, AssetTreeConverter}
 import com.datayes.invest.pms.web.model.models.ModelWrites._
-import controllers.util.Jsonp
-
-import javax.inject.Inject
-import play.api.libs.json.{JsValue, Json}
-import play.api.mvc._
+import com.datayes.invest.pms.web.service.PortfolioChartService
+import com.datayes.invest.pms.web.service.PortfolioService
 import com.datayes.invest.pms.web.sso.AuthAction
 
+import controllers.util.Jsonp
+import javax.inject.Inject
+import play.api.libs.json.JsValue
+import play.api.libs.json.Json
+import play.api.mvc._
 
 class GroupingViewController extends Controller with AsOfDateSupport with Jsonp with Logging {
+  
+  @Inject
+  private var marketIndexService: MarketIndexService = null
 
   @Inject
   private var portfolioService: PortfolioService = null
@@ -25,6 +36,18 @@ class GroupingViewController extends Controller with AsOfDateSupport with Jsonp 
 
   @Inject
   private var userPref: UserPref = null
+  
+  def availableBenchmarkIndexes = AuthAction { implicit req =>
+    val indexes = marketIndexService.getIndexes()
+    val list = indexes.map { ind =>
+      Json.obj(
+        "id" -> ind.getId(),
+        "desc" -> ind.getDesc()
+      )
+    }
+    val json = Json.toJson(list)
+    respondJsonOrJsonp(json)
+  }
 
   def all = AuthAction { implicit req =>
     val grouping = userPref.getPortfolioGroupingSetting
