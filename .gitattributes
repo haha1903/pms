@@ -297,7 +297,6 @@ app/controllers/AccountsSummaryViewController.scala -text
 app/controllers/Application.scala -text
 app/controllers/AsOfDateSupport.scala -text
 app/controllers/CommonController.scala -text
-app/controllers/Dashboard2Controller.scala -text
 app/controllers/DashboardController.scala -text
 app/controllers/FundController.scala -text
 app/controllers/GroupingViewController.scala -text
