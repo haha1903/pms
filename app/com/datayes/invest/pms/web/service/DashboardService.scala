@@ -399,23 +399,23 @@ class DashboardService extends Logging {
     fundReturnHists
   }
 
-  def getAccountOverview(accountId: Long, asOfDate: LocalDate): AccountOverview = {
-    val unitNet = getOverviewValue(accountId, asOfDate, AccountValuationType.UNIT_NET)
-    val dailyReturn = getOverviewValue(accountId, asOfDate, AccountValuationType.DAILY_RETURN)
-    val marketValue = getOverviewValue(accountId, asOfDate, AccountValuationType.SECURITY)  // TODO this may not be correct
-    val cashValue = getOverviewValue(accountId, asOfDate, AccountValuationType.CASH)
-    val fundReturn = getFundReturnAsOfDate(accountId, asOfDate)
-    val pnl = getOverviewValue(accountId, asOfDate, AccountValuationType.PROFIT_LOSS)
-
-    AccountOverview(
-      unitNet,
-      dailyReturn,
-      marketValue,
-      cashValue,
-      fundReturn,
-      pnl
-    )
-  }
+//  def getAccountOverview(accountId: Long, asOfDate: LocalDate): AccountOverview = {
+//    val unitNet = getOverviewValue(accountId, asOfDate, AccountValuationType.UNIT_NET)
+//    val dailyReturn = getOverviewValue(accountId, asOfDate, AccountValuationType.DAILY_RETURN)
+//    val marketValue = getOverviewValue(accountId, asOfDate, AccountValuationType.SECURITY)  // TODO this may not be correct
+//    val cashValue = getOverviewValue(accountId, asOfDate, AccountValuationType.CASH)
+//    val fundReturn = getFundReturnAsOfDate(accountId, asOfDate)
+//    val pnl = getOverviewValue(accountId, asOfDate, AccountValuationType.PROFIT_LOSS)
+//
+//    AccountOverview(
+//      unitNet,
+//      dailyReturn,
+//      marketValue,
+//      cashValue,
+//      fundReturn,
+//      pnl
+//    )
+//  }
 
   private def getFundReturnAsOfDate(accountId: Long, asOfDate: LocalDate): BigDecimal = {
     val accValType = AccountValuationType.DAILY_RETURN

@@ -70,12 +70,12 @@ class DashboardController extends Controller with AsOfDateSupport with Jsonp wit
     respondJsonOrJsonp(json)
   }
 
-  def accountOverview(accountId: Long) = AuthAction { implicit req =>
-    val asOfDate = getAsOfDate()
-    val accountOverview = transaction {
-      dashboardService.getAccountOverview(accountId, asOfDate)
-    }
-    val json = Json.toJson(accountOverview)
-    respondJsonOrJsonp(json)
-  }
+//  def accountOverview(accountId: Long) = AuthAction { implicit req =>
+//    val asOfDate = getAsOfDate()
+//    val accountOverview = transaction {
+//      dashboardService.getAccountOverview(accountId, asOfDate)
+//    }
+//    val json = Json.toJson(accountOverview)
+//    respondJsonOrJsonp(json)
+//  }
 }

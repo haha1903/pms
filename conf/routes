@@ -25,7 +25,7 @@ GET     /accountsMgmt/dashboard/industryWeight                @controllers.Dashb
 GET     /accountsMgmt/dashboard/topHoldingStock               @controllers.DashboardController.topHoldingStock(accountId: Long, number: Integer)
 GET     /accountsMgmt/dashboard/performanceOverview           @controllers.DashboardController.performanceOverview(accountId: Long)
 GET     /accountsMgmt/dashboard/netValueTrend                 @controllers.DashboardController.netValueTrend(accountId: Long, benchmarkIndexTicker: String)
-GET     /accountsMgmt/dashboard/accountOverview               @controllers.DashboardController.accountOverview(accountId: Long)
+#GET     /accountsMgmt/dashboard/accountOverview               @controllers.DashboardController.accountOverview(accountId: Long)
 #GET     /accountsMgmt/dashboard/layoutConfig/save             @controllers.DashboardController.saveLayoutConfig(config: String)
 #GET     /accountsMgmt/dashboard/layoutConfig/get              @controllers.DashboardController.getLayoutConfig
 GET		/accountsMgmt/summaryView							  @controllers.AccountsSummaryViewController.getSummary
