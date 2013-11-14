@@ -197,8 +197,6 @@ app/com/datayes/invest/pms/logic/valuation/account/impl/AccountValuationLogicImp
 app/com/datayes/invest/pms/logic/valuation/position/PositionValuationLogic.scala -text
 app/com/datayes/invest/pms/logic/valuation/position/PositionValuationLogicFactory.scala -text
 app/com/datayes/invest/pms/logic/valuation/position/impl/MarketValuationLogic.scala -text
-app/com/datayes/invest/pms/mgmt/AccountDeleteHelper.java -text
-app/com/datayes/invest/pms/mgmt/AccountManager.java -text
 app/com/datayes/invest/pms/persist/Persist.java -text
 app/com/datayes/invest/pms/persist/PersistException.java -text
 app/com/datayes/invest/pms/persist/PersistModule.java -text
@@ -274,7 +272,7 @@ app/com/datayes/invest/pms/web/model/fastjson/asset/AssetTreeConverter.scala -te
 app/com/datayes/invest/pms/web/model/gson/gson.scala -text
 app/com/datayes/invest/pms/web/model/models.scala -text
 app/com/datayes/invest/pms/web/model/writes.scala -text
-app/com/datayes/invest/pms/web/service/AccountMgmtService.scala -text
+app/com/datayes/invest/pms/web/service/AccountDeleteHelper.java -text
 app/com/datayes/invest/pms/web/service/AccountService.scala -text
 app/com/datayes/invest/pms/web/service/AccountsSummaryService.scala -text
 app/com/datayes/invest/pms/web/service/AssetTreeMaker.scala -text

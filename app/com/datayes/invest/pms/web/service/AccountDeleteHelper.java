@@ -1,4 +1,4 @@
-package com.datayes.invest.pms.mgmt;
+package com.datayes.invest.pms.web.service;
 
 import java.util.List;
 
@@ -59,7 +59,7 @@ public class AccountDeleteHelper {
     @Inject
     private TransactionDao transactionDao;
 
-    void deleteAccount(Long accountId) {
+    public void deleteAccount(Long accountId) {
         Account account = accountDao.findById(accountId);
         if (account == null) {
             throw new RuntimeException("Failed to load account by id " + accountId);

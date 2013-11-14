@@ -8,17 +8,11 @@ import javax.inject.Inject
 import play.api.libs.json.Json
 import com.datayes.invest.pms.tools.importer.ImportManager
 import controllers.util.Jsonp
-import com.datayes.invest.pms.web.service.AccountMgmtService
 import com.datayes.invest.pms.util.progress.ProgressStatus
 import com.datayes.invest.pms.web.sso.AuthAction
 
 class ImportController extends Controller with Jsonp with Logging {
 
-//  @Inject
-//  private var tradeReader: TradeReader = null
-
-  @Inject
-  private var accountMgmtService: AccountMgmtService = null
   
   @Inject
   private var importManager: ImportManager = null
@@ -75,21 +69,21 @@ class ImportController extends Controller with Jsonp with Logging {
     respondJsonOrJsonp(json)
   }
 
-  def deleteAccount(accountId: Long) = AuthAction { implicit request =>
-    val (success, msg) = try {
-      accountMgmtService.deleteAccount(accountId)
-      (true, "Account #" + accountId + " deleted")
-    } catch {
-      case e: Throwable =>
-        logger.warn("Error deleting account #{}", accountId, e)
-        (false, e.getMessage)
-    }
-    val json = Json.obj(
-      "success" -> success,
-      "message" -> msg
-    )
-    respondJsonOrJsonp(json)
-  }
+//  def deleteAccount(accountId: Long) = AuthAction { implicit request =>
+//    val (success, msg) = try {
+//      accountMgmtService.deleteAccount(accountId)
+//      (true, "Account #" + accountId + " deleted")
+//    } catch {
+//      case e: Throwable =>
+//        logger.warn("Error deleting account #{}", accountId, e)
+//        (false, e.getMessage)
+//    }
+//    val json = Json.obj(
+//      "success" -> success,
+//      "message" -> msg
+//    )
+//    respondJsonOrJsonp(json)
+//  }
 
   // TODO what is this used for?
 //  def importStockIndexFutureTransactionCsv = AuthAction { implicit req =>
