@@ -31,8 +31,8 @@ GET     /accountsMgmt/dashboard/layoutConfig/get              @controllers.Dashb
 GET		/accountsMgmt/summaryView							  @controllers.AccountsSummaryViewController.getSummary
 
 # Import
-POST    /importAccount/upload                                 @controllers.ImportController.uploadAccountCsv
-GET     /importAccount/status                                 @controllers.ImportController.uploadAccountCsvStatus(uuid: String)
+#POST    /importAccount/upload                                 @controllers.ImportController.uploadAccountCsv
+#GET     /importAccount/status                                 @controllers.ImportController.uploadAccountCsvStatus(uuid: String)
 #GET     /deleteAccount                                        @controllers.ImportController.deleteAccount(accountId: Long)
 
 # Proxy
@@ -52,6 +52,8 @@ GET     /common/industries                                   @controllers.Common
 
 GET     /account/list                                        @controllers.AccountController.list
 GET     /account/delete                                      @controllers.AccountController.delete
+POST    /account/import/upload                               @controllers.AccountController.importUpload
+GET     /account/import/status                               @controllers.AccountController.importStatus
 
 
 ###################

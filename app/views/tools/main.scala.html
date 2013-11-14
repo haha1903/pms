@@ -32,15 +32,14 @@
     <p>
 
     <h3>Test Upload Account Import CSV</h3>
-    <form method="post" action="@routes.ImportController.uploadAccountCsv" enctype="multipart/form-data">
+    <form method="post" action="@routes.AccountController.importUpload" enctype="multipart/form-data">
         <input type="file" name="upload">
         <p>
             <input type="submit">
         </p>
     </form>
 
-    查看导入进度: http://@{host}/importAccount/status?uuid=<br>
-    删除组合: http://@{host}/deleteAccount?accountId=<br>
+    查看导入进度: http://@{host}/account/import/status?uuid=<br>
     <p>
 
     <h3>Test File Upload</h3>

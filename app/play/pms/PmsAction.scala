@@ -1,7 +1,6 @@
 package play.pms
 
 import com.datayes.invest.pms.logging.Logging
-
 import play.api.http.Status
 import play.api.libs.json.JsString
 import play.api.libs.json.JsValue
@@ -13,17 +12,19 @@ import play.api.mvc.Request
 import play.api.mvc.Results.BadRequest
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.Results.Ok
+import play.api.mvc.Result
+import play.api.mvc.BodyParser
 
 
 trait PmsActionBuilder extends Logging {
   
-  private val useDyResponse = false;
+  private val useDyResponse = false
   
-  def apply(block: Request[AnyContent] => JsValue): Action[AnyContent] = new Action[AnyContent] {
+  def apply[A](bodyParser: BodyParser[A])(block: Request[A] => JsValue): Action[A] = new Action[A] {
     
-    def parser = BodyParsers.parse.anyContent
+    def parser = bodyParser
     
-    def apply(ctx: Request[AnyContent]) = {
+    def apply(ctx: Request[A]) = {
       try {
         val json = block(ctx)
         val respjson = if (useDyResponse) {
@@ -36,7 +37,7 @@ trait PmsActionBuilder extends Logging {
       } catch {
         case e: NotImplementedError => throw new RuntimeException(e)
         case e: LinkageError => throw new RuntimeException(e)
-        case e @ (_: MissingParamException | _: ParamFormatException) =>
+        case e: ClientException =>
           if (useDyResponse) {
             val dyresp = DYResponse(Status.BAD_REQUEST, e.getMessage(), JsString(e.getStackTraceString))
             val respjson = Json.toJson(dyresp)
@@ -58,7 +59,9 @@ trait PmsActionBuilder extends Logging {
     }
   }
   
-  def apply(block: => JsValue): Action[AnyContent] = apply(_ => block)
+  def apply(block: Request[AnyContent] => JsValue): Action[AnyContent] = apply(BodyParsers.parse.anyContent)(block)
+  
+  def apply(block: => JsValue): Action[AnyContent] = apply(BodyParsers.parse.anyContent)(_ => block)
 }
 
 object PmsAction extends PmsActionBuilder
