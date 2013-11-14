@@ -50,7 +50,7 @@ class GroupingViewController extends Controller with AsOfDateSupport with Jsonp 
   }
 
   def all = AuthAction { implicit req =>
-    val grouping = userPref.getPortfolioGroupingSetting
+    val grouping = userPref.getPortfolioGroupingSettings()
     val asOfDateOpt = getAsOfDateOpt
     val filterParam = getFilterParam
     val benchmarkIndexOpt = req.getQueryString("benchmarkIndex")
@@ -80,11 +80,11 @@ class GroupingViewController extends Controller with AsOfDateSupport with Jsonp 
   }
 
   def getGroupingSetting = AuthAction { implicit req =>
-    val setting = userPref.getPortfolioGroupingSetting().flatMap { assetNodeType =>
-      userPref.availablePortfolioGroupingItems.find(_.nodeType == assetNodeType)
+    val setting = userPref.getPortfolioGroupingSettings().flatMap { assetNodeType =>
+      userPref.getPortfolioGroupingItems().find(_.nodeType == assetNodeType)
     }
     val json = Json.obj(
-      "availableItems" -> userPref.availablePortfolioGroupingItems.map(groupingItemToJson(_)),
+      "availableItems" -> userPref.getPortfolioGroupingItems.map(groupingItemToJson(_)),
       "setting" -> setting.map(groupingItemToJson(_))
     )
     respondJsonOrJsonp(json)
@@ -102,7 +102,7 @@ class GroupingViewController extends Controller with AsOfDateSupport with Jsonp 
     logger.debug("Saving grouping settings: {}", settingList.toString)
     val (result, message) = try {
       val setting = settingList.map(AssetNodeType.withName(_))
-      userPref.savePortfolioGroupingSetting(setting)
+      userPref.setPortfolioGroupingSettings(setting)
       (true, "Portfolio grouping settings saved succesfully")
     } catch {
       case e: Throwable =>

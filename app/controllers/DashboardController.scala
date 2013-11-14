@@ -8,7 +8,6 @@ import com.datayes.invest.pms.web.model.models.ModelWrites._
 import play.api.mvc._
 import javax.inject.Inject
 import com.datayes.invest.pms.web.service.DashboardService
-import com.datayes.invest.pms.userpref.UserPref
 import play.api.libs.json.Json
 import com.datayes.invest.pms.web.sso.AuthAction
 
@@ -17,9 +16,6 @@ class DashboardController extends Controller with AsOfDateSupport with Jsonp wit
 
   @Inject
   private var dashboardService: DashboardService = null
-  
-  @Inject
-  private var userPref: UserPref = null
 
   def getAssetClassWeight(accountId: Long) = AuthAction { implicit req =>
     val asOfDate = getAsOfDate()
@@ -49,28 +45,6 @@ class DashboardController extends Controller with AsOfDateSupport with Jsonp wit
       dashboardService.gettopHoldingStock(accountId, number, asOfDate)
     }
     val json = Json.toJson(topHoldingStock)
-    respondJsonOrJsonp(json)
-  }
-  
-  def saveLayoutConfig(content: String) = AuthAction { implicit req =>
-    val (result, message) = try {
-      userPref.saveLayoutConfig(content)
-      (true, "layout config saved succesfully")
-    } catch {
-      case e: Throwable => (false, e.getMessage)
-    }
-    val json = Json.obj(
-      "success" -> result,
-      "message" -> message
-    )
-    respondJsonOrJsonp(json)
-  }
-  
-  def getLayoutConfig() = AuthAction { implicit req =>
-    val config = Json.toJson(userPref.getLayoutConfig)
-    val json = Json.obj(
-      "config" -> config
-    )
     respondJsonOrJsonp(json)
   }
   

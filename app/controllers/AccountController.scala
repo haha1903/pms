@@ -1,21 +1,20 @@
 package controllers
 
 import org.joda.time.LocalDate
+
 import com.datayes.invest.pms.logging.Logging
-import com.datayes.invest.pms.persist.dsl.transaction
+import com.datayes.invest.pms.tools.importer.ImportManager
 import com.datayes.invest.pms.web.model.writes.AccountWrites
 import com.datayes.invest.pms.web.service.AccountService
+
 import javax.inject.Inject
+import play.api.libs.json.JsNull
 import play.api.libs.json.Json
+import play.api.libs.json.Json.toJsFieldJsValueWrapper
+import play.pms.ClientException
 import play.pms.PmsAction
 import play.pms.PmsController
-import play.api.libs.json.JsNull
-import play.api.mvc.Action
-import com.datayes.invest.pms.tools.importer.ImportManager
-import play.pms.MissingParamException
-import play.pms.ClientException
-import play.api.mvc.Request
-import play.api.mvc.AnyContent
+
 
 class AccountController extends PmsController with Logging {
   
@@ -49,9 +48,7 @@ class AccountController extends PmsController with Logging {
         logger.debug("Account import csv file received: " + tmpFile)
         val resp = importManager.importAccountCsv(tmpFile, true)
 
-        val json = Json.obj(
-          "uuid" -> resp.uuid
-        )
+        val json = Json.obj("uuid" -> resp.uuid)
         json
 
       }.getOrElse {

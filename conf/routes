@@ -26,8 +26,8 @@ GET     /accountsMgmt/dashboard/topHoldingStock               @controllers.Dashb
 GET     /accountsMgmt/dashboard/performanceOverview           @controllers.DashboardController.performanceOverview(accountId: Long)
 GET     /accountsMgmt/dashboard/netValueTrend                 @controllers.DashboardController.netValueTrend(accountId: Long, benchmarkIndexTicker: String)
 GET     /accountsMgmt/dashboard/accountOverview               @controllers.DashboardController.accountOverview(accountId: Long)
-GET     /accountsMgmt/dashboard/layoutConfig/save             @controllers.DashboardController.saveLayoutConfig(config: String)
-GET     /accountsMgmt/dashboard/layoutConfig/get              @controllers.DashboardController.getLayoutConfig
+#GET     /accountsMgmt/dashboard/layoutConfig/save             @controllers.DashboardController.saveLayoutConfig(config: String)
+#GET     /accountsMgmt/dashboard/layoutConfig/get              @controllers.DashboardController.getLayoutConfig
 GET		/accountsMgmt/summaryView							  @controllers.AccountsSummaryViewController.getSummary
 
 # Import
@@ -48,8 +48,10 @@ GET     /assets/*file                                         controllers.Assets
 # New interface
 ###################
 
+# Common
 GET     /common/industries                                   @controllers.CommonController.industries
 
+# Account
 GET     /account/list                                        @controllers.AccountController.list
 GET     /account/delete                                      @controllers.AccountController.delete
 POST    /account/import/upload                               @controllers.AccountController.importUpload
@@ -60,6 +62,9 @@ GET     /summary                                             @controllers.Summar
 
 # Fund
 GET     /fund/summary                                        @controllers.FundController.getSummary
+GET     /fund/dashboard/layout/get                           @controllers.Dashboard2Controller.getLayout
+GET     /fund/dashboard/layout/set                           @controllers.Dashboard2Controller.setLayout
+
 
 ###################
 # Test and Monitor

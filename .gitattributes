@@ -254,6 +254,8 @@ app/com/datayes/invest/pms/tools/importer/SimulationRunner.scala -text
 app/com/datayes/invest/pms/tools/importer/SimulationRunnerCacheFlusher.java -text
 app/com/datayes/invest/pms/tools/importer/SimulationRunnerCacheLoader.java -text
 app/com/datayes/invest/pms/userpref/UserPref.scala -text
+app/com/datayes/invest/pms/userpref/UserPrefModule.java -text
+app/com/datayes/invest/pms/userpref/impl/UserPrefImpl.scala -text
 app/com/datayes/invest/pms/util/BeanException.java -text
 app/com/datayes/invest/pms/util/BeanUtil.java -text
 app/com/datayes/invest/pms/util/BigDecimalConstants.scala -text
@@ -295,6 +297,7 @@ app/controllers/AccountsSummaryViewController.scala -text
 app/controllers/Application.scala -text
 app/controllers/AsOfDateSupport.scala -text
 app/controllers/CommonController.scala -text
+app/controllers/Dashboard2Controller.scala -text
 app/controllers/DashboardController.scala -text
 app/controllers/FundController.scala -text
 app/controllers/GroupingViewController.scala -text

@@ -2,35 +2,17 @@ package com.datayes.invest.pms.userpref
 
 import com.datayes.invest.pms.web.model.models.AssetNodeType
 
-class UserPref {
+trait UserPref {
 
-  val availablePortfolioGroupingItems: List[GroupingItem] = List(
-    GroupingItem(AssetNodeType.account, "组合"),
-    GroupingItem(AssetNodeType.assetClass, "资产类型"),
-    GroupingItem(AssetNodeType.industry, "行业")
-  )
-
-  private var portfolioGroupingSetting = List(AssetNodeType.account)    // Default grouping
-    
-  private var layoutConfig: String = null
-
-  def getPortfolioGroupingSetting() = portfolioGroupingSetting
-
-  def savePortfolioGroupingSetting(setting: List[AssetNodeType.Type]): Unit = {
-    for (s <- setting) {
-      val availableItems = availablePortfolioGroupingItems.map(_.nodeType)
-      if (! availableItems.contains(s)) {
-        throw new RuntimeException("Invalid portfolio grouping setting: " + s)
-      }
-    }
-    this.portfolioGroupingSetting = setting
-  }
+  def getPortfolioGroupingSettings(): List[AssetNodeType.Type]
   
-  def getLayoutConfig() = layoutConfig
+  def setPortfolioGroupingSettings(setting: List[AssetNodeType.Type])
   
-  def saveLayoutConfig(_layoutConfig: String): Unit = {
-    layoutConfig = _layoutConfig
-  }
+  def getPortfolioGroupingItems(): List[GroupingItem]
+  
+  def getDashboardLayoutConfig(): String
+  
+  def setDashboardLayoutConfig(config: String): Unit
 }
 
 case class GroupingItem(nodeType: AssetNodeType.Type, displayName: String)
