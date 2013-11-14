@@ -58,6 +58,9 @@ GET     /account/import/status                               @controllers.Accoun
 # Summary
 GET     /summary                                             @controllers.SummaryController.getSummary
 
+# Fund
+GET     /fund/summary                                        @controllers.FundController.getSummary(accountId: Long)
+
 ###################
 # Test and Monitor
 ###################
