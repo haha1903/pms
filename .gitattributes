@@ -304,6 +304,7 @@ app/play/pms/DYResponse.scala -text
 app/play/pms/ParamExtractor.scala -text
 app/play/pms/PmsAction.scala -text
 app/play/pms/PmsController.scala -text
+app/play/pms/exceptions.scala -text
 app/test/TestIdGenerator.java -text
 app/test/TestPersist.java -text
 app/views/debug/mds.scala.html -text

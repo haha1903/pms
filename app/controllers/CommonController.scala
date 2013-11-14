@@ -10,6 +10,7 @@ import play.api.mvc.Controller
 import play.pms.PmsAction
 import play.pms.PmsController
 import org.joda.time.LocalDate
+import play.api.libs.json.JsNumber
 
 class CommonController extends PmsController with Logging {
   
@@ -17,12 +18,14 @@ class CommonController extends PmsController with Logging {
   private var portfolioService: PortfolioService = null
 
   def industries = PmsAction { implicit req =>
-    val asOfDate: LocalDate = param("asOfDate").asLocalDate
-    
-    val inds = transaction {
-        portfolioService.getAvailableIndustry()
-      }
-      val arr = Json.toJson(inds)
-      arr
+    val asOfDate: Option[Int] = param("asOfDate")
+    println(asOfDate)
+    JsNumber(asOfDate.get)
+//    
+//    val inds = transaction {
+//      portfolioService.getAvailableIndustry()
+//    }
+//    val arr = Json.toJson(inds)
+//    arr
   }
 }

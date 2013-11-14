@@ -33,9 +33,11 @@ object Global extends WithFilters(new LoggingFilter) with Logging {
   }
   
   private def initializeSystem() {
-    val scheduler = injector.getInstance(classOf[SystemScheduler])
-    val thread = new Thread(scheduler)
-    thread.start()
+    if (runningMode == RunningMode.NORMAL) {
+      val scheduler = injector.getInstance(classOf[SystemScheduler])
+      val thread = new Thread(scheduler)
+      thread.start()
+    }
   }
   
   private def createInjectors(): Unit = {
