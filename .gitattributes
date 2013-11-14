@@ -290,6 +290,7 @@ app/com/datayes/invest/pms/web/sso/UserContextHandler.scala -text
 app/controllers/AccountsSummaryViewController.scala -text
 app/controllers/Application.scala -text
 app/controllers/AsOfDateSupport.scala -text
+app/controllers/CommonController.scala -text
 app/controllers/DashboardController.scala -text
 app/controllers/GroupingViewController.scala -text
 app/controllers/ImportController.scala -text
@@ -299,6 +300,10 @@ app/controllers/tools/RunProcessController.scala -text
 app/controllers/util/DecimalWriters.scala -text
 app/controllers/util/Jsonp.scala -text
 app/net/jcip/annotations/NotThreadSafe.java -text
+app/play/pms/DYResponse.scala -text
+app/play/pms/ParamExtractor.scala -text
+app/play/pms/PmsAction.scala -text
+app/play/pms/PmsController.scala -text
 app/test/TestIdGenerator.java -text
 app/test/TestPersist.java -text
 app/views/debug/mds.scala.html -text

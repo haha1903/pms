@@ -42,8 +42,16 @@ GET     /deleteAccount                                        @controllers.Impor
 GET     /attribution                                          @controllers.ProxyController.attribution
 POST    /attrupload                                           @controllers.ProxyController.upload
 
+
+GET     /common/industries                                   @controllers.CommonController.industries
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file                                         controllers.Assets.at(path="/public", file)
+
+
+###################
+# New interface
+###################
 
 
 ###################
