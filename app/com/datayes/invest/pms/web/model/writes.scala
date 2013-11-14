@@ -2,10 +2,11 @@ package com.datayes.invest.pms.web.model
 
 import org.joda.time.LocalDate
 import org.joda.time.LocalDateTime
-
 import play.api.libs.json.JsNull
 import play.api.libs.json.JsString
 import play.api.libs.json.Writes
+import com.datayes.invest.pms.entity.account.Account
+import play.api.libs.json.Json
 
 package object writes {
 
@@ -25,5 +26,18 @@ package object writes {
     } else {
       JsString(o.toString())
     }
+  }
+  
+  implicit object AccountWrites extends Writes[Account] {
+    
+    def writes(o: Account) = Json.obj(
+      "id" -> o.getId().toLong,
+      "name" -> o.getAccountName(),
+      "accountNo" -> o.getAccountNo(),
+      "countryCode" -> o.getCountryCode(),
+      "currencyCode" -> o.getCurrencyCode(),
+      "classCode" -> o.getAccountClass(),
+      "openDate" -> o.getOpenDate()
+    )
   }
 }

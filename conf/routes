@@ -18,11 +18,8 @@ GET     /accountMgmt/groupingView/availableBenchmarkIndexes   @controllers.Group
 GET     /accountMgmt/groupingView/chart                       @controllers.GroupingViewController.chart(view: String, accountId: Long)
 GET     /accountMgmt/groupingView/getGroupingSetting          @controllers.GroupingViewController.getGroupingSetting
 GET     /accountMgmt/groupingView/saveGroupingSetting         @controllers.GroupingViewController.saveGroupingSetting(setting: String)
-# !!!Need to check if there is s after account!!!
-GET     /accountsMgmt/groupingView/filter/availableIndustry   @controllers.GroupingViewController.getAvailableIndustry
 
 # Dashboard
-GET     /accountsMgmt/dashboard/accountList                   @controllers.DashboardController.getAccountList
 GET     /accountsMgmt/dashboard/assetClassWeight              @controllers.DashboardController.getAssetClassWeight(accountId: Long)
 GET     /accountsMgmt/dashboard/industryWeight                @controllers.DashboardController.getIndustryWeight(accountId: Long)
 GET     /accountsMgmt/dashboard/topHoldingStock               @controllers.DashboardController.topHoldingStock(accountId: Long, number: Integer)

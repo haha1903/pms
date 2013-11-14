@@ -21,14 +21,6 @@ class DashboardController extends Controller with AsOfDateSupport with Jsonp wit
   @Inject
   private var userPref: UserPref = null
 
-  def getAccountList = AuthAction { implicit req =>
-    val accounts = transaction {
-      dashboardService.getAccountList()
-    }
-    val json = Json.toJson(accounts)
-    respondJsonOrJsonp(json)
-  }
-
   def getAssetClassWeight(accountId: Long) = AuthAction { implicit req =>
     val asOfDate = getAsOfDate()
     val assetClassWeights = transaction {

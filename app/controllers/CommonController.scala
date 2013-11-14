@@ -12,15 +12,16 @@ import play.pms.PmsController
 import org.joda.time.LocalDate
 import play.api.libs.json.JsNumber
 import play.api.libs.json.JsString
+import com.datayes.invest.pms.web.service.CommonService
 
 class CommonController extends PmsController with Logging {
   
   @Inject
-  private var portfolioService: PortfolioService = null
+  private var commonService: CommonService = null
 
   def industries = PmsAction { implicit req =>
     val inds = transaction {
-      portfolioService.getAvailableIndustry()
+      commonService.getIndustries()
     }
     val arr = Json.toJson(inds)
     arr
