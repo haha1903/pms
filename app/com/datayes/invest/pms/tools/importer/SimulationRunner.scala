@@ -77,7 +77,7 @@ class SimulationRunner extends Thread with Logging {
       fireProgressEvent(100, ProgressStatus.COMPLETED)
     } catch {
       case e: Throwable =>
-        logger.debug("Error processing imported account #" + account.getId, e)
+        logger.warn("Error processing imported account #" + account.getId, e)
         fireProgressEvent(percentComplete, ProgressStatus.FAILED)
     }
   }

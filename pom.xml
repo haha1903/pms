@@ -88,17 +88,5 @@
 		</plugins>
 	</build>
 
-	<distributionManagement>
-		<repository>
-			<id>dist</id>
-			<name>dist-release</name>
-			<url>http://artifactory.datayes.com/artifactory/invest-platform-release</url>
-		</repository>
-		<snapshotRepository>
-			<id>dist</id>
-			<name>dist-snapshot</name>
-			<url>http://artifactory.datayes.com/artifactory/invest-platform-release</url>
-		</snapshotRepository>
-	</distributionManagement>
 </project>
 

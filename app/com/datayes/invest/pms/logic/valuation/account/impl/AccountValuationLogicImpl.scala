@@ -520,27 +520,34 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
     unitNet
   }
 
-  private def findNetWorth(accountId: Long, asOfDate: LocalDate): BigDecimal = {
-
+  private def findNetWorth(account: Account, asOfDate: LocalDate): BigDecimal = {
     val netWorthAccValType = AccountValuationType.NET_WORTH
-    val pk = new AccountValuationHist.PK(accountId, netWorthAccValType.getDbValue(), asOfDate)
+    val pk = new AccountValuationHist.PK(account.getId(), netWorthAccValType.getDbValue(), asOfDate)
     val hist = accountValuationHistDao.findById(pk)
 
     if (hist != null) {
       hist.getValueAmount
     } else {
-      logger.error("Failed to find net worth of account (id = {}) on {}", accountId, asOfDate)
+      logger.error("Failed to find net worth of account (id = {}) on {}", account.getId(), asOfDate)
       BigDecimalConstants.ZERO
     }
+    
   }
   
-  private def findInitNetWorth(accountId: Long): BigDecimal = {
-    val initHist = accountValuationInitDao.findByAccountId(accountId)
-    if (null == initHist) {
-      logger.error("Failed to find initial net worth of account (id = {})", accountId)
-      BigDecimalConstants.ZERO
+  private def findPreviousNetWorth(account: Account, asOfDate: LocalDate): BigDecimal = {
+    val openDay = account.getOpenDate().toLocalDate()
+    if (openDay.isBefore(asOfDate)) {
+      val date = asOfDate.minusDays(1);
+      findNetWorth(account, date)
     } else {
-      initHist.getValueAmount();
+      // find previous net worth from account valuation init
+      val initHist = accountValuationInitDao.findByAccountId(account.getId)
+      if (null == initHist) {
+        logger.error("Failed to find initial net worth of account (id = {})", account.getId)
+        BigDecimalConstants.ZERO
+      } else {
+        initHist.getValueAmount();
+      }
     }
   }
 
@@ -552,13 +559,8 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
 
     val accValType = AccountValuationType.DAILY_RETURN
 
-    val presentNetWorth = findNetWorth(account.getId, asOfDate)
-    val previousDate = asOfDate.minusDays(1)
-    val previousNetWorth = if (account.getOpenDate().toLocalDate().equals(asOfDate)) {
-      findInitNetWorth(account.getId)
-    } else {
-      findNetWorth(account.getId, asOfDate.minusDays(1))
-    }
+    val presentNetWorth = findNetWorth(account, asOfDate)
+    val previousNetWorth = findPreviousNetWorth(account, asOfDate)
 
     val dailyReturn = {
       if (previousNetWorth != 0) {
@@ -585,8 +587,8 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
 
     val accValType = AccountValuationType.PROFIT_LOSS
 
-    val presentNetWorth = findNetWorth(account.getId, asOfDate)
-    val previousNetWorth = findNetWorth(account.getId, asOfDate.minusDays(1))
+    val presentNetWorth = findNetWorth(account, asOfDate)
+    val previousNetWorth = findPreviousNetWorth(account, asOfDate)
 
     //TODO: There is no additional data now
     //期末市值 + 卖出金额 + 分红金额 + 特殊业务流出 - （期初市值 + 买入金额 + 特殊业务流入）
