@@ -62,6 +62,11 @@ GET     /summary                                             @controllers.Summar
 
 # Fund
 GET     /fund/summary                                        @controllers.FundController.getSummary
+GET     /fund/netTrend                                       @controllers.FundController.getNetTrend
+GET     /fund/industryProportion                             @controllers.FundController.getIndustryProportion
+GET     /fund/performanceOverview                            @controllers.FundController.getPerformanceOverview
+GET     /fund/assetProportion                                @controllers.FundController.getAssetProportion
+GET     /fund/topHoldingStock                                @controllers.FundController.getTopHoldingStock
 GET     /fund/dashboard/layout/get                           @controllers.FundController.getDashboardLayout
 GET     /fund/dashboard/layout/set                           @controllers.FundController.setDashboardLayout
 
