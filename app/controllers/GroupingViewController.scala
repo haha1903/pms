@@ -116,15 +116,6 @@ class GroupingViewController extends Controller with AsOfDateSupport with Jsonp 
     respondJsonOrJsonp(json)
   }
 
-  def getAvailableIndustry = AuthAction { implicit req =>
-    val availableIndustry = transaction {
-      portfolioService.getAvailableIndustry()
-    }
-
-    val jArray = Json.toJson(availableIndustry)
-    respondJsonOrJsonp(jArray)
-  }
-
   private def getFilterParam(implicit req: Request[AnyContent]): FilterParam = {
     val assetClass = getParameterOption("assetClass").map(AssetClassType.withName(_))
     val exchange = getParameterOption("exchange")

@@ -4,9 +4,7 @@ import java.util.List;
 
 public interface IndustryService {
 	
-//	List<String> getDataSources();
-
-    List<String> getAvailableIndustries();
+    List<String> getIndustries();
     
     String getIndustryBySecurityId(Long securityId);
 }

@@ -19,8 +19,6 @@ class PortfolioService extends Logging {
   @Inject
   private var assetsLoader: AssetsLoader = null
   
-  @Inject
-  private var industryService: IndustryService = null
 
   // TODO Temporary variables for testing
   private var _totalNumOfPositions = 0
@@ -37,9 +35,6 @@ class PortfolioService extends Logging {
     treeMaker.create(filteredAssets)
   }
 
-  def getAvailableIndustry(): List[String] = {
-    industryService.getAvailableIndustries().toList
-  }
 
   private def createAccountIdNameMap(accounts: List[Account]): Map[Long, String] =
     (for (a <- accounts) yield (a.getId.toLong -> a.getAccountName)).toMap

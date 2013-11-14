@@ -11,15 +11,15 @@ package object models {
    * Account
    */
 
-  case class Account(
-    id: Long,
-    name: Option[String],
-    accountNo: Option[String],
-    countryCode: String,
-    currencyCode: String,
-    classCode: String,
-    openDate: Option[LocalDateTime]
-  )
+//  case class Account(
+//    id: Long,
+//    name: Option[String],
+//    accountNo: Option[String],
+//    countryCode: String,
+//    currencyCode: String,
+//    classCode: String,
+//    openDate: Option[LocalDateTime]
+//  )
 
 
   /*
@@ -229,17 +229,17 @@ package object models {
      * Account
      */
 
-    implicit object AccountWrites extends Writes[Account] {
-      def writes(o: Account) = Json.obj(
-        "id" -> o.id,
-        "name" -> o.name,
-        "accountNo" -> o.accountNo,
-        "countryCode" -> o.countryCode,
-        "currencyCode" -> o.currencyCode,
-        "classCode" -> o.classCode,
-        "openDate" -> o.openDate
-      )
-    }
+//    implicit object AccountWrites extends Writes[Account] {
+//      def writes(o: Account) = Json.obj(
+//        "id" -> o.id,
+//        "name" -> o.name,
+//        "accountNo" -> o.accountNo,
+//        "countryCode" -> o.countryCode,
+//        "currencyCode" -> o.currencyCode,
+//        "classCode" -> o.classCode,
+//        "openDate" -> o.openDate
+//      )
+//    }
 
 
     /*

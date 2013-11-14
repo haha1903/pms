@@ -7,18 +7,16 @@ import org.joda.time.LocalDate
 trait ParamExtractor {
 
   protected def param(name: String)(implicit request: Request[AnyContent]) = Param(name, request)
-  
-//  protected def param[T](name: String, default: T)(implicit request: Request[AnyContent]) = ParamDefault(Param(name, request), default)
-  
-  /*
-   * String param
-   */
+
   case class Param(name: String, request: Request[AnyContent]) {
     def default[T](v: T) = ParamDefault[T](this, v)
   }
 
   case class ParamDefault[T](underlying: Param, default: T)
   
+  /*
+   * Implicit conversions
+   */
   implicit def param2String(p: Param): String = {
     val s = p.request.getQueryString(p.name).getOrElse(throw new MissingParamException(p.name))
     s
@@ -27,8 +25,7 @@ trait ParamExtractor {
   implicit def param2StringOpt(p: Param): Option[String] = p.request.getQueryString(p.name)
   
   implicit def paramDefault2String(p: ParamDefault[String]): String = {
-    val u = p.underlying
-    u.request.getQueryString(u.name).getOrElse(p.default)
+    param2StringOpt(p.underlying).getOrElse(p.default)
   }
   
   implicit def param2Int(p: Param): Int = {
@@ -43,9 +40,60 @@ trait ParamExtractor {
     }
   }
   
-  private def parseInt(name: String, v: String): Int =  try {
-    Integer.parseInt(v)
+  implicit def paramDefault2Int(p: ParamDefault[Int]): Int = {
+    param2IntOpt(p.underlying).getOrElse(p.default)
+  }
+  
+  implicit def param2Long(p: Param): Long = {
+    val s = p.request.getQueryString(p.name).getOrElse(throw new MissingParamException(p.name))
+    parseLong(p.name, s)
+  }
+  
+  implicit def param2LongOpt(p: Param): Option[Long] = {
+    p.request.getQueryString(p.name) match {
+      case Some(s) => Some(parseLong(p.name, s))
+      case None => None
+    }
+  }
+  
+  implicit def paramDefault2Long(p: ParamDefault[Int]): Long = {
+    param2LongOpt(p.underlying).getOrElse(p.default)
+  }
+  
+  implicit def param2LocalDate(p: Param): LocalDate = {
+    val s = p.request.getQueryString(p.name).getOrElse(throw new MissingParamException(p.name))
+    parseLocalDate(p.name, s)
+  }
+  
+  implicit def param2LocalDateOpt(p: Param): Option[LocalDate] = {
+    p.request.getQueryString(p.name) match {
+      case Some(s) => Some(parseLocalDate(p.name, s))
+      case None => None
+    }
+  }
+  
+  implicit def paramDefault2LocalDate(p: ParamDefault[LocalDate]): LocalDate = {
+    param2LocalDateOpt(p.underlying).getOrElse(p.default)
+  }
+  
+  /*
+   * Helper functions
+   */
+  private def parseInt(name: String, s: String): Int =  try {
+    Integer.parseInt(s)
   } catch {
-    case e: NumberFormatException => throw new ParamFormatException(name, "int", v, e)
+    case e: NumberFormatException => throw new ParamFormatException(name, "int", s, e)
+  }
+  
+  private def parseLong(name: String, s: String): Long =  try {
+    java.lang.Long.parseLong(s)
+  } catch {
+    case e: NumberFormatException => throw new ParamFormatException(name, "long", s, e)
+  }
+  
+  private def parseLocalDate(name: String, s: String): LocalDate = try {
+    LocalDate.parse(s)
+  } catch {
+    case e: IllegalArgumentException => throw new ParamFormatException(name, "date", s, e)
   }
 }

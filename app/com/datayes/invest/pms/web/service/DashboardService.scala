@@ -7,7 +7,6 @@ import scala.collection.mutable
 import scala.BigDecimal._
 import util.control.Breaks._
 import com.datayes.invest.pms.logging.Logging
-import com.datayes.invest.pms.dao.account.AccountDao
 import com.datayes.invest.pms.dao.account.AccountValuationHistDao
 import com.datayes.invest.pms.dao.security.EquityDao
 import com.datayes.invest.pms.service.marketdata.MarketDataService
@@ -22,9 +21,6 @@ import com.datayes.invest.pms.entity.account.AccountValuationHist
 
 
 class DashboardService extends Logging {
-
-  @Inject
-  private var accountDao: AccountDao = null
 
   @Inject
   private var assetsLoader: AssetsLoader = null
@@ -43,22 +39,6 @@ class DashboardService extends Logging {
   
   @Inject
   private var securityDao: SecurityDao = null
-
-
-  def getAccountList(): Seq[Account] = {
-    val accounts = accountDao.findEffectiveAccounts(LocalDate.now)
-    accounts.map { a =>
-      Account(
-        id = a.getId,
-        name = Option(a.getAccountName),
-        accountNo = Option(a.getAccountNo),
-        countryCode = a.getCountryCode,
-        currencyCode = a.getCurrencyCode,
-        classCode = a.getAccountClass,
-        openDate = Option(a.getOpenDate).map(p => LocalDateTime.fromDateFields(p.toDate))
-      )
-    }
-  }
 
   def getAssetClassWeight(accountId: Long, asOfDate: LocalDate): Seq[AssetClassWeight] = {
     val securityAssets = assetsLoader.loadAssets(accountId, asOfDate, None)

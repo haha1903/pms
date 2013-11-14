@@ -36,7 +36,7 @@ public class IndustryServiceImpl implements IndustryService {
     private static final String UNKNOWN = "未分类";
 
     @Override
-    public List<String> getAvailableIndustries() {
+    public List<String> getIndustries() {
         List<Industry> industries = industryDao.findByDataSourceIdClassLevel(DefaultValues.INDUSTRY_DATA_SOURCE_ID(), CLASS_LEVEL);
         List<String> results = new ArrayList<String>();
         for (Industry ind : industries) {

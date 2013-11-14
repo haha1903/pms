@@ -273,10 +273,13 @@ app/com/datayes/invest/pms/web/model/fastjson/asset/AssetTree.java -text
 app/com/datayes/invest/pms/web/model/fastjson/asset/AssetTreeConverter.scala -text
 app/com/datayes/invest/pms/web/model/gson/gson.scala -text
 app/com/datayes/invest/pms/web/model/models.scala -text
+app/com/datayes/invest/pms/web/model/writes.scala -text
 app/com/datayes/invest/pms/web/service/AccountMgmtService.scala -text
+app/com/datayes/invest/pms/web/service/AccountService.scala -text
 app/com/datayes/invest/pms/web/service/AccountsSummaryService.scala -text
 app/com/datayes/invest/pms/web/service/AssetTreeMaker.scala -text
 app/com/datayes/invest/pms/web/service/AssetsLoader.scala -text
+app/com/datayes/invest/pms/web/service/CommonService.scala -text
 app/com/datayes/invest/pms/web/service/DashboardService.scala -text
 app/com/datayes/invest/pms/web/service/FilterHelper.scala -text
 app/com/datayes/invest/pms/web/service/PortfolioChartService.scala -text
@@ -287,6 +290,7 @@ app/com/datayes/invest/pms/web/sso/AuthAction.scala -text
 app/com/datayes/invest/pms/web/sso/SamlActionTrait.scala -text
 app/com/datayes/invest/pms/web/sso/SamlHelper.java -text
 app/com/datayes/invest/pms/web/sso/UserContextHandler.scala -text
+app/controllers/AccountController.scala -text
 app/controllers/AccountsSummaryViewController.scala -text
 app/controllers/Application.scala -text
 app/controllers/AsOfDateSupport.scala -text
