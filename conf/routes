@@ -55,6 +55,8 @@ GET     /account/delete                                      @controllers.Accoun
 POST    /account/import/upload                               @controllers.AccountController.importUpload
 GET     /account/import/status                               @controllers.AccountController.importStatus
 
+# Summary
+GET     /summary                                             @controllers.SummaryController.getSummary
 
 ###################
 # Test and Monitor

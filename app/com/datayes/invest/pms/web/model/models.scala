@@ -394,21 +394,18 @@ package object models {
     }
 
     implicit object AccountsSummaryItemWrites extends Writes[AccountsSummaryItem] {
-      def writes(o: AccountsSummaryItem) = Json.obj(
-         "count" -> o.count.toString,
-         "type" -> categoryMap.get(o.category).getOrElse("").toString,
-         "ratio" -> writePercentDecimal(o.ratio),
-         "assetValue" -> writeValueDecimal(o.assetValue),
-         "netValue" -> writeValueDecimal(o.netValue),
-         "pnl" -> writeValueDecimal(o.pnl),
-         "cash" -> writeValueDecimal(o.cash)
-      )
-      private val categoryMap: Map[AccountTypeType, String] = Map(
-        AccountTypeType.ABSOLUTE_INCOME -> "AbsoluteIncome",
-        AccountTypeType.CASH_INCOME -> "CashIncome",
-        AccountTypeType.EQUITY -> "Equity",
-        AccountTypeType.FIXED_INCOME -> "FixedIncome"
-      )
+      def writes(o: AccountsSummaryItem) = {
+        val typeName = if( null == o.category) "" else o.category.toString
+        Json.obj(
+          "count" -> o.count.toString,
+          "type" -> typeName,
+          "ratio" -> writePercentDecimal(o.ratio),
+          "assetValue" -> writeValueDecimal(o.assetValue),
+          "netValue" -> writeValueDecimal(o.netValue),
+          "pnl" -> writeValueDecimal(o.pnl),
+          "cash" -> writeValueDecimal(o.cash)
+        )
+      }
     }
     
     implicit object AccountsSummaryWrites extends Writes[AccountsSummary] {

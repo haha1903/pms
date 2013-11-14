@@ -280,9 +280,11 @@ app/com/datayes/invest/pms/web/service/AssetsLoader.scala -text
 app/com/datayes/invest/pms/web/service/CommonService.scala -text
 app/com/datayes/invest/pms/web/service/DashboardService.scala -text
 app/com/datayes/invest/pms/web/service/FilterHelper.scala -text
+app/com/datayes/invest/pms/web/service/FundService.scala -text
 app/com/datayes/invest/pms/web/service/PortfolioChartService.scala -text
 app/com/datayes/invest/pms/web/service/PortfolioService.scala -text
 app/com/datayes/invest/pms/web/service/SingleAssetLoader.scala -text
+app/com/datayes/invest/pms/web/service/SummaryService.scala -text
 app/com/datayes/invest/pms/web/servlet/Play2Servlet25.scala -text
 app/com/datayes/invest/pms/web/sso/AuthAction.scala -text
 app/com/datayes/invest/pms/web/sso/SamlActionTrait.scala -text
@@ -294,8 +296,10 @@ app/controllers/Application.scala -text
 app/controllers/AsOfDateSupport.scala -text
 app/controllers/CommonController.scala -text
 app/controllers/DashboardController.scala -text
+app/controllers/FundController.scala -text
 app/controllers/GroupingViewController.scala -text
 app/controllers/ProxyController.scala -text
+app/controllers/SummaryController.scala -text
 app/controllers/debug/MarketDataServiceMonitorController.scala -text
 app/controllers/tools/RunProcessController.scala -text
 app/controllers/util/DecimalWriters.scala -text
