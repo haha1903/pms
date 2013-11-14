@@ -19,7 +19,10 @@ class CommonController extends PmsController with Logging {
 
   def industries = PmsAction { implicit req =>
     val asOfDate: Option[Int] = param("asOfDate")
+    val name: String = param("a").default("hello")
+    
     println(asOfDate)
+    println(name)
     JsNumber(asOfDate.get)
 //    
 //    val inds = transaction {
