@@ -5,48 +5,9 @@
 # Index
 GET     /                                                     @controllers.Application.index
 
-# PMS
-GET     /pms                                                  @controllers.Application.pms
-
 # SAML SSO
 POST    /saml/*path                                           @controllers.Application.saml(path)
 GET     /saml/*path                                           @controllers.Application.saml(path)
-
-# Grouping View pages
-#GET     /accountMgmt/groupingView/all                         @controllers.GroupingViewController.all
-#GET     /accountMgmt/groupingView/availableBenchmarkIndexes   @controllers.GroupingViewController.availableBenchmarkIndexes
-#GET     /accountMgmt/groupingView/chart                       @controllers.GroupingViewController.chart(view: String, accountId: Long)
-#GET     /accountMgmt/groupingView/getGroupingSetting          @controllers.GroupingViewController.getGroupingSetting
-#GET     /accountMgmt/groupingView/saveGroupingSetting         @controllers.GroupingViewController.saveGroupingSetting(setting: String)
-
-# Dashboard
-#GET     /accountsMgmt/dashboard/assetClassWeight              @controllers.DashboardController.getAssetClassWeight(accountId: Long)
-#GET     /accountsMgmt/dashboard/industryWeight                @controllers.DashboardController.getIndustryWeight(accountId: Long)
-#GET     /accountsMgmt/dashboard/topHoldingStock               @controllers.DashboardController.topHoldingStock(accountId: Long, number: Integer)
-#GET     /accountsMgmt/dashboard/performanceOverview           @controllers.DashboardController.performanceOverview(accountId: Long)
-#GET     /accountsMgmt/dashboard/netValueTrend                 @controllers.DashboardController.netValueTrend(accountId: Long, benchmarkIndexTicker: String)
-#GET     /accountsMgmt/dashboard/accountOverview               @controllers.DashboardController.accountOverview(accountId: Long)
-#GET     /accountsMgmt/dashboard/layoutConfig/save             @controllers.DashboardController.saveLayoutConfig(config: String)
-#GET     /accountsMgmt/dashboard/layoutConfig/get              @controllers.DashboardController.getLayoutConfig
-#GET		/accountsMgmt/summaryView							  @controllers.AccountsSummaryViewController.getSummary
-
-# Import
-#POST    /importAccount/upload                                 @controllers.ImportController.uploadAccountCsv
-#GET     /importAccount/status                                 @controllers.ImportController.uploadAccountCsvStatus(uuid: String)
-#GET     /deleteAccount                                        @controllers.ImportController.deleteAccount(accountId: Long)
-
-# Proxy
-GET     /attribution                                          @controllers.ProxyController.attribution
-POST    /attrupload                                           @controllers.ProxyController.upload
-
-
-# Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                                         controllers.Assets.at(path="/public", file)
-
-
-###################
-# New interface
-###################
 
 # Common
 GET     /common/industries                                   @controllers.CommonController.industries
@@ -77,6 +38,15 @@ GET     /portfolio/settings/get                              @controllers.Portfo
 GET     /portfolio/settings/set                              @controllers.PortfolioController.setGroupingSettings
 
 
+# Proxy for attribution
+GET     /attribution                                          @controllers.ProxyController.attribution
+POST    /attrupload                                           @controllers.ProxyController.upload
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file                                         controllers.Assets.at(path="/public", file)
+
+
 ###################
 # Test and Monitor
 ###################
@@ -88,8 +58,8 @@ POST    /tools/process                                        @controllers.tools
 
 
 #Cache Observation
-GET     /debug/mds/monitor                                    @controllers.debug.MarketDataServiceMonitorController.monitor
-GET     /debug/mds/initMds                                    @controllers.debug.MarketDataServiceMonitorController.initMds
-GET     /debug/mds/cacheData                                  @controllers.debug.MarketDataServiceMonitorController.cacheData
-GET     /debug/mds/cacheSize                                  @controllers.debug.MarketDataServiceMonitorController.cacheSize
-GET     /debug/mds/cacheMssing                                @controllers.debug.MarketDataServiceMonitorController.cacheMissing
+GET     /debug/mds/monitor                                    @controllers.debug.MDSMonitorController.monitor
+GET     /debug/mds/initMds                                    @controllers.debug.MDSMonitorController.initMds
+GET     /debug/mds/cacheData                                  @controllers.debug.MDSMonitorController.cacheData
+GET     /debug/mds/cacheSize                                  @controllers.debug.MDSMonitorController.cacheSize
+GET     /debug/mds/cacheMssing                                @controllers.debug.MDSMonitorController.cacheMissing

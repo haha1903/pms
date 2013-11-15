@@ -292,13 +292,12 @@ app/com/datayes/invest/pms/web/sso/SamlHelper.java -text
 app/com/datayes/invest/pms/web/sso/UserContextHandler.scala -text
 app/controllers/AccountController.scala -text
 app/controllers/Application.scala -text
-app/controllers/AsOfDateSupport.scala -text
 app/controllers/CommonController.scala -text
 app/controllers/FundController.scala -text
 app/controllers/PortfolioController.scala -text
 app/controllers/ProxyController.scala -text
 app/controllers/SummaryController.scala -text
-app/controllers/debug/MarketDataServiceMonitorController.scala -text
+app/controllers/debug/MDSMonitorController.scala -text
 app/controllers/tools/RunProcessController.scala -text
 app/controllers/util/DecimalWriters.scala -text
 app/controllers/util/Jsonp.scala -text
@@ -314,7 +313,6 @@ app/test/TestPersist.java -text
 app/views/debug/mds.scala.html -text
 app/views/index.scala.html -text
 app/views/layout.scala.html -text
-app/views/pms.scala.html -text
 app/views/tools/main.scala.html -text
 app/views/tools/run_process.scala.html -text
 conf/META-INF/persistence.xml -text

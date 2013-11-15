@@ -13,13 +13,8 @@ class Application extends Controller with Logging {
   private val pmsApiUrl = Config.INSTANCE.getString("pms.api.url", "localhost:9000")
 
   def index = Action {
-    Ok(views.html.index())
-  }
-
-  def pms = AuthAction {
-    //val user = SsoContext.getUser
     val username = "" //if (user == null) "" else user.getName()
-    Ok(views.html.pms(pmsApiUrl, f2eHost, "10415", "通联数据", username))
+    Ok(views.html.index(pmsApiUrl, f2eHost, "10415", "通联数据", username))
   }
 
   def tools = AuthAction { implicit request =>

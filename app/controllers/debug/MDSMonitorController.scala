@@ -16,7 +16,7 @@ import org.joda.time.LocalDate
 import java.util.{ Set => JSet, Collections => JCollections }
 import java.lang.{ Long => JLong }
 
-class MarketDataServiceMonitorController extends Controller with Logging {
+class MDSMonitorController extends Controller with Logging {
   
   @Inject
   private var marketDataService: MarketDataServiceImpl = null
