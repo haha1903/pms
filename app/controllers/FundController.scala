@@ -1,7 +1,6 @@
 package controllers
 
 import org.joda.time.LocalDate
-
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.userpref.UserPref
 import com.datayes.invest.pms.web.model.models.ModelWrites.AccountOverviewWrites
@@ -11,13 +10,13 @@ import com.datayes.invest.pms.web.model.models.ModelWrites.NetValueTrendItemWrit
 import com.datayes.invest.pms.web.model.models.ModelWrites.PerformanceWrites
 import com.datayes.invest.pms.web.model.models.ModelWrites.TopHoldingStockWrites
 import com.datayes.invest.pms.web.service.FundService
-
 import javax.inject.Inject
 import play.api.libs.json.Json
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.pms.PmsAction
 import play.pms.PmsController
 import play.pms.PmsResult
+import play.api.libs.json.JsString
 
 
 class FundController extends PmsController with Logging {
@@ -81,15 +80,15 @@ class FundController extends PmsController with Logging {
   
   def getDashboardLayout = PmsAction { implicit req =>
     val config = userPref.getDashboardLayoutConfig()
-    val json = Json.obj("config" -> config)
+    val json = JsString(config)
     PmsResult(json)
   }
   
   def setDashboardLayout = PmsAction { implicit req =>
-    val config: String = param("config")
+    val data: String = param("data")
     
     val (result, message) = try {
-      userPref.setDashboardLayoutConfig(config)
+      userPref.setDashboardLayoutConfig(data)
       (true, "layout config has bean saved")
     } catch {
       case e: Throwable => (false, e.getMessage)

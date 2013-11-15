@@ -19,7 +19,7 @@ class UserPrefImpl extends UserPref {
     
   private var currentLayoutConfig: String = null
 
-  def getPortfolioGroupingSettings() = currentPortfolioGroupingSettings
+  def getCurrentPortfolioGroupingSettings() = currentPortfolioGroupingSettings
 
   def setPortfolioGroupingSettings(setting: List[AssetNodeType.Type]): Unit = {
     for (s <- setting) {
@@ -31,7 +31,7 @@ class UserPrefImpl extends UserPref {
     this.currentPortfolioGroupingSettings = setting
   }
   
-  def getPortfolioGroupingItems(): List[GroupingItem] = availablePortfolioGroupingItems
+  def getAvailablePortfolioGroupingItems(): List[GroupingItem] = availablePortfolioGroupingItems
   
   def getDashboardLayoutConfig() = currentLayoutConfig
   

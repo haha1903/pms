@@ -72,6 +72,8 @@ GET     /fund/dashboard/layout/set                           @controllers.FundCo
 
 # Portfolio
 GET     /portfolio/list                                     @controllers.PortfolioController.list
+GET     /portfolio/settings/get                             @controllers.PortfolioController.getGroupingSettings
+GET     /portfolio/settings/set                             @controllers.PortfolioController.setGroupingSettings
 
 
 ###################

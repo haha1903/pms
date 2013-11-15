@@ -4,11 +4,11 @@ import com.datayes.invest.pms.web.model.models.AssetNodeType
 
 trait UserPref {
 
-  def getPortfolioGroupingSettings(): List[AssetNodeType.Type]
+  def getCurrentPortfolioGroupingSettings(): List[AssetNodeType.Type]
   
   def setPortfolioGroupingSettings(setting: List[AssetNodeType.Type])
   
-  def getPortfolioGroupingItems(): List[GroupingItem]
+  def getAvailablePortfolioGroupingItems(): List[GroupingItem]
   
   def getDashboardLayoutConfig(): String
   
