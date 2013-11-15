@@ -19,14 +19,14 @@ class FundController extends PmsController with Logging {
   @Inject
   private var userPref: UserPref = null
 
-  def getSummary() = PmsAction { implicit req =>
+  def summary() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
     val asOfDate: LocalDate = paramAsOfDateOrToday
     val summary = fundService.getSummary(accountId, asOfDate)
     Json.toJson(summary)
   }
 
-  def getNetTrend() = PmsAction { implicit req =>
+  def netTrend() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
     val asOfDate: LocalDate = paramAsOfDateOrToday
     val benchmarkIndexTicker: String = param("benchmarkIndexTicker")
@@ -34,14 +34,14 @@ class FundController extends PmsController with Logging {
     Json.toJson(netValueTrendItems)
   }
 
-  def getIndustryProportion() = PmsAction { implicit req =>
+  def industryProportion() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
     val asOfDate = paramAsOfDateOrToday
     val industryProportions = fundService.getIndustryProportion(accountId, asOfDate)
     Json.toJson(industryProportions)
   }
 
-  def getPerformanceOverview() = PmsAction { implicit req =>
+  def performanceOverview() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
     val asOfDate = paramAsOfDateOrToday
     val standardFund = List(("本基金", accountId),("上证综指", 1L), ("沪深300", 1782L), ("上证基指", 20L))
@@ -49,14 +49,14 @@ class FundController extends PmsController with Logging {
     Json.toJson(performance)
   }
 
-  def getAssetProportion() = PmsAction { implicit req =>
+  def assetProportion() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
     val asOfDate = paramAsOfDateOrToday
     val assetProportions = fundService.getAssetProportion(accountId, asOfDate)
     Json.toJson(assetProportions)
   }
 
-  def getTopHoldingStock() = PmsAction { implicit req =>
+  def topHoldingStock() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
     val number: Int = param("number")
     val asOfDate = paramAsOfDateOrToday

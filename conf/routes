@@ -20,15 +20,15 @@ GET     /accountMgmt/groupingView/getGroupingSetting          @controllers.Group
 GET     /accountMgmt/groupingView/saveGroupingSetting         @controllers.GroupingViewController.saveGroupingSetting(setting: String)
 
 # Dashboard
-GET     /accountsMgmt/dashboard/assetClassWeight              @controllers.DashboardController.getAssetClassWeight(accountId: Long)
-GET     /accountsMgmt/dashboard/industryWeight                @controllers.DashboardController.getIndustryWeight(accountId: Long)
-GET     /accountsMgmt/dashboard/topHoldingStock               @controllers.DashboardController.topHoldingStock(accountId: Long, number: Integer)
-GET     /accountsMgmt/dashboard/performanceOverview           @controllers.DashboardController.performanceOverview(accountId: Long)
-GET     /accountsMgmt/dashboard/netValueTrend                 @controllers.DashboardController.netValueTrend(accountId: Long, benchmarkIndexTicker: String)
+#GET     /accountsMgmt/dashboard/assetClassWeight              @controllers.DashboardController.getAssetClassWeight(accountId: Long)
+#GET     /accountsMgmt/dashboard/industryWeight                @controllers.DashboardController.getIndustryWeight(accountId: Long)
+#GET     /accountsMgmt/dashboard/topHoldingStock               @controllers.DashboardController.topHoldingStock(accountId: Long, number: Integer)
+#GET     /accountsMgmt/dashboard/performanceOverview           @controllers.DashboardController.performanceOverview(accountId: Long)
+#GET     /accountsMgmt/dashboard/netValueTrend                 @controllers.DashboardController.netValueTrend(accountId: Long, benchmarkIndexTicker: String)
 #GET     /accountsMgmt/dashboard/accountOverview               @controllers.DashboardController.accountOverview(accountId: Long)
 #GET     /accountsMgmt/dashboard/layoutConfig/save             @controllers.DashboardController.saveLayoutConfig(config: String)
 #GET     /accountsMgmt/dashboard/layoutConfig/get              @controllers.DashboardController.getLayoutConfig
-GET		/accountsMgmt/summaryView							  @controllers.AccountsSummaryViewController.getSummary
+#GET		/accountsMgmt/summaryView							  @controllers.AccountsSummaryViewController.getSummary
 
 # Import
 #POST    /importAccount/upload                                 @controllers.ImportController.uploadAccountCsv
@@ -61,12 +61,12 @@ GET     /account/import/status                               @controllers.Accoun
 GET     /summary                                             @controllers.SummaryController.getSummary
 
 # Fund
-GET     /fund/summary                                        @controllers.FundController.getSummary
-GET     /fund/netTrend                                       @controllers.FundController.getNetTrend
-GET     /fund/industryProportion                             @controllers.FundController.getIndustryProportion
-GET     /fund/performanceOverview                            @controllers.FundController.getPerformanceOverview
-GET     /fund/assetProportion                                @controllers.FundController.getAssetProportion
-GET     /fund/topHoldingStock                                @controllers.FundController.getTopHoldingStock
+GET     /fund/summary                                        @controllers.FundController.summary
+GET     /fund/netTrend                                       @controllers.FundController.netTrend
+GET     /fund/industryProportion                             @controllers.FundController.industryProportion
+GET     /fund/performanceOverview                            @controllers.FundController.performanceOverview
+GET     /fund/assetProportion                                @controllers.FundController.assetProportion
+GET     /fund/topHoldingStock                                @controllers.FundController.topHoldingStock
 GET     /fund/dashboard/layout/get                           @controllers.FundController.getDashboardLayout
 GET     /fund/dashboard/layout/set                           @controllers.FundController.setDashboardLayout
 
