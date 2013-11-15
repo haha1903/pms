@@ -3,11 +3,26 @@ package com.datayes.invest.pms.web.model.gson
 import com.google.gson._
 import java.lang.reflect.Type
 import org.joda.time.LocalDateTime
+import org.joda.time.LocalDate
 
 class BigDecimalSerializer extends JsonSerializer[BigDecimal] {
 
   def serialize(src: BigDecimal, typeOfSrc: Type, context: JsonSerializationContext): JsonElement = {
     new JsonPrimitive(src.bigDecimal)
+  }
+}
+
+class LocalDateSerializer extends JsonSerializer[LocalDate] {
+
+  def serialize(src: LocalDate, typeOfSrc: Type, context: JsonSerializationContext): JsonElement = {
+    new JsonPrimitive(src.toString)
+  }
+}
+
+class LocalDateDeserializer extends JsonDeserializer[LocalDate] {
+
+  def deserialize(json: JsonElement, typeOfT: Type, context: JsonDeserializationContext): LocalDate = {
+    LocalDate.parse(json.getAsJsonPrimitive.getAsString)
   }
 }
 

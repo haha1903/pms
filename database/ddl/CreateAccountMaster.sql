@@ -856,7 +856,7 @@ create table SOURCE_TRANSACTION
 create table POSITION_YIELD
 (
    ID                       bigint not null AUTO_INCREMENT comment "本表主键",
-   AS_OF_DATE               datetime not null comment "日期",
+   AS_OF_DATE               date not null comment "日期",
    POSITION_ID              bigint not null comment "持仓ID",
    ACCOUNT_ID               bigint not null comment "账户代码",
    SUB_ACCOUNT_ID           varchar(40) comment "子账户代码",
@@ -885,7 +885,7 @@ create table POSITION_YIELD
 create table ACCOUNT_YIELD
 (
    ID                       bigint not null AUTO_INCREMENT comment "本表主键",
-   AS_OF_DATE               datetime not null comment "日期",
+   AS_OF_DATE               date not null comment "日期",
    ACCOUNT_ID               bigint not null comment "账户代码",
    ACCOUNT_YIELD_ITEM_ID    bigint not null comment "账户收益科目：目前只有净值",
    CURRENCY_TYPE_CD         char(1) comment "L:原币,B:本位币,A本位币和原币一致",
@@ -938,6 +938,7 @@ create table POSITION_INIT
 create table MARKET_DATA
 (
    SECURITY_ID          bigint not null PRIMARY KEY,
+   AS_OF_DATE           date,
    TIMESTAMP            datetime,
    PRICE                decimal(31, 11),
    PREVIOUS_PRICE       decimal(31, 11),

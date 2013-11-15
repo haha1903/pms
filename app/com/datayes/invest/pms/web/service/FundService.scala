@@ -240,17 +240,17 @@ class FundService extends Logging {
     fundReturnHists
   }
 
-  private def loadBenchmarkReturns(securityId: Long, startDate: LocalDate, endDate: LocalDate):
-    Seq[(LocalDate, BigDecimal)] = {
+  private def loadBenchmarkReturns(securityId: Long, startDate: LocalDate, endDate: LocalDate): Seq[(LocalDate, BigDecimal)] = {
 
-    val priceVolumes = priceVolumeDao.findSomeBySecurityIdInPeriod(securityId, startDate, endDate)
+//    val priceVolumes = priceVolumeDao.findSomeBySecurityIdInPeriod(securityId, startDate, endDate)
+    val marketDataList = marketDataService.getMarketDataBetweenDates(securityId, startDate, endDate);
 
-    val rets = priceVolumes.headOption match {
-      case Some(firstPriceVolume) =>
-        priceVolumes.map { p =>
-          val ratio = BigDecimal(p.getPriceClose / firstPriceVolume.getPriceClose - 1)
-          val date = p.getTradeDate
-          (date, ratio)
+    val rets = marketDataList.headOption match {
+      case Some(firstMarketData) =>
+        val firstPrice = firstMarketData.getPrice();
+        marketDataList.map { md =>
+          val ratio = md.getPrice() / firstPrice - 1
+          (md.getAsOfDate(), ratio)
         }
       case None =>
         Seq.empty[(LocalDate, BigDecimal)]

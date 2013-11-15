@@ -1,14 +1,18 @@
 package com.datayes.invest.pms.entity.account;
 
-import org.hibernate.annotations.Proxy;
-import org.joda.time.LocalDateTime;
+import java.sql.Timestamp;
 
-import com.datayes.invest.pms.util.BeanUtil;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+import org.hibernate.annotations.Proxy;
+import org.joda.time.LocalDate;
 
 import scala.math.BigDecimal;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
+import com.datayes.invest.pms.util.BeanUtil;
 
 
 @Entity
@@ -17,6 +21,8 @@ import java.sql.Timestamp;
 public class MarketData implements Cloneable {
 
     private Long securityId;
+    
+    private LocalDate asOfDate;
     
     private Timestamp timestamp;
     
@@ -34,12 +40,14 @@ public class MarketData implements Cloneable {
     }
 
     public MarketData(Long securityId,
+                      LocalDate asOfDate,
                       Timestamp timestamp,
                       BigDecimal price,
                       BigDecimal previousPrice,
                       Timestamp receivedTime,
                       String source) {
         this.securityId = securityId;
+        this.asOfDate = asOfDate;
         this.timestamp = timestamp;
         this.price = price;
         this.previousPrice = previousPrice;
@@ -55,6 +63,15 @@ public class MarketData implements Cloneable {
 
     public void setSecurityId(Long securityId) {
         this.securityId = securityId;
+    }
+    
+    @Column(name = "AS_OF_DATE")
+    public LocalDate getAsOfDate() {
+        return asOfDate;
+    }
+    
+    public void setAsOfDate(LocalDate asOfDate) {
+        this.asOfDate = asOfDate;
     }
 
     @Column(name = "TIMESTAMP")

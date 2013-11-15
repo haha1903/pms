@@ -1,6 +1,8 @@
 package com.datayes.invest.pms.service.marketdata.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +30,7 @@ import com.datayes.invest.pms.entity.security.Future;
 import com.datayes.invest.pms.entity.security.FuturePriceVolume;
 import com.datayes.invest.pms.entity.security.PriceVolume;
 import com.datayes.invest.pms.entity.security.Security;
+import com.datayes.invest.pms.logic.transaction.BusinessException;
 import com.datayes.invest.pms.persist.Persist;
 import com.datayes.invest.pms.persist.Transaction;
 import com.datayes.invest.pms.service.calendar.CalendarService;
@@ -113,6 +116,63 @@ public class MarketDataServiceImpl implements MarketDataService {
 
         return null;
     }
+    
+    // TODO refactor this: should have no gap in market data ?
+    @Override
+    public List<MarketData> getMarketDataBetweenDates(Long securityId, LocalDate startDate, LocalDate endDate) {
+        if (startDate.compareTo(endDate) > 0) {
+            return Collections.emptyList();
+        }
+        LocalDate today = LocalDate.now();
+        if (today.compareTo(endDate) < 0) {
+            throw new BusinessException("Failed to get market data beteen dates. End date is later than current date");
+        }
+        
+        LocalDate actEndDate = endDate;
+        List<MarketData> buffer = new ArrayList<MarketData>();
+        
+        // Load today's market data from cache if end date is today
+        if (today.isEqual(endDate)) {
+            actEndDate = today.minusDays(1);
+            MarketData md = getMarketData(securityId, today);
+            MarketData cloned = cloneMarketData(md);
+            cloned.setAsOfDate(today);
+            buffer.add(cloned);
+        }
+        
+        List<PriceVolume> priceVolumes = priceVolumeDao.findSomeBySecurityIdInPeriod(securityId, startDate, actEndDate);
+        if (priceVolumes == null || priceVolumes.isEmpty()) {
+            return buffer;
+        }
+        for (PriceVolume pv : priceVolumes) {
+            MarketData md = Converter.toMarketData(pv);
+            buffer.add(md);
+        }
+        
+        // Sort by MarketData.asOfDate
+        Collections.sort(buffer, new Comparator<MarketData>() {
+            @Override
+            public int compare(MarketData o1, MarketData o2) {
+                if (o1 == null || o2 == null) {
+                    return 0;
+                }
+                LocalDate d1 = o1.getAsOfDate();
+                LocalDate d2 = o2.getAsOfDate();
+                if (d1 == null) {
+                    if (d2 == null)
+                        return 0;
+                    else
+                        return -1;
+                }
+                if (d2 == null) {
+                    return 1;
+                }
+                return d1.compareTo(d2);
+            }
+        });
+        
+        return buffer;
+    }
 
     public Map<Long, MarketData> getMarketDataCache() {
         return marketDataCache.getRealTimeCache();
@@ -179,17 +239,6 @@ public class MarketDataServiceImpl implements MarketDataService {
         MarketDataDbScheduler scheduler = new MarketDataDbScheduler(marketDataCache, marketDataDao);
         timer.schedule(scheduler, 0, DefaultValues.MARKETDATA_SCHEDULER_INTERVAL());
     }
-
-//    private boolean isTradeTime() {
-//        LocalTime now = LocalTime.now();
-//        // If now is in trade time
-//        if( now.isAfter(openTime) && now.isBefore(closeTime) ) {
-//            return true;
-//        }
-//        else {
-//            return false;
-//        }
-//    }
 
     private Map<Long, MarketData> getHistoryMarketDataFromDb(Set<Long> securityIds, LocalDate tradeDate) {
         if (securityIds == null || securityIds.isEmpty()) {
@@ -266,6 +315,12 @@ public class MarketDataServiceImpl implements MarketDataService {
             }
         }
         return marketdataMap;
+    }
+    
+    private MarketData cloneMarketData(MarketData md) {
+        MarketData cloned = new MarketData(md.getSecurityId(), md.getAsOfDate(), md.getTimestamp(), md.getPrice(),
+            md.getPreviousPrice(), md.getReceivedTime(), md.getSource());
+        return cloned;
     }
     
     private void maybeInitialize() {

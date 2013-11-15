@@ -54,7 +54,10 @@ class MarketDataServiceMonitorController extends Controller with Logging {
   }
   
   private def createGson(): Gson = {
+    // TODO this could be shared in the code base
     val builder = new GsonBuilder
+    builder.registerTypeAdapter(classOf[LocalDate], new LocalDateSerializer)
+    builder.registerTypeAdapter(classOf[LocalDate], new LocalDateDeserializer)
     builder.registerTypeAdapter(classOf[LocalDateTime], new LocalDateTimeSerializer)
     builder.registerTypeAdapter(classOf[LocalDateTime], new LocalDateTimeDeserializer)
     builder.registerTypeAdapter(classOf[BigDecimal], new BigDecimalSerializer)

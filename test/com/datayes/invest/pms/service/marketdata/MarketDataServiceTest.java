@@ -74,8 +74,8 @@ public class MarketDataServiceTest {
     private Long securityId1 = 2l;
     private Long securityId2 = 4l;
 
-    private MarketData marketDataFor2 = new MarketData(securityId1, new Timestamp(tradeDay.toDate().getTime()), new BigDecimal(new java.math.BigDecimal(5.2d)), new BigDecimal(new java.math.BigDecimal(4.9d)), null, Source.MQ.toString());
-    private MarketData marketDataFor4 = new MarketData(securityId2, new Timestamp(tradeDay.toDate().getTime()), new BigDecimal(new java.math.BigDecimal(10.1d)), new BigDecimal(new java.math.BigDecimal(10.7d)), null, Source.MQ.toString());
+    private MarketData marketDataFor2 = new MarketData(securityId1, now, new Timestamp(tradeDay.toDate().getTime()), new BigDecimal(new java.math.BigDecimal(5.2d)), new BigDecimal(new java.math.BigDecimal(4.9d)), null, Source.MQ.toString());
+    private MarketData marketDataFor4 = new MarketData(securityId2, now, new Timestamp(tradeDay.toDate().getTime()), new BigDecimal(new java.math.BigDecimal(10.1d)), new BigDecimal(new java.math.BigDecimal(10.7d)), null, Source.MQ.toString());
 
     @Test
     public void testGetMarketData() {

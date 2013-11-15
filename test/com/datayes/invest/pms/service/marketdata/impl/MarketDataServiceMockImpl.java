@@ -2,6 +2,7 @@ package com.datayes.invest.pms.service.marketdata.impl;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -28,6 +29,12 @@ public class MarketDataServiceMockImpl implements MarketDataService {
     public void setMarketDataMap(Map<Long, MarketData> map) {
         Map<Long, MarketData> newMap = new HashMap<>(map);
         this.marketDataMap = Collections.unmodifiableMap(newMap);
+    }
+
+    @Override
+    public List<MarketData> getMarketDataBetweenDates(Long securityId, LocalDate startDate, LocalDate endDate) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
