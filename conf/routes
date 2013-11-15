@@ -71,9 +71,10 @@ GET     /fund/dashboard/layout/get                           @controllers.FundCo
 GET     /fund/dashboard/layout/set                           @controllers.FundController.setDashboardLayout
 
 # Portfolio
-GET     /portfolio/list                                     @controllers.PortfolioController.list
-GET     /portfolio/settings/get                             @controllers.PortfolioController.getGroupingSettings
-GET     /portfolio/settings/set                             @controllers.PortfolioController.setGroupingSettings
+GET     /portfolio/list                                      @controllers.PortfolioController.list
+GET     /portfolio/chart                                     @controllers.PortfolioController.chart
+GET     /portfolio/settings/get                              @controllers.PortfolioController.getGroupingSettings
+GET     /portfolio/settings/set                              @controllers.PortfolioController.setGroupingSettings
 
 
 ###################

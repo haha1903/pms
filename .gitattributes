@@ -281,6 +281,7 @@ app/com/datayes/invest/pms/web/service/AssetsLoader.scala -text
 app/com/datayes/invest/pms/web/service/CommonService.scala -text
 app/com/datayes/invest/pms/web/service/FilterHelper.scala -text
 app/com/datayes/invest/pms/web/service/FundService.scala -text
+app/com/datayes/invest/pms/web/service/PortfolioChartService.scala -text
 app/com/datayes/invest/pms/web/service/PortfolioService.scala -text
 app/com/datayes/invest/pms/web/service/SingleAssetLoader.scala -text
 app/com/datayes/invest/pms/web/service/SummaryService.scala -text

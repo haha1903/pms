@@ -1,25 +1,33 @@
 package controllers
 
 import org.joda.time.LocalDate
+
 import com.datayes.invest.pms.logging.Logging
+import com.datayes.invest.pms.userpref.GroupingItem
 import com.datayes.invest.pms.userpref.UserPref
 import com.datayes.invest.pms.web.model.fastjson.asset.AssetTreeConverter
 import com.datayes.invest.pms.web.model.models.AssetClassType
+import com.datayes.invest.pms.web.model.models.AssetNodeType
 import com.datayes.invest.pms.web.model.models.FilterParam
+import com.datayes.invest.pms.web.model.models.ModelWrites.ChartWrites
+import com.datayes.invest.pms.web.model.models.PortfolioView
 import com.datayes.invest.pms.web.model.models.RangeFilterType
+import com.datayes.invest.pms.web.service.PortfolioChartService
 import com.datayes.invest.pms.web.service.PortfolioService
+
 import javax.inject.Inject
+import play.api.libs.json.JsValue
+import play.api.libs.json.Json
 import play.api.mvc.AnyContent
 import play.api.mvc.Request
 import play.pms.PmsAction
 import play.pms.PmsController
 import play.pms.PmsResult
-import com.datayes.invest.pms.userpref.GroupingItem
-import play.api.libs.json.JsValue
-import play.api.libs.json.Json
-import com.datayes.invest.pms.web.model.models.AssetNodeType
 
 class PortfolioController extends PmsController with Logging {
+  
+  @Inject
+  private var portfolioChartService: PortfolioChartService = null
   
   @Inject
   private var portfolioService: PortfolioService = null
@@ -30,7 +38,7 @@ class PortfolioController extends PmsController with Logging {
   def list = PmsAction { implicit req =>
     val asOfDate: LocalDate = paramAsOfDateOrToday()
     val benchmarkIndexOpt: Option[String] = param("benchmarkIndex")
-    val filterParam = paramFilterParam
+    val filterParam: FilterParam = paramFilterParam()
     
     val currentGroupingSettings = userPref.getCurrentPortfolioGroupingSettings()
     
@@ -41,7 +49,21 @@ class PortfolioController extends PmsController with Logging {
     PmsResult(jsonStr)
   }
   
-  private def paramFilterParam(implicit req: Request[AnyContent]): FilterParam = {
+  def chart = PmsAction { implicit req =>
+    val view: String = param("view")
+    val accountId: Long = param("accountId")
+    val asOfDate: LocalDate = paramAsOfDateOrToday()
+    val filterParam = paramFilterParam()
+    
+    val portfolioView = PortfolioView.withName(view)
+    val chart = portfolioChartService.getChart(accountId, asOfDate, portfolioView, filterParam)
+
+    val json = Json.toJson(chart)
+    PmsResult(json)
+  }
+
+  
+  private def paramFilterParam()(implicit req: Request[AnyContent]): FilterParam = {
     val assetClassOpt = req.getQueryString("filter.assetClass").map(AssetClassType.withName(_))
     val exchangeOpt = req.getQueryString("filter.exchange")
     val industryOpt = req.getQueryString("filter.industry")
