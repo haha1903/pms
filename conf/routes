@@ -13,11 +13,11 @@ POST    /saml/*path                                           @controllers.Appli
 GET     /saml/*path                                           @controllers.Application.saml(path)
 
 # Grouping View pages
-GET     /accountMgmt/groupingView/all                         @controllers.GroupingViewController.all
-GET     /accountMgmt/groupingView/availableBenchmarkIndexes   @controllers.GroupingViewController.availableBenchmarkIndexes
-GET     /accountMgmt/groupingView/chart                       @controllers.GroupingViewController.chart(view: String, accountId: Long)
-GET     /accountMgmt/groupingView/getGroupingSetting          @controllers.GroupingViewController.getGroupingSetting
-GET     /accountMgmt/groupingView/saveGroupingSetting         @controllers.GroupingViewController.saveGroupingSetting(setting: String)
+#GET     /accountMgmt/groupingView/all                         @controllers.GroupingViewController.all
+#GET     /accountMgmt/groupingView/availableBenchmarkIndexes   @controllers.GroupingViewController.availableBenchmarkIndexes
+#GET     /accountMgmt/groupingView/chart                       @controllers.GroupingViewController.chart(view: String, accountId: Long)
+#GET     /accountMgmt/groupingView/getGroupingSetting          @controllers.GroupingViewController.getGroupingSetting
+#GET     /accountMgmt/groupingView/saveGroupingSetting         @controllers.GroupingViewController.saveGroupingSetting(setting: String)
 
 # Dashboard
 #GET     /accountsMgmt/dashboard/assetClassWeight              @controllers.DashboardController.getAssetClassWeight(accountId: Long)
@@ -69,6 +69,9 @@ GET     /fund/assetProportion                                @controllers.FundCo
 GET     /fund/topHoldingStock                                @controllers.FundController.topHoldingStock
 GET     /fund/dashboard/layout/get                           @controllers.FundController.getDashboardLayout
 GET     /fund/dashboard/layout/set                           @controllers.FundController.setDashboardLayout
+
+# Portfolio
+GET     /portfolio/list                                     @controllers.PortfolioController.list
 
 
 ###################

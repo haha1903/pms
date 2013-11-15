@@ -281,7 +281,6 @@ app/com/datayes/invest/pms/web/service/AssetsLoader.scala -text
 app/com/datayes/invest/pms/web/service/CommonService.scala -text
 app/com/datayes/invest/pms/web/service/FilterHelper.scala -text
 app/com/datayes/invest/pms/web/service/FundService.scala -text
-app/com/datayes/invest/pms/web/service/PortfolioChartService.scala -text
 app/com/datayes/invest/pms/web/service/PortfolioService.scala -text
 app/com/datayes/invest/pms/web/service/SingleAssetLoader.scala -text
 app/com/datayes/invest/pms/web/service/SummaryService.scala -text
@@ -295,7 +294,7 @@ app/controllers/Application.scala -text
 app/controllers/AsOfDateSupport.scala -text
 app/controllers/CommonController.scala -text
 app/controllers/FundController.scala -text
-app/controllers/GroupingViewController.scala -text
+app/controllers/PortfolioController.scala -text
 app/controllers/ProxyController.scala -text
 app/controllers/SummaryController.scala -text
 app/controllers/debug/MarketDataServiceMonitorController.scala -text
@@ -307,6 +306,7 @@ app/play/pms/DYResponse.scala -text
 app/play/pms/ParamExtractor.scala -text
 app/play/pms/PmsAction.scala -text
 app/play/pms/PmsController.scala -text
+app/play/pms/PmsResult.scala -text
 app/play/pms/exceptions.scala -text
 app/test/TestIdGenerator.java -text
 app/test/TestPersist.java -text

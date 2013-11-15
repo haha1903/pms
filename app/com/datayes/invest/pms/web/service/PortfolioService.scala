@@ -1,14 +1,27 @@
 package com.datayes.invest.pms.web.service
 
-import com.datayes.invest.pms.dao.account.AccountDao
-import javax.inject.Inject
-import com.datayes.invest.pms.logging.Logging
-import com.datayes.invest.pms.web.model.models._
+import scala.collection.JavaConversions.asScalaBuffer
+
 import org.joda.time.LocalDate
-import scala.collection.JavaConversions._
+
+import com.datayes.invest.pms.dao.account.AccountDao
+import com.datayes.invest.pms.dao.account.PositionValuationHistDao
 import com.datayes.invest.pms.entity.account.Account
+import com.datayes.invest.pms.entity.account.PositionValuationHist
+import com.datayes.invest.pms.entity.account.SecurityPosition
+import com.datayes.invest.pms.logging.Logging
+import com.datayes.invest.pms.persist.dsl.transaction
+import com.datayes.invest.pms.util.DefaultValues
+import com.datayes.invest.pms.web.model.models.AssetClassType
+import com.datayes.invest.pms.web.model.models.AssetNodeType
 import com.datayes.invest.pms.web.model.models.AssetTree
-import com.datayes.invest.pms.service.industry.IndustryService
+import com.datayes.invest.pms.web.model.models.Chart
+import com.datayes.invest.pms.web.model.models.ChartDataPoint
+import com.datayes.invest.pms.web.model.models.ChartType
+import com.datayes.invest.pms.web.model.models.FilterParam
+import com.datayes.invest.pms.web.model.models.PortfolioView
+
+import javax.inject.Inject
 
 
 class PortfolioService extends Logging {
@@ -19,11 +32,11 @@ class PortfolioService extends Logging {
   @Inject
   private var assetsLoader: AssetsLoader = null
   
+  @Inject
+  private var positionValuationHistDao: PositionValuationHistDao = null
+  
 
-  // TODO Temporary variables for testing
-  private var _totalNumOfPositions = 0
-
-  def getAssetTree(asOfDate: LocalDate, groupings: List[AssetNodeType.Type], filterParam: FilterParam, benchmarkIndexNameOpt: Option[String]): AssetTree = {
+  def getAssetTree(asOfDate: LocalDate, groupings: List[AssetNodeType.Type], filterParam: FilterParam, benchmarkIndexNameOpt: Option[String]): AssetTree = transaction {
     val accounts = accountDao.findEffectiveAccounts(asOfDate)
     val allValidAssets = accounts.flatMap(a => assetsLoader.loadAssets(a.getId, asOfDate, benchmarkIndexNameOpt)).filter { asset =>
       asset.assetClass != AssetClassType.future && asset.assetClass != AssetClassType.cash &&
@@ -34,8 +47,50 @@ class PortfolioService extends Logging {
     val treeMaker = new AssetTreeMaker(groupings, accountIdNameMap)
     treeMaker.create(filteredAssets)
   }
-
+      
+  def getChart(accountId: Long, asOfDate: LocalDate, view: PortfolioView.Type, filterParam: FilterParam): Chart = {
+    view match {
+      case PortfolioView.industry =>
+        val points: Seq[(String, BigDecimal)] = getIndustryChartData(accountId, asOfDate, filterParam)
+        val normalized: Seq[(String, BigDecimal)] = normalize(points)
+        val chartDataPoints = normalized.map { case (s, v) => ChartDataPoint(s, v) }
+        Chart(ChartType.pie, chartDataPoints)
+    }
+  }
 
   private def createAccountIdNameMap(accounts: List[Account]): Map[Long, String] =
     (for (a <- accounts) yield (a.getId.toLong -> a.getAccountName)).toMap
+
+  private def getIndustryChartData(accountId: Long, asOfDate: LocalDate, filterParam: FilterParam): List[(String, BigDecimal)] = {
+    val assets = assetsLoader.loadAssets(accountId, asOfDate, None)
+    val filteredAssets = FilterHelper.filterAssets(assets, filterParam)
+    val industrySums = filteredAssets.groupBy(_.industry).map { case (industry, assets) =>
+      val valueSum = sum(assets.map(_.marketValue))
+      (industry, valueSum)
+    }
+    logger.debug("industrySums: {}", industrySums)
+
+    industrySums.toList
+  }
+  
+  private def getMarketValue(pos: SecurityPosition, asOfDate: LocalDate): BigDecimal = {
+    val pk = new PositionValuationHist.PK(pos.getId, DefaultValues.POSITION_VALUATION_TYPE.getDbValue, asOfDate)
+    val valHist = positionValuationHistDao.findById(pk)
+      if (valHist == null) {
+        // TODO design exception
+        throw new RuntimeException("Position #" + pos.getId + " valuation history not found")
+      }
+      valHist.getValueAmount
+  }
+
+  private def normalize(points: Seq[(String, BigDecimal)]): Seq[(String, BigDecimal)] = {
+    val values = points.map(_._2)
+    val s = sum(values)
+    val normalized = points.map { case (n, v) => (n, v / s) }
+    logger.debug("normalized data points: {}", normalized)
+    normalized
+  }
+
+  private def sum(values: Seq[BigDecimal]): BigDecimal =
+    values.foldLeft(BigDecimal("0"))(_ + _)
 }

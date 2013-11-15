@@ -8,24 +8,8 @@ import com.datayes.invest.pms.dbtype.AccountTypeType
 package object models {
 
   /*
-   * Account
-   */
-
-//  case class Account(
-//    id: Long,
-//    name: Option[String],
-//    accountNo: Option[String],
-//    countryCode: String,
-//    currencyCode: String,
-//    classCode: String,
-//    openDate: Option[LocalDateTime]
-//  )
-
-
-  /*
    * Types for portfolio position tree
    */
-
 
   object AssetClassType extends Enumeration {
     type Type = Value

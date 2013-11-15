@@ -2,17 +2,13 @@ package controllers
 
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.persist.dsl.transaction
-import com.datayes.invest.pms.web.service.PortfolioService
+import com.datayes.invest.pms.web.service.CommonService
+
 import javax.inject.Inject
 import play.api.libs.json.Json
-import play.api.mvc.Action
-import play.api.mvc.Controller
 import play.pms.PmsAction
 import play.pms.PmsController
-import org.joda.time.LocalDate
-import play.api.libs.json.JsNumber
-import play.api.libs.json.JsString
-import com.datayes.invest.pms.web.service.CommonService
+import play.pms.PmsResult
 
 class CommonController extends PmsController with Logging {
   
@@ -24,6 +20,6 @@ class CommonController extends PmsController with Logging {
       commonService.getIndustries()
     }
     val arr = Json.toJson(inds)
-    arr
+    PmsResult(arr)
   }
 }

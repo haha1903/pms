@@ -1,11 +1,14 @@
 package controllers
 
 import com.datayes.invest.pms.logging.Logging
-import javax.inject.Inject
+import com.datayes.invest.pms.web.model.models.ModelWrites.AccountsSummaryWrites
 import com.datayes.invest.pms.web.service.SummaryService
-import com.datayes.invest.pms.web.model.models.ModelWrites._
+
+import javax.inject.Inject
 import play.api.libs.json.Json
-import play.pms.{PmsAction, PmsController}
+import play.pms.PmsAction
+import play.pms.PmsController
+import play.pms.PmsResult
 
 
 class SummaryController extends PmsController with Logging {
@@ -15,6 +18,7 @@ class SummaryController extends PmsController with Logging {
   def getSummary() = PmsAction { implicit req =>
     val asOfDate = paramAsOfDateOrToday
     val accountsSummary = summaryService.getSummary(asOfDate)
-    Json.toJson(accountsSummary)
+    val json = Json.toJson(accountsSummary)
+    PmsResult(json)
   }
 }

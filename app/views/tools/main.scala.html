@@ -4,30 +4,12 @@
 
     <h3>Debug and Monitor</h3>
     <a href="@controllers.debug.routes.MarketDataServiceMonitorController.monitor">Market Data Service</a>
-
-    <h3>Dashboard links</h3>
-
-    基金列表: http://@{host}/accountsMgmt/dashboard/accountList<br>
-
-    资产配置: http://@{host}/accountsMgmt/dashboard/assetClassWeight?accountId=<br>
-
-    行业占比: http://@{host}/accountsMgmt/dashboard/industryWeight?accountId=<br>
-
-    重仓股票: http://@{host}/accountsMgmt/dashboard/topHoldingStock?accountId=&number=<br>
-
-    业绩表现: http://@{host}/accountsMgmt/dashboard/performanceOverview?accountId=<br>
-
-    净值走势: http://@{host}/accountsMgmt/dashboard/netValueTrend?accountId=&benchmarkIndexTicker=<br>
-
-    组合概况: http://@{host}/accountsMgmt/dashboard/accountOverview?accountId=<br>
     
     <h3>Tools</h3>
 
     <a href="@controllers.tools.routes.RunProcessController.runProcess">日初处理, 日终处理, 估值</a><p>
     
-    <a href="@routes.GroupingViewController.all">@routes.GroupingViewController.all</a><p>
-    
-    <a href="@routes.GroupingViewController.getGroupingSetting">@routes.GroupingViewController.getGroupingSetting</a><p>
+    <a href="@routes.PortfolioController.list">@routes.PortfolioController.list</a><p>
 
     <p>
 

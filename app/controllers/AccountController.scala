@@ -14,6 +14,7 @@ import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.pms.ClientException
 import play.pms.PmsAction
 import play.pms.PmsController
+import play.pms.PmsResult
 
 
 class AccountController extends PmsController with Logging {
@@ -29,14 +30,14 @@ class AccountController extends PmsController with Logging {
     
     val accounts = accountService.getAccountList(asOfDate)
     val json = Json.toJson(accounts)
-    json
+    PmsResult(json)
   }
   
   def delete = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
     
     accountService.delete(accountId)
-    JsNull
+    PmsResult(JsNull)
   }
   
   def importUpload =  PmsAction(parse.multipartFormData) { implicit request =>
@@ -49,7 +50,7 @@ class AccountController extends PmsController with Logging {
         val resp = importManager.importAccountCsv(tmpFile, true)
 
         val json = Json.obj("uuid" -> resp.uuid)
-        json
+        PmsResult(json)
 
       }.getOrElse {
         throw new ClientException("Failed to import account. Missing import csv file")
@@ -76,6 +77,6 @@ class AccountController extends PmsController with Logging {
       "timeElapsed" -> timeElapsed,
       "message" -> msg
     )
-    json
+    PmsResult(json)
   }
 }
