@@ -13,6 +13,9 @@ import play.api.mvc.Results.BadRequest
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.Results.Ok
 import play.api.mvc.Result
+import com.datayes.invest.pms.web.sso.SamlActionTrait
+import com.datayes.invest.pms.config.Config
+import com.datayes.invest.pms.web.sso.AuthAction
 
 
 trait PmsActionBuilder extends Logging {
@@ -27,69 +30,67 @@ trait PmsActionBuilder extends Logging {
   def apply(block: => PmsResult): Action[AnyContent] = apply(BodyParsers.parse.anyContent)(_ => block)
   
   
-  def apply[A](bodyParser: BodyParser[A])(block: Request[A] => PmsResult): Action[A] = new Action[A] {
-    
-    def parser = bodyParser
-    
-    def apply(ctx: Request[A]) = {
-      try {
-        val result = block(ctx)
-        result match {
-          case res: PmsJsResult => respond(res)
-          case res: PmsStrResult => respond(res)
-        }
+  def apply[A](bodyParser: BodyParser[A])(block: Request[A] => PmsResult): Action[A] = new AuthAction[A](bodyParser)({ req =>
+
+    try {
+      val result = block(req)
+      result match {
+        case res: PmsJsResult => respond(res)
+        case res: PmsStrResult => respond(res)
+      }
         
-      } catch {
-        case e: NotImplementedError => throw new RuntimeException(e)
-        case e: LinkageError => throw new RuntimeException(e)
-        case e: ClientException => exception(e)
-        case th: Throwable => exception(th)
-      }
+    } catch {
+      case e: NotImplementedError => throw new RuntimeException(e)
+      case e: LinkageError => throw new RuntimeException(e)
+      case e: ClientException => exception(e)
+      case th: Throwable => exception(th)
+    }    
+  })
+
+  private def respond(res: PmsJsResult) = {
+    val respjson = if (useDyResponse) {
+      val dyresp = DYJsResponse(Status.OK, "", res.json)
+      Json.toJson(dyresp)
+    } else {
+      res.json
     }
-        
-    private def respond(res: PmsJsResult) = {
-      val respjson = if (useDyResponse) {
-        val dyresp = DYJsResponse(Status.OK, "", res.json)
-        Json.toJson(dyresp)
-      } else {
-        res.json
-      }
-      Ok(respjson)
-    }
+    Ok(respjson)
+  }
     
-    private def respond(res: PmsStrResult) = {
-      val content = res.content
-      val resp = if (useDyResponse) {
-        val dyresp = DYStrResponse.create(Status.OK, "", content)
-        dyresp
-      } else {
-        content
-      }
-      Ok(resp).as("application/json; charset=utf-8")
+  private def respond(res: PmsStrResult) = {
+    val content = res.content
+    val resp = if (useDyResponse) {
+      val dyresp = DYStrResponse.create(Status.OK, "", content)
+      dyresp
+    } else {
+      content
     }
+    Ok(resp).as("application/json; charset=utf-8")
+  }
     
-    private def exception(e: ClientException) = {
-      if (useDyResponse) {
-        val dyresp = DYJsResponse(Status.BAD_REQUEST, e.getMessage(), JsString(e.getStackTraceString))
-        val respjson = Json.toJson(dyresp)
-        BadRequest(respjson)
-      } else {
-        throw e
-      }
-    }
-    
-    private def exception(e: Throwable) = {
-      logger.warn("Internal server error: {}", e.getMessage(), e)
-      if (useDyResponse) {
-        val dyresp = DYJsResponse(Status.INTERNAL_SERVER_ERROR, e.getMessage, JsString(e.getStackTraceString))
-        val respjson = Json.toJson(dyresp)
-        InternalServerError(respjson)
-      } else {
-        throw e
-      }
+  private def exception(e: ClientException) = {
+    if (useDyResponse) {
+      val dyresp = DYJsResponse(Status.BAD_REQUEST, e.getMessage(), JsString(e.getStackTraceString))
+      val respjson = Json.toJson(dyresp)
+      BadRequest(respjson)
+    } else {
+      throw e
     }
   }
-
+    
+  private def exception(e: Throwable) = {
+    logger.warn("Internal server error: {}", e.getMessage(), e)
+    if (useDyResponse) {
+      val dyresp = DYJsResponse(Status.INTERNAL_SERVER_ERROR, e.getMessage, JsString(e.getStackTraceString))
+      val respjson = Json.toJson(dyresp)
+      InternalServerError(respjson)
+    } else {
+      throw e
+    }
+  }
 }
 
-object PmsAction extends PmsActionBuilder
+object PmsAction extends PmsActionBuilder {
+  
+  lazy val ssoEnabled = Config.INSTANCE.getBoolean("paas.sso.enabled", false)
+}

@@ -1,21 +1,32 @@
 package com.datayes.invest.pms.web.sso
 
-import play.api.mvc._
-import com.datayes.paas.sso.{User, SsoContext}
-import play.api.mvc.Results._
-import org.opensaml.xml.XMLObject
-import scala.collection.mutable
 import java.io.IOException
-import org.opensaml.saml2.core.impl.LogoutRequestImpl
 import java.net.URL
-import com.datayes.invest.pms.logging.Logging
-import scala.collection.JavaConversions._
+
+import scala.collection.JavaConversions.asScalaBuffer
+import scala.collection.mutable
+
 import com.datayes.invest.pms.config.Config
+import com.datayes.invest.pms.logging.Logging
+import com.datayes.paas.sso.SsoContext
+import com.datayes.paas.sso.User
+import com.datayes.paas.sso.model.LogoutRequest
+import com.datayes.paas.sso.model.Message
+import com.datayes.paas.sso.model.Response
 
-trait SamlActionTrait extends Logging {
+import play.api.mvc.Action
+import play.api.mvc.AnyContent
+import play.api.mvc.AnyContentAsFormUrlEncoded
+import play.api.mvc.BodyParser
+import play.api.mvc.BodyParsers
+import play.api.mvc.Request
+import play.api.mvc.Result
+import play.api.mvc.Results.MethodNotAllowed
+import play.api.mvc.Results.Ok
+import play.api.mvc.Results.Redirect
 
-  val userContextHandler: UserContextHandler
-
+object SamlActionTrait {
+  
   private object Constants {
 
     val SAMLRequest = "SAMLRequest"
@@ -23,28 +34,36 @@ trait SamlActionTrait extends Logging {
     val SAMLResponse = "SAMLResponse"
 
     val RelayState = "RelayState"
-
-    val COOKIE_USER = "user"
-
-    val PROTOCOL = "http://"
   }
 
+  private lazy val pmsUrl = Config.INSTANCE.getString("pms.url", "localhost:9000")
+  
   private lazy val authUrl = Config.INSTANCE.getString("paas.sso.auth.url")
 
-  private lazy val consumerUrl = Config.INSTANCE.getString("paas.sso.consumer.url")
+  private lazy val consumerIndex: String = {
+    val s = Config.INSTANCE.getString("paas.sso.consumer.index", "")
+    if (s == null || s.trim().isEmpty()) {
+      null
+    } else {
+      s
+    }
+  }
+  
+  private lazy val consumerPath = Config.INSTANCE.getString("paas.sso.consumer.path")
 
-  private lazy val consumerPath = new URL(consumerUrl).getPath
+  private lazy val consumerUrl = pmsUrl + consumerPath
+}
 
-  def doSaml(block: Request[AnyContent] => Result): Action[AnyContent] =
-    doSaml(BodyParsers.parse.anyContent)(block)
+trait SamlActionTrait[A] extends Logging {
 
-  def doSaml[A](bodyParser: BodyParser[A])(block: Request[A] => Result): Action[A] = new Action[A] { request =>
+  val userContextHandler: UserContextHandler
 
-    def parser = bodyParser
-    def apply(request: Request[A]) = try {
-      // TODO refactor this code
+  private val saml2 = new Saml2()
+
+  def doSaml(bodyParser: BodyParser[A])(request: Request[A])(block: Request[A] => Result): Result = {
+
       SsoContext.removeUser()
-      if (request.path != consumerPath) {
+      if (request.path != SamlActionTrait.consumerPath) {
         // Normal request
         userContextHandler.getUser(request) match {
           case Some(user) =>
@@ -58,17 +77,18 @@ trait SamlActionTrait extends Logging {
       } else {
         // Consumer request
         if ("POST" == request.method && request.body.isInstanceOf[AnyContent]) {
-          val samlRequestOpt = getFormParameter(request, Constants.SAMLRequest)
-          val samlResponseOpt = getFormParameter(request, Constants.SAMLResponse)
+          val samlRequestOpt = getFormParameter(request, SamlActionTrait.Constants.SAMLRequest)
+          val samlResponseOpt = getFormParameter(request, SamlActionTrait.Constants.SAMLResponse)
 
           if (samlRequestOpt.isDefined) {  // single sign out request
             singleSignOut(samlRequestOpt.get)
           } else if (samlResponseOpt.isDefined) {
-            val samlResponseObj = SamlHelper.unmarshall(samlResponseOpt.get)
-            if (SamlHelper.SAML_LOGOUT_RESPONSE == samlResponseObj.getDOM().getNodeName()) {
-              doLogout(request)
-            } else {  // login response
+            val samlResponseObj = saml2.unmarshall(samlResponseOpt.get)
+            
+            if (samlResponseObj.isInstanceOf[Response]) {
               doLogin(request, samlResponseObj)
+            } else {
+              doLogout(request)
             }
           } else {
             MethodNotAllowed  // invalid request
@@ -77,30 +97,26 @@ trait SamlActionTrait extends Logging {
         } else if (request.getQueryString("logout").isDefined) {
           userContextHandler.getUser(request) match {
             case Some(user) => sendLogoutRequest(user)
-            case None => Redirect(Constants.PROTOCOL + request.host)
+            case None => Redirect(SamlActionTrait.pmsUrl)
           }
         } else {
           MethodNotAllowed  // invalid request
         }
       }
-
-    }
   }
 
   private def sendLogoutRequest(user: User): Result = {
-    val logoutRequest = SamlHelper.buildLogoutRequest(user, consumerUrl)
+    val logoutRequest = saml2.buildLogoutRequest(user.getName(), SamlActionTrait.consumerUrl)
     val queryString = Map(
-      Constants.SAMLRequest -> Seq(SamlHelper.marshall(logoutRequest)),
-      Constants.RelayState  -> Seq("")
+      SamlActionTrait.Constants.SAMLRequest -> Seq(logoutRequest),
+      SamlActionTrait.Constants.RelayState  -> Seq("")
     )
-    userContextHandler.removeUserContext(Redirect(authUrl, queryString), user.getName())
+    userContextHandler.removeUserContext(Redirect(SamlActionTrait.authUrl, queryString), user.getName())
   }
 
-  private def doLogin[A](request: Request[A], samlResponseObj: XMLObject): Result = {
+  private def doLogin[A](request: Request[A], samlResponseObj: Message): Result = {
 
-    import org.opensaml.saml2.core. { Response => SamlResponse }
-
-    val resp = samlResponseObj.asInstanceOf[SamlResponse]
+    val resp = samlResponseObj.asInstanceOf[Response]
     val assertion = resp.getAssertions.get(0)
 
     val attributes = mutable.Map.empty[String, String]
@@ -125,43 +141,43 @@ trait SamlActionTrait extends Logging {
     if (username == null) {
       throw new IOException("sso login, user is null")
     } else {
-      val relayState = getFormParameter(request, Constants.RelayState).getOrElse("")  // TODO What if relay state is empty?
-      userContextHandler.withUserContext(Redirect(relayState), username)
+      val relayState = getFormParameter(request, SamlActionTrait.Constants.RelayState).getOrElse("")  // TODO What if relay state is empty?
+      userContextHandler.withUserContext(Redirect(relayState), new User(username))
     }
   }
 
   private def doLogout[A](request: Request[A]): Result = {
     // TODO request.getContextpath()
-    Redirect(Constants.PROTOCOL + request.host)
+    Redirect(SamlActionTrait.pmsUrl)
   }
 
   private def singleSignOut(samlRequest: String): Result = {
-    val samlRequestObj = SamlHelper.unmarshall(samlRequest)
-    if (SamlHelper.SAML_LOGOUT_REQUEST != samlRequestObj.getDOM().getNodeName()) {
+    val message = saml2.unmarshall(samlRequest)
+    if (! message.isInstanceOf[LogoutRequest]) {
       throw new IOException("invalid do logout request")
     }
-    val name = samlRequestObj.asInstanceOf[LogoutRequestImpl].getNameID().getValue()
+    val name = message.asInstanceOf[LogoutRequest].getNameID().getValue()
     userContextHandler.removeUserContext(Ok(""), name)
   }
 
   private def logoutRequest(user: User): Result = {
-    val logoutRequest = SamlHelper.buildLogoutRequest(user, consumerUrl)
+    val logoutRequest = saml2.buildLogoutRequest(user.getName(), SamlActionTrait.consumerUrl)
     val queryString = Map(
-      Constants.SAMLRequest -> Seq(SamlHelper.marshall(logoutRequest)),
-      Constants.RelayState  -> Seq("")
+      SamlActionTrait.Constants.SAMLRequest -> Seq(logoutRequest),
+      SamlActionTrait.Constants.RelayState  -> Seq("")
     )
-    Redirect(authUrl, queryString)
+    Redirect(SamlActionTrait.authUrl, queryString)
   }
 
   private def doAuth[A](request: Request[A]): Result = {
-    val authRequest = SamlHelper.buildAuthRequest(consumerUrl)
+    val authRequest = saml2.buildAuthRequest(SamlActionTrait.consumerUrl, SamlActionTrait.consumerIndex)
     // TODO find a way to get the full request URL
-    val requestUrl = "http://" + request.host + request.uri
+    val requestUrl = SamlActionTrait.pmsUrl + request.uri
     val queryString = Map(
-      Constants.SAMLRequest -> Seq(SamlHelper.marshall(authRequest)),
-      Constants.RelayState  -> Seq(requestUrl)
-    )
-    Redirect(authUrl, queryString)
+      SamlActionTrait.Constants.SAMLRequest -> Seq(authRequest),
+      SamlActionTrait.Constants.RelayState  -> Seq(requestUrl)
+    ) ++ request.queryString
+    Redirect(SamlActionTrait.authUrl, queryString)
   }
 
   private def getFormParameter[A](request: Request[A], name: String): Option[String] = {

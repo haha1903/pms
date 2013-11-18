@@ -288,8 +288,8 @@ app/com/datayes/invest/pms/web/service/SingleAssetLoader.scala -text
 app/com/datayes/invest/pms/web/service/SummaryService.scala -text
 app/com/datayes/invest/pms/web/servlet/Play2Servlet25.scala -text
 app/com/datayes/invest/pms/web/sso/AuthAction.scala -text
+app/com/datayes/invest/pms/web/sso/Saml2.java -text
 app/com/datayes/invest/pms/web/sso/SamlActionTrait.scala -text
-app/com/datayes/invest/pms/web/sso/SamlHelper.java -text
 app/com/datayes/invest/pms/web/sso/UserContextHandler.scala -text
 app/controllers/AccountController.scala -text
 app/controllers/Application.scala -text

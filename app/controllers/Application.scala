@@ -10,11 +10,11 @@ class Application extends Controller with Logging {
 
   private val f2eHost = Config.INSTANCE.getString("pms.f2e.host", "f2e.datayes.com")
 
-  private val pmsApiUrl = Config.INSTANCE.getString("pms.api.url", "localhost:9000")
+  private val pmsUrl = Config.INSTANCE.getString("pms.url", "localhost:9000")
 
-  def index = Action {
+  def index = AuthAction { implicit req =>
     val username = "" //if (user == null) "" else user.getName()
-    Ok(views.html.index(pmsApiUrl, f2eHost, "10415", "通联数据", username))
+    Ok(views.html.index(pmsUrl, f2eHost, "10415", "通联数据", username))
   }
 
   def tools = AuthAction { implicit request =>

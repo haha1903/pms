@@ -19,7 +19,7 @@ hibernate.show_sql = false
 # Host information
 #
 pms {
-    api.url = "http://localhost:9000"
+    url = "http://localhost:9000"
     f2e.host = "f2e01-dev.datayes.com"
 }
 
@@ -30,7 +30,7 @@ pms {
 paas.sso {
     enabled = false
     auth.url = "https://10.20.112.214:9443/samlsso"
-    consumer.url="http://10.20.102.158:9000/saml/pms/consumer"
+    consumer.path = "/saml/pms/consumer"
 }
 
 

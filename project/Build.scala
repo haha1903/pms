@@ -17,7 +17,7 @@ object ApplicationBuild extends Build {
     "com.alibaba" % "fastjson" % "1.1.35",
     "com.dyuproject.protostuff" % "protostuff-core" % protostuffVersion,
     "com.dyuproject.protostuff" % "protostuff-runtime" % protostuffVersion,
-    "com.datayes.paas.sso" % "datayes-sso" % "1.0.1" withSources,
+    "com.datayes.paas.sso" % "datayes-sso" % "1.1.1" withSources,
     "com.google.code.gson" % "gson" % "2.2.4",
     "com.google.inject" % "guice" % "3.0" withSources,
     //"com.google.inject.extensions" % "guice-assistedinject" % "3.0",

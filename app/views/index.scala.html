@@ -1,4 +1,4 @@
-@(pmsApiUrl: String, f2eHost: String, enterpriseId: String, companyName: String, username: String)
+@(pmsUrl: String, f2eHost: String, enterpriseId: String, companyName: String, username: String)
 
 <!DOCTYPE html>
 <html>
@@ -14,7 +14,7 @@
                 biz="business/pms/index"
                 jsonp="true"
                 preload="easyui,cc"
-                api="@pmsApiUrl"
+                api="@pmsUrl"
                 src="http://@f2eHost/js/compressed/cc-loader-1.1.0.js"></script>
 
         <script>
