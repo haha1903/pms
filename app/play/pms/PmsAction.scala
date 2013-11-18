@@ -22,7 +22,7 @@ trait PmsActionBuilder extends Logging {
   
   // This flag is used by PMS developer
   // Should be set to true when deployed
-  private val useDyResponse = false
+  private val useDyResponse = true
   
   
   def apply(block: Request[AnyContent] => PmsResult): Action[AnyContent] = apply(BodyParsers.parse.anyContent)(block)
