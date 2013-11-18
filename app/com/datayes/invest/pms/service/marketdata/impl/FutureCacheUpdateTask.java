@@ -16,31 +16,23 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class FutureCacheUpdateTask implements Runnable {
+    private final JedisPool pool;
+    private final FutureMarketDataListener listener;
+    private final Gson gson;
 
-    private MarketDataCache marketDataCache = null;
-
-    private static Config config = Config.INSTANCE;
-
-    private static String CHANNEL = config.getString("redis.channel");
-    private static String HOST = config.getString("redis.host");
-    private static int PORT = config.getInt("redis.port");
-	
-//    private static String CHANNEL = "future2";
-//    private static String HOST = "10.20.112.103";
-//    private static int PORT = 6379;
-    
-    final private Gson gson;
+    private final static Config config = Config.INSTANCE;
+    private final static String CHANNEL = config.getString("redis.future_channel");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FutureCacheUpdateTask.class);
 
-
-    public FutureCacheUpdateTask(MarketDataCache marketDataCache) {
+    public FutureCacheUpdateTask(JedisPool pool, MarketDataCache marketDataCache) {
         GsonBuilder builder = new GsonBuilder();
         builder.registerTypeAdapter(BigDecimal.class, new BigDecimalSerializer());
         builder.registerTypeAdapter(BigDecimalSerializer.class, new BigDecimalDeserializer());
         gson = builder.create();
 
-        this.marketDataCache = marketDataCache;
+        this.pool = pool;
+        listener = new FutureMarketDataListener(gson, marketDataCache);
     }
 
     @Override
@@ -48,11 +40,7 @@ public class FutureCacheUpdateTask implements Runnable {
         LOGGER.info("Future Cache Scheduler begins");
 
         try {
-            JedisPool pool = new JedisPool(new JedisPoolConfig(), HOST, PORT);
             Jedis jedis = pool.getResource();
-
-            FutureMarketDataListener listener = new FutureMarketDataListener(gson, marketDataCache);
-
             jedis.subscribe(listener, CHANNEL);
         } catch (Throwable th){
             LOGGER.error(th.getMessage(), th);

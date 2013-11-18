@@ -225,13 +225,14 @@ app/com/datayes/invest/pms/service/fee/impl/FeeServiceImpl.scala -text
 app/com/datayes/invest/pms/service/industry/IndustryService.java -text
 app/com/datayes/invest/pms/service/industry/impl/IndustryServiceImpl.java -text
 app/com/datayes/invest/pms/service/marketdata/MarketDataService.java -text
-app/com/datayes/invest/pms/service/marketdata/impl/EquityCacheUpdateTask.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/FutureCacheUpdateTask.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/FutureMarketDataListener.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/MarketDataCache.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/MarketDataDbScheduler.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/MarketDataServiceImpl.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/Source.java -text
+app/com/datayes/invest/pms/service/marketdata/impl/StockCacheUpdateTask.java -text
+app/com/datayes/invest/pms/service/marketdata/impl/StockMarketDataListener.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Book.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Converter.java -text
 app/com/datayes/invest/pms/service/marketdata/impl/data/Future.java -text

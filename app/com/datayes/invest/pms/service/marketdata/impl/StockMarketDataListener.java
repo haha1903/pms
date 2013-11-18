@@ -1,34 +1,37 @@
 package com.datayes.invest.pms.service.marketdata.impl;
 
-import java.sql.Timestamp;
-
+import com.datayes.invest.pms.entity.account.MarketData;
+import com.datayes.invest.pms.service.marketdata.impl.FutureMarketDataListener;
+import com.datayes.invest.pms.service.marketdata.impl.MarketDataCache;
+import com.datayes.invest.pms.service.marketdata.impl.data.Converter;
+import com.datayes.invest.pms.service.marketdata.impl.data.Stock;
+import com.dyuproject.protostuff.ProtobufIOUtil;
+import com.dyuproject.protostuff.Schema;
+import com.dyuproject.protostuff.runtime.RuntimeSchema;
+import com.google.gson.Gson;
+import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import redis.clients.jedis.JedisPubSub;
 
-import com.datayes.invest.pms.entity.account.MarketData;
-import com.datayes.invest.pms.service.marketdata.impl.data.Converter;
-import com.datayes.invest.pms.service.marketdata.impl.data.Future;
-import com.google.gson.Gson;
-
-public class FutureMarketDataListener extends JedisPubSub {
-
-    private final Gson gson;
+public class StockMarketDataListener extends JedisPubSub  {
     private final MarketDataCache marketDataCache;
+
+    private static Schema<Stock> stockSchema = RuntimeSchema.getSchema(Stock.class);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FutureMarketDataListener.class);
 
-
-    public FutureMarketDataListener(Gson gson, MarketDataCache marketDataCache) {
-        this.gson = gson;
+    public StockMarketDataListener(MarketDataCache marketDataCache) {
         this.marketDataCache = marketDataCache;
     }
 
     @Override
     public void onMessage(String channel, String message) {
-        Future future = gson.fromJson(message, Future.class);
-        MarketData md = Converter.toMarketData(future);
+        byte[] buff = Base64.decodeBase64(message);
+        Stock stock = new Stock();
+        ProtobufIOUtil.mergeFrom(buff, stock, stockSchema);
+
+        MarketData md = Converter.toMarketData(stock);
         marketDataCache.update(md);
     }
 

@@ -33,7 +33,7 @@ public class Converter {
         LocalDate asOfDate = new LocalDate(stock.getTimestamp());
         Timestamp now = new Timestamp(System.currentTimeMillis());
 
-        return new MarketData(stock.getSecID(), asOfDate, ts, price, prevPrice, now, Source.MQ.toString());
+        return new MarketData(stock.getSecID(), asOfDate, ts, price, prevPrice, now, Source.REDIS_STOCK.toString());
     }
 
     public static MarketData toMarketData(Future future) {
@@ -47,8 +47,8 @@ public class Converter {
             Timestamp ts = new Timestamp(future.getTimestamp());
             LocalDate asOfDate = new LocalDate(ts.getTime());
             Timestamp now = new Timestamp(System.currentTimeMillis());
-            
-            return new MarketData(future.getSecID(), asOfDate, ts, price, prevPrice, now, Source.REDIS.toString());
+
+            return new MarketData(future.getSecID(), asOfDate, ts, price, prevPrice, now, Source.REDIS_FUTURE.toString());
         }
         else {
             return null;

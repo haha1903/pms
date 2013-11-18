@@ -37,6 +37,8 @@ import com.datayes.invest.pms.service.calendar.CalendarService;
 import com.datayes.invest.pms.service.marketdata.MarketDataService;
 import com.datayes.invest.pms.service.marketdata.impl.data.Converter;
 import com.datayes.invest.pms.util.DefaultValues;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 @Singleton
 public class MarketDataServiceImpl implements MarketDataService {
@@ -225,12 +227,16 @@ public class MarketDataServiceImpl implements MarketDataService {
         preloadCache();
 
         // Create new thread for receiving stock data
-        EquityCacheUpdateTask equityCacheUpdateTask = new EquityCacheUpdateTask(marketDataCache);
-        Thread equityThread = new Thread(equityCacheUpdateTask);
+        String HOST = config.getString("redis.host");
+        int PORT = config.getInt("redis.port");
+        JedisPool pool = new JedisPool(new JedisPoolConfig(), HOST, PORT);
+
+        StockCacheUpdateTask stockCacheUpdateTask = new StockCacheUpdateTask(pool, marketDataCache);
+        Thread equityThread = new Thread(stockCacheUpdateTask);
         equityThread.start();
 
         // Create new thread for receiving future data
-        FutureCacheUpdateTask futureCacheUpdateTask = new FutureCacheUpdateTask(marketDataCache);
+        FutureCacheUpdateTask futureCacheUpdateTask = new FutureCacheUpdateTask(pool, marketDataCache);
         Thread futureThread = new Thread(futureCacheUpdateTask);
         futureThread.start();
 

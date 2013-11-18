@@ -41,16 +41,11 @@ jupitar.jms {
     url = "tcp://trading4-dev.datayes.com:61666"
     topic = "Topic.Tiger.ClientUpdate"
 }
-rabbitmq {
-    queue_name = "PMS_MARKETDATA_QUEUE"
-    exchange_name = "rtmdd.marketData.CN"
-    equity_key = "marketData.CN.Equities2"
-    host = "10.20.136.21"
-}
 redis {
-    host = "10.20.112.103"
+    host = "redis01-dev"
     port = 6379
-    channel = "future2"
+    stock_channel = "stock2"
+    future_channel = "future2"
 }
 
 
