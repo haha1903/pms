@@ -25,6 +25,7 @@ object ApplicationBuild extends Build {
     "joda-time" % "joda-time" % "2.2",
     "mysql" % "mysql-connector-java" % "5.1.25",
     "org.apache.activemq" % "activemq-client" % "5.8.0",
+    "commons-codec" % "commons-codec" % "1.8",
     "org.apache.commons" % "commons-lang3" % "3.1",
     "org.apache.geronimo.specs" % "geronimo-servlet_2.5_spec" % "1.2",
     "org.hibernate" % "hibernate-c3p0" % hibernateVersion withSources,
