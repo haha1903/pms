@@ -29,7 +29,8 @@ class FundController extends PmsController with Logging {
 
   def summary() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
-    val asOfDate: LocalDate = paramAsOfDateOrToday
+    val asOfDate: LocalDate = paramAsOfDateOrToday()
+    
     val summary = fundService.getSummary(accountId, asOfDate)
     val json = Json.toJson(summary)
     PmsResult(json)
@@ -37,8 +38,9 @@ class FundController extends PmsController with Logging {
 
   def netTrend() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
-    val asOfDate: LocalDate = paramAsOfDateOrToday
+    val asOfDate: LocalDate = paramAsOfDateOrToday()
     val benchmarkIndexTicker: String = param("benchmarkIndexTicker")
+    
     val netValueTrendItems = fundService.getNetTrend(accountId, asOfDate, benchmarkIndexTicker)
     val json = Json.toJson(netValueTrendItems)
     PmsResult(json)
@@ -46,7 +48,8 @@ class FundController extends PmsController with Logging {
 
   def industryProportion() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
-    val asOfDate = paramAsOfDateOrToday
+    val asOfDate = paramAsOfDateOrToday()
+    
     val industryProportions = fundService.getIndustryProportion(accountId, asOfDate)
     val json = Json.toJson(industryProportions)
     PmsResult(json)
@@ -54,7 +57,8 @@ class FundController extends PmsController with Logging {
 
   def performanceOverview() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
-    val asOfDate = paramAsOfDateOrToday
+    val asOfDate = paramAsOfDateOrToday()
+    
     val standardFund = List(("本基金", accountId),("上证综指", 1L), ("沪深300", 1782L), ("上证基指", 20L))
     val performance = fundService.getPerformanceOverview(accountId, asOfDate, standardFund)
     val json = Json.toJson(performance)
@@ -63,7 +67,8 @@ class FundController extends PmsController with Logging {
 
   def assetProportion() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
-    val asOfDate = paramAsOfDateOrToday
+    val asOfDate = paramAsOfDateOrToday()
+    
     val assetProportions = fundService.getAssetProportion(accountId, asOfDate)
     val json = Json.toJson(assetProportions)
     PmsResult(json)
@@ -71,8 +76,9 @@ class FundController extends PmsController with Logging {
 
   def topHoldingStock() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
-    val number: Int = param("number")
-    val asOfDate = paramAsOfDateOrToday
+    val number: Int = param("number").default(10)
+    val asOfDate = paramAsOfDateOrToday()
+    
     val topHoldingStock = fundService.getTopHoldingStock(accountId, number, asOfDate)
     val json = Json.toJson(topHoldingStock)
     PmsResult(json)

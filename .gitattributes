@@ -355,4 +355,5 @@ test/com/datayes/invest/pms/util/BeanUtilTest.java -text
 test/com/datayes/invest/pms/util/Position.java -text
 test/com/datayes/invest/pms/util/PositionHist.java -text
 test/com/datayes/invest/pms/util/SecurityPosition.java -text
+tools/postman/pms.json -text
 war/WEB-INF/web.xml -text
