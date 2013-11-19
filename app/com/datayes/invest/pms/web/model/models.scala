@@ -194,8 +194,6 @@ package object models {
 
   object ModelWrites {
 
-    import DecimalWriters.{ writePercentDecimal, writePriceDecimal, writeValueDecimal }
-
     /*
      * Dates
      */
@@ -207,24 +205,6 @@ package object models {
     implicit object LocalDateTimeWrites extends Writes[LocalDateTime] {
       def writes(o: LocalDateTime) = JsString(o.toString)
     }
-
-
-    /*
-     * Account
-     */
-
-//    implicit object AccountWrites extends Writes[Account] {
-//      def writes(o: Account) = Json.obj(
-//        "id" -> o.id,
-//        "name" -> o.name,
-//        "accountNo" -> o.accountNo,
-//        "countryCode" -> o.countryCode,
-//        "currencyCode" -> o.currencyCode,
-//        "classCode" -> o.classCode,
-//        "openDate" -> o.openDate
-//      )
-//    }
-
 
     /*
      * AssetNode
@@ -241,11 +221,11 @@ package object models {
         "type" -> a.nodeType.toString,
         "name" -> a.name,
         "id" -> a.id,
-        "marketValue" -> writeValueDecimal(a.marketValue),
-        "weight" -> writePercentDecimal(a.weight),
-        "holdingValue" -> writeValueDecimal(a.holdingValue),
-        "dailyPnL" -> writeValueDecimal(a.dailyPnL),
-        "floatPnL" -> writeValueDecimal(a.floatPnL)
+        "marketValue" -> a.marketValue,
+        "weight" -> a.weight,
+        "holdingValue" -> a.holdingValue,
+        "dailyPnL" -> a.dailyPnL,
+        "floatPnL" -> a.floatPnL
       )
 
       private def assetTreeToJson(a: AssetTree) = {
@@ -260,13 +240,13 @@ package object models {
         json ++ Json.obj(
           "securityId" -> a.securityId,
           "code" -> a.code,
-          "marketPrice" -> writePriceDecimal(a.marketPrice),
-          "priceChange" -> writePercentDecimal(a.priceChange),
-          "holdingQuantity" -> writeValueDecimal(a.holdingQuantity),
-          "holdingValuePrice" -> writePriceDecimal(a.holdingValuePrice),
-          "interest" -> writeValueDecimal(a.interest),
-          "earnedPnL" -> writeValueDecimal(a.earnedPnL),
-          "benchmarkIndexWeight" -> writePercentDecimal(a.benchmarkIndexWeight)
+          "marketPrice" -> a.marketPrice,
+          "priceChange" -> a.priceChange,
+          "holdingQuantity" -> a.holdingQuantity,
+          "holdingValuePrice" -> a.holdingValuePrice,
+          "interest" -> a.interest,
+          "earnedPnL" -> a.earnedPnL,
+          "benchmarkIndexWeight" -> a.benchmarkIndexWeight
         )
       }
 
@@ -283,7 +263,7 @@ package object models {
     implicit object DataPointWrites extends Writes[ChartDataPoint] {
       def writes(p: ChartDataPoint) = Json.obj(
         "name" -> p.name,
-        "value" -> writePercentDecimal(p.value)
+        "value" -> p.value
       )
     }
 
@@ -302,10 +282,10 @@ package object models {
     implicit object AssetClassWeightWrites extends Writes[AssetClassWeight] {
       def writes(o: AssetClassWeight) = Json.obj(
         "assetClass" -> o.assetClass.toString,
-        "weight" -> writePercentDecimal(o.weight),
-        "marketValue" -> writeValueDecimal(o.marketValue),
-        "floatPnL" -> writeValueDecimal(o.floatPnL),
-        "floatPnLRate" -> writePercentDecimal(o.floatPnLRate)
+        "weight" -> o.weight,
+        "marketValue" -> o.marketValue,
+        "floatPnL" -> o.floatPnL,
+        "floatPnLRate" -> o.floatPnLRate
       )
     }
 
@@ -313,8 +293,8 @@ package object models {
       def writes(node: IndustryWeightNode) = {
         val json = Json.obj(
           "name" -> node.name,
-          "marketValue" -> writeValueDecimal(node.marketValue),
-          "weight" -> writePercentDecimal(node.weight)
+          "marketValue" -> node.marketValue,
+          "weight" -> node.weight
         )
         node match {
           case leaf: IndustryWeightLeaf =>
@@ -329,51 +309,52 @@ package object models {
       def writes(o: Holding) = Json.obj(
         "name" -> o.name.toString,
         "ticker" -> o.ticker.toString,
-        "marketPrice" -> writePriceDecimal(o.marketPrice),
-        "marketValue" -> writeValueDecimal(o.marketValue),
-        "holdingValuePrice" -> writePriceDecimal(o.holdingValuePrice),
+        "marketPrice" -> o.marketPrice,
+        "marketValue" -> o.marketValue,
+        "holdingValuePrice" -> o.holdingValuePrice,
         "industry" -> o.industry.toString,
-        "floatPnL" -> writePercentDecimal(o.floatPnL),
-        "weight" -> writePercentDecimal(o.weight))
+        "floatPnL" -> o.floatPnL,
+        "weight" -> o.weight
+      )
     }
     
     implicit object TopHoldingStockWrites extends Writes[TopHoldingStock] {
        def writes(o: TopHoldingStock) = Json.obj(
          "number" -> o.number.toInt,
-         "weight" -> writePercentDecimal(o.weight),
+         "weight" -> o.weight,
          "holding" -> o.holdings)
     }
 	
     implicit object PerformanceWrites extends Writes[Performance] {
       def writes(o: Performance) = Json.obj(
          "name" -> o.name.toString,
-         "changeLastWeek" -> writePercentDecimal(o.changeLastWeek),
-         "changeLastMonth" -> writePercentDecimal(o.changeLastMonth),
-         "changeLastQuater" -> writePercentDecimal(o.changeLastQuater),
-         "changeLastHalfYear" -> writePercentDecimal(o.changeLastHalfYear),
-         "changeLastYear" -> writePercentDecimal(o.changeLastYear),
-         "changeYearToDate" -> writePercentDecimal(o.changeYearToDate)
+         "changeLastWeek" -> o.changeLastWeek,
+         "changeLastMonth" -> o.changeLastMonth,
+         "changeLastQuater" -> o.changeLastQuater,
+         "changeLastHalfYear" -> o.changeLastHalfYear,
+         "changeLastYear" -> o.changeLastYear,
+         "changeYearToDate" -> o.changeYearToDate
          )
     }
 
     implicit object NetValueTrendItemWrites extends Writes[NetValueTrendItem] {
       def writes(o: NetValueTrendItem) = Json.obj(
         "date" -> o.date,
-        "netValue" -> writeValueDecimal(o.netValue),
-        "fundReturn" -> writePercentDecimal(o.fundReturn),
-        "benchmarkReturn" -> writePercentDecimal(o.benchmarkReturn)
+        "netValue" -> o.netValue,
+        "fundReturn" -> o.fundReturn,
+        "benchmarkReturn" -> o.benchmarkReturn
       )
     }
 
     implicit object AccountOverviewWrites extends Writes[AccountOverview] {
       // TODO do not expose some fields for now
       def writes(o: AccountOverview) = Json.obj(
-        "unitNetValue" -> writeValueDecimal(o.unitNetValue),
-        "dailyReturn" -> writePercentDecimal(o.dailyReturn),
-        "marketValue" -> writeValueDecimal(o.marketValue),
-        "cashValue" -> writeValueDecimal(o.cashValue),
-        "fundReturn" -> writePercentDecimal(o.fundReturn),
-        "floatPnL" -> writeValueDecimal(o.floatPnL)
+        "unitNetValue" -> o.unitNetValue,
+        "dailyReturn" -> o.dailyReturn,
+        "marketValue" -> o.marketValue,
+        "cashValue" -> o.cashValue,
+        "fundReturn" -> o.fundReturn,
+        "floatPnL" -> o.floatPnL
       )
     }
 
@@ -383,11 +364,11 @@ package object models {
         Json.obj(
           "count" -> o.count.toString,
           "type" -> typeName,
-          "ratio" -> writePercentDecimal(o.ratio),
-          "assetValue" -> writeValueDecimal(o.assetValue),
-          "netValue" -> writeValueDecimal(o.netValue),
-          "pnl" -> writeValueDecimal(o.pnl),
-          "cash" -> writeValueDecimal(o.cash)
+          "ratio" -> o.ratio,
+          "assetValue" -> o.assetValue,
+          "netValue" -> o.netValue,
+          "pnl" -> o.pnl,
+          "cash" -> o.cash
         )
       }
     }
@@ -396,10 +377,10 @@ package object models {
       def writes(o: AccountsSummary) = Json.obj(
          "count" -> o.count.toString,
          "date" -> o.date,
-         "totalAssetValue" -> writeValueDecimal(o.totalAssetValue),
-         "totalNetValue" -> writeValueDecimal(o.totalNetValue),
-         "totalPnl" -> writeValueDecimal(o.totalPnl),
-         "totalCash" -> writeValueDecimal(o.totalCash),
+         "totalAssetValue" -> o.totalAssetValue,
+         "totalNetValue" -> o.totalNetValue,
+         "totalPnl" -> o.totalPnl,
+         "totalCash" -> o.totalCash,
          "detail" -> o.items
       )
     }

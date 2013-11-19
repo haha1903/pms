@@ -1,8 +1,6 @@
 package com.datayes.invest.pms.web.model.fastjson.asset
 
 import com.datayes.invest.pms.web.model.models.{ Asset => PAsset, AssetNode => PAssetNode, AssetTree => PAssetTree}
-import controllers.util.DecimalWriters.{ writePercentDecimal, writePriceDecimal, writeValueDecimal }
-
 
 object AssetTreeConverter {
 
@@ -14,11 +12,11 @@ object AssetTreeConverter {
       case tree: PAssetTree => convertAssetTree(tree)
       case asset: PAsset => convertAsset(asset)
     }
-    node.dailyPnL = writeValueDecimal(assetNode.dailyPnL)
-    node.floatPnL = writeValueDecimal(assetNode.floatPnL)
-    node.holdingValue = writeValueDecimal(assetNode.holdingValue)
-    node.marketValue = writeValueDecimal(assetNode.marketValue)
-    node.weight = writePercentDecimal(assetNode.weight)
+    node.dailyPnL = assetNode.dailyPnL.bigDecimal
+    node.floatPnL = assetNode.floatPnL.bigDecimal
+    node.holdingValue = assetNode.holdingValue.bigDecimal
+    node.marketValue = assetNode.marketValue.bigDecimal
+    node.weight = assetNode.weight.bigDecimal
     node
   }
 
@@ -36,13 +34,13 @@ object AssetTreeConverter {
   private def convertAsset(asset: PAsset): Asset = {
     val a = new Asset(asset.name, asset.code, asset.securityId);
 
-    a.marketPrice = writePriceDecimal(asset.marketPrice)
-    a.priceChange = writePercentDecimal(asset.priceChange)
+    a.marketPrice = asset.marketPrice.bigDecimal
+    a.priceChange = asset.priceChange.bigDecimal
     a.holdingQuantity = asset.holdingQuantity
-    a.holdingValuePrice = writeValueDecimal(asset.holdingValuePrice)
-    a.interest = writeValueDecimal(asset.interest)
-    a.earnedPnL = writeValueDecimal(asset.earnedPnL)
-    a.benchmarkIndexWeight = writePercentDecimal(asset.benchmarkIndexWeight)
+    a.holdingValuePrice = asset.holdingValuePrice.bigDecimal
+    a.interest = asset.interest.bigDecimal
+    a.earnedPnL = asset.earnedPnL.bigDecimal
+    a.benchmarkIndexWeight = asset.benchmarkIndexWeight.bigDecimal
 
     a
   }

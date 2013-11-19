@@ -10,8 +10,8 @@ import redis.clients.jedis.JedisPoolConfig;
 import scala.math.BigDecimal;
 
 import com.datayes.invest.pms.config.Config;
-import com.datayes.invest.pms.web.model.gson.BigDecimalDeserializer;
-import com.datayes.invest.pms.web.model.gson.BigDecimalSerializer;
+import com.datayes.invest.pms.util.gson.BigDecimalDeserializer;
+import com.datayes.invest.pms.util.gson.BigDecimalSerializer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

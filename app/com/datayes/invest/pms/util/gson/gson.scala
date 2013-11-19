@@ -1,9 +1,15 @@
-package com.datayes.invest.pms.web.model.gson
+package com.datayes.invest.pms.util.gson
 
-import com.google.gson._
+
 import java.lang.reflect.Type
 import org.joda.time.LocalDateTime
 import org.joda.time.LocalDate
+import com.google.gson.JsonDeserializationContext
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonElement
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonDeserializer
+import com.google.gson.JsonSerializer
 
 class BigDecimalSerializer extends JsonSerializer[BigDecimal] {
 

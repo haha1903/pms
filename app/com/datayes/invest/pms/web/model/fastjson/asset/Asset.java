@@ -1,23 +1,24 @@
 package com.datayes.invest.pms.web.model.fastjson.asset;
 
+import java.math.BigDecimal;
 
 public class Asset extends AssetNode {
 
     public final String code;
 
-    public String marketPrice = "";
+    public BigDecimal marketPrice = null;
 
-    public String priceChange = "";
+    public BigDecimal priceChange = null;
 
     public Long holdingQuantity = 0L;
 
-    public String holdingValuePrice = "";
+    public BigDecimal holdingValuePrice = null;
 
-    public String interest = "";
+    public BigDecimal interest = null;
 
-    public String earnedPnL = "";
+    public BigDecimal earnedPnL = null;
 
-    public String benchmarkIndexWeight = "";
+    public BigDecimal benchmarkIndexWeight = null;
 
     public Asset(String name, String code, Long securityId) {
         super(AssetNodeType.leaf, String.valueOf(securityId), name);

@@ -1,5 +1,7 @@
 package com.datayes.invest.pms.web.model.fastjson.asset;
 
+import java.math.BigDecimal;
+
 public abstract class AssetNode {
 
     public final AssetNodeType type;
@@ -8,15 +10,15 @@ public abstract class AssetNode {
 
     public final String name;
 
-    public String marketValue = "";
+    public BigDecimal marketValue = null;
 
-    public String weight = "";
+    public BigDecimal weight = null;
 
-    public String holdingValue = "";
+    public BigDecimal holdingValue = null;
 
-    public String dailyPnL = "";
+    public BigDecimal dailyPnL = null;
 
-    public String floatPnL = "";
+    public BigDecimal floatPnL = null;
 
     protected AssetNode(AssetNodeType type, String id, String name) {
         this.type = type;

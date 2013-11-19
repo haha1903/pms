@@ -5,12 +5,12 @@ import com.datayes.invest.pms.web.sso.AuthAction
 import play.api.libs.ws.WS
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import controllers.util.Jsonp
 import play.api.mvc._
 import play.api.libs.json.Json
 import com.datayes.invest.pms.config.Config
+import play.pms.PmsController
 
-class ProxyController extends Controller with Jsonp with Logging {
+class ProxyController extends PmsController with Logging {
   
   val attributionHost = Config.INSTANCE.getString("proxy.attribution.host")
       
