@@ -137,9 +137,11 @@ public class MarketDataServiceImpl implements MarketDataService {
         if (today.isEqual(endDate)) {
             actEndDate = today.minusDays(1);
             MarketData md = getMarketData(securityId, today);
-            MarketData cloned = cloneMarketData(md);
-            cloned.setAsOfDate(today);
-            buffer.add(cloned);
+            if (md != null) {
+                MarketData cloned = cloneMarketData(md);
+                cloned.setAsOfDate(today);
+                buffer.add(cloned);
+            }
         }
         
         List<PriceVolume> priceVolumes = priceVolumeDao.findSomeBySecurityIdInPeriod(securityId, startDate, actEndDate);
