@@ -1,7 +1,5 @@
 package com.datayes.invest.pms.service.marketdata.impl;
 
-import java.sql.Timestamp;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +27,9 @@ public class FutureMarketDataListener extends JedisPubSub {
     public void onMessage(String channel, String message) {
         Future future = gson.fromJson(message, Future.class);
         MarketData md = Converter.toMarketData(future);
-        marketDataCache.update(md);
+        if (md != null) {
+            marketDataCache.update(md);
+        }
     }
 
     @Override

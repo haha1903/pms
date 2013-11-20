@@ -8,7 +8,6 @@ import com.datayes.invest.pms.service.marketdata.impl.data.Stock;
 import com.dyuproject.protostuff.ProtobufIOUtil;
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
-import com.google.gson.Gson;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +31,9 @@ public class StockMarketDataListener extends JedisPubSub  {
         ProtobufIOUtil.mergeFrom(buff, stock, stockSchema);
 
         MarketData md = Converter.toMarketData(stock);
-        marketDataCache.update(md);
+        if (md != null) {
+            marketDataCache.update(md);
+        }
     }
 
     @Override

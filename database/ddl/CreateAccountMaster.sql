@@ -10,7 +10,7 @@ create table ACCOUNT
    CURRENCY_CD          char(3) not null,
    ACCOUNT_CLASS_CD     varchar(20) not null,
    ACCOUNT_TYPE_ID      bigint not null,
-   ACCOUNT_NO           varchar(20),
+   ACCOUNT_NO           varchar(20) unique,
    ACCOUNT_NAME         varchar(80) not null,
    OPEN_DATE            datetime not null,
    STATUS_CHANGE_DATE   datetime,
