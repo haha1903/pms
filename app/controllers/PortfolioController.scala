@@ -1,39 +1,36 @@
 package controllers
 
 import org.joda.time.LocalDate
-
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.userpref.GroupingItem
 import com.datayes.invest.pms.userpref.UserPref
-import com.datayes.invest.pms.web.model.fastjson.asset.AssetTreeConverter
-import com.datayes.invest.pms.web.model.models.AssetClassType
-import com.datayes.invest.pms.web.model.models.AssetNodeType
+import com.datayes.invest.pms.util.gson.PmsGsonBuilder
+import com.datayes.invest.pms.web.assets.enums.AssetNodeType
 import com.datayes.invest.pms.web.model.models.FilterParam
 import com.datayes.invest.pms.web.model.models.ModelWrites.ChartWrites
 import com.datayes.invest.pms.web.model.models.PortfolioView
 import com.datayes.invest.pms.web.model.models.RangeFilterType
-import com.datayes.invest.pms.web.service.PortfolioChartService
 import com.datayes.invest.pms.web.service.PortfolioService
-
 import javax.inject.Inject
 import play.api.libs.json.JsValue
 import play.api.libs.json.Json
+import play.api.libs.json.Json.toJsFieldJsValueWrapper
 import play.api.mvc.AnyContent
 import play.api.mvc.Request
 import play.pms.PmsAction
 import play.pms.PmsController
 import play.pms.PmsResult
+import com.datayes.invest.pms.web.assets.enums.AssetClassType
 
 class PortfolioController extends PmsController with Logging {
-  
-  @Inject
-  private var portfolioChartService: PortfolioChartService = null
   
   @Inject
   private var portfolioService: PortfolioService = null
   
   @Inject
   private var userPref: UserPref = null
+  
+  private val gson = new PmsGsonBuilder().create()
 
   def list = PmsAction { implicit req =>
     val asOfDate: LocalDate = paramAsOfDateOrToday()
@@ -43,8 +40,7 @@ class PortfolioController extends PmsController with Logging {
     val currentGroupingSettings = userPref.getCurrentPortfolioGroupingSettings()
     
     val assetTree = portfolioService.getAssetTree(asOfDate, currentGroupingSettings, filterParam, benchmarkIndexOpt)
-    val fjAssetTree = AssetTreeConverter.toFastJsonObject(assetTree)
-    val jsonStr = com.alibaba.fastjson.JSON.toJSONString(fjAssetTree, false)
+    val jsonStr = gson.toJson(assetTree)
 
     PmsResult(jsonStr)
   }
@@ -56,7 +52,7 @@ class PortfolioController extends PmsController with Logging {
     val filterParam = paramFilterParam()
     
     val portfolioView = PortfolioView.withName(view)
-    val chart = portfolioChartService.getChart(accountId, asOfDate, portfolioView, filterParam)
+    val chart = portfolioService.getChart(accountId, asOfDate, portfolioView, filterParam)
 
     val json = Json.toJson(chart)
     PmsResult(json)
@@ -64,7 +60,11 @@ class PortfolioController extends PmsController with Logging {
 
   
   private def paramFilterParam()(implicit req: Request[AnyContent]): FilterParam = {
-    val assetClassOpt = req.getQueryString("filter.assetClass").map(AssetClassType.withName(_))
+    val assetClassOpt = try {
+      req.getQueryString("filter.assetClass").map(AssetClassType.valueOf(_))
+    } catch {
+      case e: Throwable => None
+    }
     val exchangeOpt = req.getQueryString("filter.exchange")
     val industryOpt = req.getQueryString("filter.industry")
     val rangeFilterTypeOpt = req.getQueryString("filter.range.type").map(RangeFilterType.withName(_))
@@ -102,7 +102,7 @@ class PortfolioController extends PmsController with Logging {
     logger.debug("Saving grouping settings: {}", list.toString)
     
     val (result, message) = try {
-      val settings = list.map(AssetNodeType.withName(_))
+      val settings = list.map(AssetNodeType.valueOf(_))
       userPref.setPortfolioGroupingSettings(settings)
       (true, "Portfolio grouping settings has been saved")
     } catch {
@@ -118,4 +118,5 @@ class PortfolioController extends PmsController with Logging {
     PmsResult(json)
   }
 
+  
 }

@@ -44,7 +44,11 @@ class MarketDataCache {
     }
 
     MarketData update(MarketData marketData) {
-        realTimeCache.put(marketData.getSecurityId(), marketData);
+        if (marketData.getSecurityId() == null) {
+            LOGGER.warn("market data has no security id: {}", marketData.toString());
+        } else {
+            realTimeCache.put(marketData.getSecurityId(), marketData);
+        }
         return marketData;
     }
 

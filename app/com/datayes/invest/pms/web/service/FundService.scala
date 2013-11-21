@@ -1,38 +1,55 @@
 package com.datayes.invest.pms.web.service
 
-import com.datayes.invest.pms.logging.Logging
-import javax.inject.Inject
-import com.datayes.invest.pms.dao.account.AccountValuationHistDao
-import org.joda.time.LocalDate
-import com.datayes.invest.pms.dbtype.{AssetClass, AccountValuationType}
-import com.datayes.invest.pms.entity.account.AccountValuationHist
-import com.datayes.invest.pms.persist.dsl.transaction
-import scala.collection.JavaConversions._
-import scala.util.control.Breaks._
-import scala._
-import com.datayes.invest.pms.util.{BigDecimalConstants, DefaultValues}
-import com.datayes.invest.pms.dao.security.{SecurityDao, PriceVolumeDao, EquityDao}
-import com.datayes.invest.pms.web.model.models._
+import scala.collection.JavaConversions.asScalaBuffer
 import scala.collection.mutable
-import scala.Some
-import com.datayes.invest.pms.web.model.models.IndustryWeightLeaf
-import com.datayes.invest.pms.web.model.models.AccountOverview
-import com.datayes.invest.pms.web.model.models.NetValueTrendItem
-import com.datayes.invest.pms.web.model.models.IndustryWeightTree
+import scala.math.BigDecimal.int2bigDecimal
+import scala.util.control.Breaks.break
+import scala.util.control.Breaks.breakable
+
+import org.joda.time.LocalDate
+
+import com.datayes.invest.pms.dao.account.AccountDao
+import com.datayes.invest.pms.dao.account.AccountValuationHistDao
+import com.datayes.invest.pms.dao.security.EquityDao
+import com.datayes.invest.pms.dao.security.PriceVolumeDao
+import com.datayes.invest.pms.dao.security.SecurityDao
+import com.datayes.invest.pms.dbtype.AccountValuationType
+import com.datayes.invest.pms.entity.account.AccountValuationHist
+import com.datayes.invest.pms.logging.Logging
+import com.datayes.invest.pms.persist.dsl.transaction
 import com.datayes.invest.pms.service.marketdata.MarketDataService
+import com.datayes.invest.pms.util.BigDecimalConstants
+import com.datayes.invest.pms.util.DefaultValues
+import com.datayes.invest.pms.web.assets.PortfolioLoader
+import com.datayes.invest.pms.web.assets.enums.AssetClassType
+import com.datayes.invest.pms.web.assets.models.AssetCommon
+import com.datayes.invest.pms.web.model.models.AccountOverview
+import com.datayes.invest.pms.web.model.models.AssetClassWeight
+import com.datayes.invest.pms.web.model.models.Holding
+import com.datayes.invest.pms.web.model.models.IndustryWeightLeaf
+import com.datayes.invest.pms.web.model.models.IndustryWeightTree
+import com.datayes.invest.pms.web.model.models.NetValueTrendItem
+import com.datayes.invest.pms.web.model.models.Performance
+import com.datayes.invest.pms.web.model.models.TopHoldingStock
+
+import javax.inject.Inject
 
 class FundService extends Logging {
+  
+  @Inject
+  private var accountDao: AccountDao = null
+  
   @Inject
   private var accountValuationHistDao: AccountValuationHistDao = null
-
-  @Inject
-  private var assetsLoader: AssetsLoader = null
 
   @Inject
   private var equityDao: EquityDao = null
 
   @Inject
   private var marketDataService: MarketDataService = null
+  
+  @Inject
+  private var portfolioLoader: PortfolioLoader = null
 
   @Inject
   private var priceVolumeDao: PriceVolumeDao = null
@@ -97,29 +114,35 @@ class FundService extends Logging {
     items
   }
 
+  // TODO refactor to not use AssetsLoader
   def getIndustryProportion(accountId: Long, asOfDate: LocalDate): IndustryWeightTree = transaction {
-    val allAssets = assetsLoader.loadAssets(accountId, asOfDate, None)
-    val industryWeights = allAssets.groupBy(a => a.industry).map { case (industry, assets) =>
+    val account = accountDao.findById(accountId)
+    if (account == null) {
+      return null
+    }
+    
+    val assets = portfolioLoader.load(account, asOfDate, None)
+    val assetsWithIndustry = assets.filter { a => a.industry != null }
+    val industryWeights = assetsWithIndustry.groupBy(a => a.industry).map { case (industry, assets) =>
       val obj = IndustryWeightLeaf(industry)
       for (a <- assets) {
         obj.marketValue += a.marketValue
+        obj.weight += a.weight
       }
       obj
     }.toSeq
 
-    var totalMarketValue = BigDecimal("0")
+    var totalMarketValue = BigDecimalConstants.ZERO
+    var totalWeight = BigDecimalConstants.ZERO
     for (w <- industryWeights) {
       totalMarketValue += w.marketValue
-    }
-    if (totalMarketValue > 0) {
-      for (w <- industryWeights)
-        w.weight = w.marketValue / totalMarketValue
+      totalWeight += w.weight
     }
     val sortedIndustryWeights = industryWeights.sortBy { w => w.weight * -1 }
     // TODO refactor with translation resource
     val tree = IndustryWeightTree("所有行业", sortedIndustryWeights)
     tree.marketValue = totalMarketValue
-    tree.weight = 1
+    tree.weight = totalWeight
 
     tree
   }
@@ -128,57 +151,60 @@ class FundService extends Logging {
     standardFund.map(p => getFundPerformance(p, accountId, asOfDate)).toSeq
   }
 
+  // TODO refactor to not use AssetsLoader
   def getAssetProportion(accountId: Long, asOfDate: LocalDate): Seq[AssetClassWeight] = transaction {
-    val securityAssets = assetsLoader.loadAssets(accountId, asOfDate, None)
-    val cashAsset = loadCashAsset(accountId, asOfDate)
-    val allAssets = cashAsset :: securityAssets.toList
-    val assetClassWeights = allAssets.groupBy(a => a.assetClass).map { case (assetClass, assets) =>
+    val account = accountDao.findById(accountId)
+    if (account == null) {
+      return null
+    }
+    
+    val assets = portfolioLoader.load(account, asOfDate, None)
+    val assetClassWeights = assets.groupBy(a => a.assetClass).map { case (assetClass, assets) =>
       val obj = AssetClassWeight(assetClass)
       for (a <- assets) {
         obj.marketValue += a.marketValue
         obj.floatPnL += a.floatPnL
+        obj.weight += a.weight
       }
       obj
     }.toSeq
 
-    var totalMarketValue = BigDecimal("0")
-    var totalFloatPnL = BigDecimal("0")
+    var totalMarketValue = BigDecimalConstants.ZERO
+    var totalFloatPnL = BigDecimalConstants.ZERO
     for (w <- assetClassWeights) {
       totalMarketValue += w.marketValue
       totalFloatPnL += w.floatPnL
       if (w.marketValue > 0) w.floatPnLRate = w.floatPnL / w.marketValue
     }
-
-    if (totalMarketValue > 0) {
-      for (w <- assetClassWeights)
-        w.weight = w.marketValue / totalMarketValue
+    
+    val filledList = mutable.ListBuffer.empty[AssetClassWeight]
+    for (ac <- AssetClassType.values()) {
+      val res = assetClassWeights.find(_.assetClass == ac).getOrElse(AssetClassWeight(assetClass = ac))
+      filledList.append(res)
     }
-
-    val allAssetClasses = AssetClassType.values.toSeq.filter(_ != AssetClassType.none)
-    val assetClassWeights2 = for {
-      ac <- allAssetClasses
-      acwOpt = assetClassWeights.find(_.assetClass == ac)
-    } yield {
-      acwOpt match {
-        case Some(acw) => acw
-        case None => AssetClassWeight(assetClass = ac)
-      }
-    }
-
-    assetClassWeights2.sortBy { acw => acw.weight * -1 }
+    val sorted = filledList.sortBy { acw => acw.weight * -1 }
+    
+    sorted
   }
 
-  def getTopHoldingStock(accountId: Long, number: Integer, asOfDate: LocalDate): TopHoldingStock = transaction {
-    val allAssets = assetsLoader.loadAssets(accountId, asOfDate, None).filter(p => filterFuture(p))
-    val totalMarketValue = allAssets.foldLeft(BigDecimal(0))(_ + _.marketValue)
-    val topAssetList = allAssets.sortWith(_.marketValue > _.marketValue).take(number)
-    val topHoldingMarketValue = topAssetList.foldLeft(BigDecimal(0))(_ + _.marketValue)
-    val holdings = topAssetList.map(p => convertToHoldings(p, totalMarketValue)).toSeq
-    var weight: BigDecimal = 0
-    if (totalMarketValue != 0) {
-      weight = topHoldingMarketValue / totalMarketValue
+  def getTopHoldingStock(accountId: Long, num: Int, asOfDate: LocalDate): TopHoldingStock = transaction {
+    val account = accountDao.findById(accountId)
+    if (account == null) {
+      return null
     }
-    val topHoldingStock = TopHoldingStock(number, weight, holdings)
+
+    val assets = portfolioLoader.load(account, asOfDate, None)
+    val equityAssets = assets.filter { a => a.assetClass == AssetClassType.EQUITY }
+    val sorted = equityAssets.sortBy { a => a.marketValue * -1 }
+    val topEquities = sorted.take(num)
+    val topHoldings = topEquities.map { a => convertToHolding(a) }
+    
+    var totalWeight = BigDecimalConstants.ZERO
+    for (a <- topEquities) {
+      totalWeight += a.weight
+    }
+    
+    val topHoldingStock = TopHoldingStock(num, totalWeight, topHoldings)
     topHoldingStock
   }
 
@@ -242,7 +268,6 @@ class FundService extends Logging {
 
   private def loadBenchmarkReturns(securityId: Long, startDate: LocalDate, endDate: LocalDate): Seq[(LocalDate, BigDecimal)] = {
 
-//    val priceVolumes = priceVolumeDao.findSomeBySecurityIdInPeriod(securityId, startDate, endDate)
     val marketDataList = marketDataService.getMarketDataBetweenDates(securityId, startDate, endDate);
 
     val rets = marketDataList.headOption match {
@@ -286,9 +311,6 @@ class FundService extends Logging {
       }
 
       buf
-      //
-      //      val sorted = buf.sortWith { (a, b) => a._1.compareTo(b._1) <= 0 }
-      //      sorted
     }
   }
 
@@ -393,35 +415,15 @@ class FundService extends Logging {
     }
   }
 
-  private def loadCashAsset(accountId: Long, asOfDate: LocalDate): Asset = {
-    val pk = new AccountValuationHist.PK(accountId, AccountValuationType.CASH.getDbValue, asOfDate)
-    val valHist = accountValuationHistDao.findById(pk)
-    val value: BigDecimal = if (valHist != null) {
-      valHist.getValueAmount
-    } else {
-      BigDecimal(0)
-    }
-    val asset = Asset(name = "Cash", code = "Cash", securityId = 0L)
-    asset.assetClass = AssetClassType.cash
-    asset.marketValue = value
-    asset
-  }
-
-  private def filterFuture(asset: Asset): Boolean = {
-    val security = securityDao.findById(asset.securityId)
-    security.getAssetClassId != AssetClass.FUTURE.getDbValue
-  }
-
-  private def convertToHoldings(asset: Asset, marketValue: BigDecimal): Holding = {
+  private def convertToHolding(asset: AssetCommon): Holding = {
     val holding = Holding(asset.name, asset.code)
     holding.marketPrice = asset.marketPrice
     holding.marketValue = asset.marketValue
     holding.holdingValuePrice = asset.holdingValuePrice
     holding.industry = asset.industry
     holding.floatPnL = asset.floatPnL
-    if (marketValue != 0) {
-      holding.weight = asset.marketValue / marketValue
-    }
+    holding.weight = asset.weight
+    
     holding
   }
 }

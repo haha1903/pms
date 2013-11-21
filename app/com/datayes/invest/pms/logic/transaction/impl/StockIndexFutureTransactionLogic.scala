@@ -1,22 +1,26 @@
 package com.datayes.invest.pms.logic.transaction.impl
 
-import java.util.Date
-import scala.math.BigDecimal._
-import javax.inject.Inject
+import scala.math.BigDecimal.int2bigDecimal
+import scala.math.BigDecimal.javaBigDecimal2bigDecimal
+
 import org.joda.time.LocalDate
 import org.joda.time.LocalDateTime
-import com.datayes.invest.pms.logging.Logging
+
 import com.datayes.invest.pms.dao.account.AccountDao
 import com.datayes.invest.pms.dao.security.FutureDao
 import com.datayes.invest.pms.dao.security.SecurityDao
-import com.datayes.invest.pms.logic.transaction.Transaction
-import com.datayes.invest.pms.dbtype.TradeSide
-import com.datayes.invest.pms.logic.transaction.BusinessException
-import com.datayes.invest.pms.dbtype.RateType
-import com.datayes.invest.pms.dbtype.LedgerType
-import com.datayes.invest.pms.entity.account.SecurityPosition
 import com.datayes.invest.pms.dbtype.AssetClass
+import com.datayes.invest.pms.dbtype.LedgerType
+import com.datayes.invest.pms.dbtype.RateType
+import com.datayes.invest.pms.dbtype.TradeSide
+import com.datayes.invest.pms.entity.account.SecurityPosition
+import com.datayes.invest.pms.logging.Logging
+import com.datayes.invest.pms.logic.transaction.BusinessException
+import com.datayes.invest.pms.logic.transaction.Transaction
 import com.datayes.invest.pms.util.DefaultValues
+import com.datayes.invest.pms.util.FutureMultiplierHelper
+
+import javax.inject.Inject
 
 class StockIndexFutureTransactionLogic extends TransactionLogicBase with Logging {
 
@@ -201,20 +205,20 @@ class StockIndexFutureTransactionLogic extends TransactionLogicBase with Logging
     var turnover: BigDecimal = 0
     val future = futureDao.findById(t.securityId)
     val contractMultiplier = future.getContractMultiplier
-    val Ratio = getRatio(contractMultiplier)
+    val Ratio = FutureMultiplierHelper.getRatio(contractMultiplier)
     turnover = t.price * t.amount * Ratio
 
     turnover
   }
   // TODO how to get the ratio per hand?
-  private def getRatio(value: String): BigDecimal = {
-    var Ratio: BigDecimal = 0
-
-    for (i <- 0 to value.length - 1) {
-      if (value.charAt(i).isDigit) {
-        Ratio = Ratio * 10 + (value.charAt(i) - '0').bigDecimal
-      }
-    }
-    Ratio
-  }
+//  private def getRatio(value: String): BigDecimal = {
+//    var Ratio: BigDecimal = 0
+//
+//    for (i <- 0 to value.length - 1) {
+//      if (value.charAt(i).isDigit) {
+//        Ratio = Ratio * 10 + (value.charAt(i) - '0').bigDecimal
+//      }
+//    }
+//    Ratio
+//  }
 }

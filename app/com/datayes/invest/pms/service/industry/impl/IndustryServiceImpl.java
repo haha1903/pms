@@ -33,8 +33,6 @@ public class IndustryServiceImpl implements IndustryService {
     
     private static final int CLASS_LEVEL = 1;
 
-    private static final String UNKNOWN = "未分类";
-
     @Override
     public List<String> getIndustries() {
         List<Industry> industries = industryDao.findByDataSourceIdClassLevel(DefaultValues.INDUSTRY_DATA_SOURCE_ID(), CLASS_LEVEL);
@@ -52,7 +50,7 @@ public class IndustryServiceImpl implements IndustryService {
         if (industry == null) {
             industry = loadIndustryBySecurityId(securityId);
             if (industry == null) {
-                industry = UNKNOWN;
+                industry = DefaultValues.UNKNOWN_INDUSTRY();
             }
             cache.put(securityId, industry);
         }

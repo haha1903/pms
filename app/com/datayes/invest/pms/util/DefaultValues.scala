@@ -1,9 +1,9 @@
 package com.datayes.invest.pms.util
 
 import com.datayes.invest.pms.dbtype.PositionValuationType
-import com.datayes.invest.pms.logic.accountinit.RateSourceData
 import com.datayes.invest.pms.dbtype.RateType
 import com.datayes.invest.pms.dbtype.TradeSide
+import com.datayes.invest.pms.logic.accountinit.RateSourceData
 
 object DefaultValues {
   
@@ -44,6 +44,8 @@ object DefaultValues {
   val STOCK_INDEX_FUTURE_PRICE_RATIO = 300
   
   val THIS_FUND = "本基金"
+    
+  val UNKNOWN_INDUSTRY = "无分类"
 
     
   val DEFAULT_FEES = List(

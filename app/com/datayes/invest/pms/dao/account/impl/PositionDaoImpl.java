@@ -1,9 +1,6 @@
 package com.datayes.invest.pms.dao.account.impl;
 
-import java.util.List;
-
 import javax.inject.Inject;
-import javax.persistence.Query;
 
 import com.datayes.invest.pms.dao.account.IdGenerator;
 import com.datayes.invest.pms.dao.account.PositionDao;

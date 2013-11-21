@@ -45,15 +45,6 @@ public class AccountValuationHist extends EntityBase {
         this.currencyCode = _currencyCode;
         this.adjustTs = _adjustTs;
     }
-    
-//    public AccountValuationHist(AccountValuationHist accountValuationHist) {
-//        this.accountId = accountValuationHist.getAccountId();
-//        this.typeId = accountValuationHist.getTypeId();
-//        this.asOfDate = accountValuationHist.getAsOfDate();
-//        this.valueAmount = accountValuationHist.getValueAmount();
-//        this.currencyCode = accountValuationHist.getCurrencyCode();
-//        this.adjustTs = accountValuationHist.getAdjustTs();
-//    }
 
     @Id
     public PK getPK() {

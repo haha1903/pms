@@ -1,9 +1,13 @@
 package com.datayes.invest.pms.web.model
 
-import com.datayes.invest.pms.util.BigDecimalConstants.ZERO
-import play.api.libs.json._
-import org.joda.time.{LocalDateTime, LocalDate}
+import org.joda.time.LocalDate
+import org.joda.time.LocalDateTime
+
 import com.datayes.invest.pms.dbtype.AccountTypeType
+import com.datayes.invest.pms.util.BigDecimalConstants.ZERO
+import com.datayes.invest.pms.web.assets.enums.AssetClassType
+
+import play.api.libs.json._
 
 package object models {
 
@@ -11,6 +15,7 @@ package object models {
    * Types for portfolio position tree
    */
 
+  /*
   object AssetClassType extends Enumeration {
     type Type = Value
     val none = Value("none")
@@ -61,7 +66,7 @@ package object models {
     var assetClass: AssetClassType.Type = AssetClassType.none
     var industry: String = ""
     var exchange: String = ""
-  }
+  }*/
 
 
   /*
@@ -87,7 +92,7 @@ package object models {
    */
 
   case class FilterParam(
-    assetClass: Option[AssetClassType.Type],
+    assetClass: Option[AssetClassType],
     exchange: Option[String],
     industry: Option[String],
     rangeFilterType: Option[RangeFilterType.Type],
@@ -96,7 +101,7 @@ package object models {
 
   object RangeFilterType extends Enumeration {
     type Type = Value
-    val marketValue, holdingValue, dailyPnL, floatPnL = Value
+    val marketValue, holdingValue, floatPnL = Value
   }
 
   /*
@@ -104,7 +109,7 @@ package object models {
    */
 
   case class AssetClassWeight(
-    assetClass: AssetClassType.Type,
+    assetClass: AssetClassType,
     var marketValue: BigDecimal = ZERO,
     var weight: BigDecimal = ZERO,
     var floatPnL: BigDecimal = ZERO,
@@ -210,6 +215,7 @@ package object models {
      * AssetNode
      */
 
+    /*
     implicit object AssetNodeWrites extends Writes[AssetNode] {
 
       def writes(n: AssetNode) = n match {
@@ -250,7 +256,7 @@ package object models {
         )
       }
 
-    }
+    }*/
 
 
     /*

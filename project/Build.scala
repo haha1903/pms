@@ -14,13 +14,11 @@ object ApplicationBuild extends Build {
   val artifactoryUrl = "http://artifactory.datayes.com/artifactory"
 
   val appDependencies = Seq(
-    "com.alibaba" % "fastjson" % "1.1.35",
     "com.dyuproject.protostuff" % "protostuff-core" % protostuffVersion,
     "com.dyuproject.protostuff" % "protostuff-runtime" % protostuffVersion,
     "com.datayes.paas.sso" % "datayes-sso" % "1.1.1" withSources,
-    "com.google.code.gson" % "gson" % "2.2.4",
+    "com.google.code.gson" % "gson" % "2.2.4" withSources,
     "com.google.inject" % "guice" % "3.0" withSources,
-    //"com.google.inject.extensions" % "guice-assistedinject" % "3.0",
     "com.rabbitmq" % "amqp-client" % "3.1.4",
     "joda-time" % "joda-time" % "2.2",
     "mysql" % "mysql-connector-java" % "5.1.25",
