@@ -1,7 +1,10 @@
 package play.pms
 
+import com.datayes.invest.pms.config.Config
 import com.datayes.invest.pms.logging.Logging
+import com.datayes.invest.pms.web.sso.AuthAction
 import play.api.http.Status
+import play.api.libs.Jsonp
 import play.api.libs.json.JsString
 import play.api.libs.json.Json
 import play.api.mvc.Action
@@ -13,10 +16,7 @@ import play.api.mvc.Results.BadRequest
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.Results.Ok
 import play.api.mvc.Result
-import com.datayes.invest.pms.web.sso.SamlActionTrait
-import com.datayes.invest.pms.config.Config
-import com.datayes.invest.pms.web.sso.AuthAction
-import play.api.libs.Jsonp
+import play.api.libs.json.JsValue
 
 
 trait PmsActionBuilder extends Logging {

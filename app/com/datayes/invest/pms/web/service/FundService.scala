@@ -5,9 +5,7 @@ import scala.collection.mutable
 import scala.math.BigDecimal.int2bigDecimal
 import scala.util.control.Breaks.break
 import scala.util.control.Breaks.breakable
-
 import org.joda.time.LocalDate
-
 import com.datayes.invest.pms.dao.account.AccountDao
 import com.datayes.invest.pms.dao.account.AccountValuationHistDao
 import com.datayes.invest.pms.dao.security.EquityDao
@@ -31,8 +29,9 @@ import com.datayes.invest.pms.web.model.models.IndustryWeightTree
 import com.datayes.invest.pms.web.model.models.NetValueTrendItem
 import com.datayes.invest.pms.web.model.models.Performance
 import com.datayes.invest.pms.web.model.models.TopHoldingStock
-
 import javax.inject.Inject
+import play.pms.ClientException
+import com.datayes.invest.pms.entity.account.Account
 
 class FundService extends Logging {
   
@@ -116,11 +115,7 @@ class FundService extends Logging {
 
   // TODO refactor to not use AssetsLoader
   def getIndustryProportion(accountId: Long, asOfDate: LocalDate): IndustryWeightTree = transaction {
-    val account = accountDao.findById(accountId)
-    if (account == null) {
-      return null
-    }
-    
+    val account = loadAccount(accountId)
     val assets = portfolioLoader.load(account, asOfDate, None)
     val assetsWithIndustry = assets.filter { a => a.industry != null }
     val industryWeights = assetsWithIndustry.groupBy(a => a.industry).map { case (industry, assets) =>
@@ -153,11 +148,7 @@ class FundService extends Logging {
 
   // TODO refactor to not use AssetsLoader
   def getAssetProportion(accountId: Long, asOfDate: LocalDate): Seq[AssetClassWeight] = transaction {
-    val account = accountDao.findById(accountId)
-    if (account == null) {
-      return null
-    }
-    
+    val account = loadAccount(accountId)
     val assets = portfolioLoader.load(account, asOfDate, None)
     val assetClassWeights = assets.groupBy(a => a.assetClass).map { case (assetClass, assets) =>
       val obj = AssetClassWeight(assetClass)
@@ -188,11 +179,7 @@ class FundService extends Logging {
   }
 
   def getTopHoldingStock(accountId: Long, num: Int, asOfDate: LocalDate): TopHoldingStock = transaction {
-    val account = accountDao.findById(accountId)
-    if (account == null) {
-      return null
-    }
-
+    val account = loadAccount(accountId)
     val assets = portfolioLoader.load(account, asOfDate, None)
     val equityAssets = assets.filter { a => a.assetClass == AssetClassType.EQUITY }
     val sorted = equityAssets.sortBy { a => a.marketValue * -1 }
@@ -208,8 +195,7 @@ class FundService extends Logging {
     topHoldingStock
   }
 
-  private def getOverviewValue(accountId: Long, asOfDate: LocalDate,
-                               accValType: AccountValuationType): BigDecimal = {
+  private def getOverviewValue(accountId: Long, asOfDate: LocalDate, accValType: AccountValuationType): BigDecimal = {
     val pk = new AccountValuationHist.PK(accountId, accValType.getDbValue, asOfDate)
     val valHist = accountValuationHistDao.findById(pk)
     if (valHist == null) {
@@ -233,9 +219,7 @@ class FundService extends Logging {
     ratio - 1
   }
 
-  private def loadNetValueHistsBeforeDate(accountId: Long, sinceDate: LocalDate):
-    Seq[(LocalDate, BigDecimal)] = {
-
+  private def loadNetValueHistsBeforeDate(accountId: Long, sinceDate: LocalDate): Seq[(LocalDate, BigDecimal)] = {
     val accValType = AccountValuationType.NET_WORTH
     val accValHists = accountValuationHistDao.findByAccountIdTypeIdBeforeDate(accountId,
       accValType.getDbValue, sinceDate)
@@ -248,9 +232,7 @@ class FundService extends Logging {
     hists
   }
 
-  private def loadFundReturnHistsBeforeDate(accountId: Long, beforeDate: LocalDate):
-    Seq[(LocalDate, BigDecimal)] = {
-
+  private def loadFundReturnHistsBeforeDate(accountId: Long, beforeDate: LocalDate): Seq[(LocalDate, BigDecimal)] = {
     val accValType = AccountValuationType.DAILY_RETURN
     val accValHists = accountValuationHistDao.findByAccountIdTypeIdBeforeDate(accountId,
       accValType.getDbValue, beforeDate)
@@ -315,8 +297,7 @@ class FundService extends Logging {
   }
 
   private def mergeToNetValueTrendItems(netValueHists: Seq[(LocalDate, BigDecimal)],
-                                        fundReturnsHists: Seq[(LocalDate, BigDecimal)], benchmarkReturns: Seq[(LocalDate, BigDecimal)]):
-    Seq[NetValueTrendItem] = {
+      fundReturnsHists: Seq[(LocalDate, BigDecimal)], benchmarkReturns: Seq[(LocalDate, BigDecimal)]): Seq[NetValueTrendItem] = {
 
     // Find a later start date
     val startDateOpt: Option[LocalDate] = for {
@@ -425,5 +406,13 @@ class FundService extends Logging {
     holding.weight = asset.weight
     
     holding
+  }
+  
+  private def loadAccount(accountId: Long): Account = {
+    val account = accountDao.findById(accountId)
+    if (account == null) {
+      throw new ClientException("Account (id = " + accountId + ") does not exist", null)
+    }
+    account
   }
 }

@@ -1,6 +1,6 @@
 package play.pms
 
-class ClientException(message: String, cause: Throwable) extends RuntimeException {
+class ClientException(message: String, cause: Throwable) extends RuntimeException(message, cause) {
   
   def this() = this(null, null)
   
