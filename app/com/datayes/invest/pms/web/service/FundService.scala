@@ -43,6 +43,9 @@ class FundService extends Logging {
 
   @Inject
   private var equityDao: EquityDao = null
+  
+  @Inject
+  private var helper: ServiceHelper = null
 
   @Inject
   private var marketDataService: MarketDataService = null
@@ -57,6 +60,7 @@ class FundService extends Logging {
   private var securityDao: SecurityDao = null
 
   def getSummary(accountId: Long, asOfDate: LocalDate): AccountOverview = transaction {
+    helper.loadAccount(accountId, asOfDate)    
     val unitNet = getOverviewValue(accountId, asOfDate, AccountValuationType.UNIT_NET)
     val dailyReturn = getOverviewValue(accountId, asOfDate, AccountValuationType.DAILY_RETURN)
     val marketValue = getOverviewValue(accountId, asOfDate, AccountValuationType.SECURITY)  // TODO this may not be correct
@@ -75,6 +79,7 @@ class FundService extends Logging {
   }
 
   def getNetTrend(accountId: Long, asOfDate: LocalDate, benchmarkIndexTicker: String): Seq[NetValueTrendItem] = transaction {
+    helper.loadAccount(accountId, asOfDate)
     val netValueHists = loadNetValueHistsBeforeDate(accountId, asOfDate)
     val fundReturnHists = loadFundReturnHistsBeforeDate(accountId, asOfDate)
     val startDateOpt = fundReturnHists.headOption.map(_._1)
@@ -115,7 +120,7 @@ class FundService extends Logging {
 
   // TODO refactor to not use AssetsLoader
   def getIndustryProportion(accountId: Long, asOfDate: LocalDate): IndustryWeightTree = transaction {
-    val account = loadAccount(accountId)
+    val account = helper.loadAccount(accountId, asOfDate)
     val assets = portfolioLoader.load(account, asOfDate, None)
     val assetsWithIndustry = assets.filter { a => a.industry != null }
     val industryWeights = assetsWithIndustry.groupBy(a => a.industry).map { case (industry, assets) =>
@@ -143,12 +148,13 @@ class FundService extends Logging {
   }
 
   def getPerformanceOverview(accountId: Long, asOfDate: LocalDate, standardFund: List[(String, Long)]): Seq[Performance] = transaction {
+    helper.loadAccount(accountId, asOfDate)
     standardFund.map(p => getFundPerformance(p, accountId, asOfDate)).toSeq
   }
 
   // TODO refactor to not use AssetsLoader
   def getAssetProportion(accountId: Long, asOfDate: LocalDate): Seq[AssetClassWeight] = transaction {
-    val account = loadAccount(accountId)
+    val account = helper.loadAccount(accountId, asOfDate)
     val assets = portfolioLoader.load(account, asOfDate, None)
     val assetClassWeights = assets.groupBy(a => a.assetClass).map { case (assetClass, assets) =>
       val obj = AssetClassWeight(assetClass)
@@ -179,7 +185,7 @@ class FundService extends Logging {
   }
 
   def getTopHoldingStock(accountId: Long, num: Int, asOfDate: LocalDate): TopHoldingStock = transaction {
-    val account = loadAccount(accountId)
+    val account = helper.loadAccount(accountId, asOfDate)
     val assets = portfolioLoader.load(account, asOfDate, None)
     val equityAssets = assets.filter { a => a.assetClass == AssetClassType.EQUITY }
     val sorted = equityAssets.sortBy { a => a.marketValue * -1 }
@@ -407,12 +413,5 @@ class FundService extends Logging {
     
     holding
   }
-  
-  private def loadAccount(accountId: Long): Account = {
-    val account = accountDao.findById(accountId)
-    if (account == null) {
-      throw new ClientException("Account (id = " + accountId + ") does not exist", null)
-    }
-    account
-  }
+
 }

@@ -28,6 +28,8 @@ class PortfolioService extends Logging {
   @Inject
   private var accountDao: AccountDao = null
 
+  @Inject
+  private var helper: ServiceHelper = null
   
   @Inject
   private var portfolioLoader: PortfolioLoader = null
@@ -49,9 +51,10 @@ class PortfolioService extends Logging {
   }
 
   def getChart(accountId: Long, asOfDate: LocalDate, view: PortfolioView.Type, filterParam: FilterParam): Chart = transaction {
+    val account = helper.loadAccount(accountId, asOfDate)
     view match {
       case PortfolioView.industry =>
-        val points: Seq[(String, BigDecimal)] = getIndustryChartData(accountId, asOfDate, filterParam)
+        val points: Seq[(String, BigDecimal)] = getIndustryChartData(account, asOfDate, filterParam)
         val normalized: Seq[(String, BigDecimal)] = normalize(points)
         val chartDataPoints = normalized.map { case (s, v) => ChartDataPoint(s, v) }
         Chart(ChartType.pie, chartDataPoints)
@@ -61,13 +64,7 @@ class PortfolioService extends Logging {
   private def createAccountIdNameMap(accounts: List[Account]): Map[Long, String] =
     (for (a <- accounts) yield (a.getId.toLong -> a.getAccountName)).toMap
 
-  private def getIndustryChartData(accountId: Long, asOfDate: LocalDate, filterParam: FilterParam): List[(String, BigDecimal)] = {
-//    val assets = assetsLoader.loadAssets(accountId, asOfDate, None)
-    val account = accountDao.findById(accountId)
-    if (account == null) {
-      return null
-    }
-    
+  private def getIndustryChartData(account: Account, asOfDate: LocalDate, filterParam: FilterParam): List[(String, BigDecimal)] = {
     val assets = portfolioLoader.load(account, asOfDate, None)
     val filteredAssets = FilterHelper.filterAssets(assets, filterParam)
     val industrySums = filteredAssets.groupBy(_.industry).map { case (industry, assets) =>

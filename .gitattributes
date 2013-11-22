@@ -295,6 +295,7 @@ app/com/datayes/invest/pms/web/service/CommonService.scala -text
 app/com/datayes/invest/pms/web/service/FilterHelper.scala -text
 app/com/datayes/invest/pms/web/service/FundService.scala -text
 app/com/datayes/invest/pms/web/service/PortfolioService.scala -text
+app/com/datayes/invest/pms/web/service/ServiceHelper.scala -text
 app/com/datayes/invest/pms/web/service/SummaryService.scala -text
 app/com/datayes/invest/pms/web/servlet/Play2Servlet25.scala -text
 app/com/datayes/invest/pms/web/sso/AuthAction.scala -text
