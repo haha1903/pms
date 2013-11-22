@@ -331,6 +331,7 @@ app/test/gson/Tree.java -text
 app/test/gsonscala/TestPmsGson.scala -text
 app/test/gsonscala/TypeAdapterRuntimeTypeWrapper.java -text
 app/test/gsonscala/models.scala -text
+app/test/importer/AddTradePrice.scala -text
 app/views/debug/mds.scala.html -text
 app/views/index.scala.html -text
 app/views/layout.scala.html -text
@@ -360,6 +361,7 @@ public/stylesheets/main.css -text
 sample/import/account/csv/sample.csv -text
 sample/import/account/csv/主动投资组合A.csv -text
 sample/import/account/csv/量化策略A.csv -text
+sample/import/account/csv/量化策略B(带成交价).csv -text
 sample/import/account/json/sample-account-file.json -text
 /svnignore.exclude -text
 test/ApplicationSpec.scala -text

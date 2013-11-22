@@ -125,13 +125,14 @@ class AccountCsvImporter extends Logging {
     val asOfDate = LocalDate.parse(header(1))
 
     for (line <- csvList.tail) {
-      val symbol = line(0)
-      val quantityDelta = BigDecimal(line(1))
-      createOneSourceTransaction(symbol, quantityDelta, asOfDate, accountId)
+      val (symbol, quantityDelta, priceOpt) = getSecurityLine(line)
+      createOneSourceTransaction(symbol, quantityDelta, priceOpt, asOfDate, accountId)
     }
   }
 
-  private def createOneSourceTransaction(symbol: String, quantityDelta: BigDecimal, asOfDate: LocalDate, accountId: Long): Unit = {
+  private def createOneSourceTransaction(symbol: String, quantityDelta: BigDecimal, priceOpt: Option[BigDecimal],
+      asOfDate: LocalDate, accountId: Long): Unit = {
+    
     val security = findSecurity(symbol).getOrElse(
       throw new RuntimeException(symbol + " is not a security and not supported")
     )
@@ -191,17 +192,27 @@ class AccountCsvImporter extends Logging {
       fees = DefaultValues.DEFAULT_FEES
     )
   }
+    
+  private def getSecurityLine(line: Array[String]): (String, BigDecimal, Option[BigDecimal]) = {
+    val symbol = line(0)
+    val quantity = BigDecimal(line(1))
+    val priceOpt = if (line.size < 3) {
+      None
+    } else {
+      Some(BigDecimal(line(2)))
+    }
+    (symbol, quantity, priceOpt)
+  }
 
   private def createPositionList(csvList: List[Array[String]], openDate: LocalDateTime): List[PositionSourceData] = {
     for {
       csv <- csvList.tail    // skip POSITION line
-      symbol = csv(0)
-      quantity = BigDecimal(csv(1))
-      psd = createPositionSourceData(symbol, quantity, openDate)
+      (symbol, quantity, priceOpt) = getSecurityLine(csv)
+      psd = createPositionSourceData(symbol, quantity, priceOpt, openDate)
     } yield psd
   }
 
-  private def createPositionSourceData(symbol: String, quantity: BigDecimal, openDate: LocalDateTime): PositionSourceData = {
+  private def createPositionSourceData(symbol: String, quantity: BigDecimal, priceOpt: Option[BigDecimal], openDate: LocalDateTime): PositionSourceData = {
 
     val securityOpt = findSecurity(symbol)
     val exchange = securityOpt.map(_.getExchangeCode).getOrElse("XSHG")
