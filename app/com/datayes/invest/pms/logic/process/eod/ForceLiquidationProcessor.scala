@@ -63,7 +63,7 @@ class ForceLiquidationProcessor extends Processor with Logging {
         if (future.getDeliveryDate == null) {
           false
         } else {
-          asOfDate == future.getDeliveryDate
+          asOfDate.isEqual(future.getDeliveryDate.toLocalDate())
         }
       case _ => false
     }
@@ -75,7 +75,7 @@ class ForceLiquidationProcessor extends Processor with Logging {
     if (quantity == 0) {
       return
     }
-    logger.debug("start force liquidation on account#{} positionId = {}, quantity = {}, price = {}", 
+    logger.debug("start force liquidation on account #{} positionId = {}, quantity = {}, price = {}", 
             accountId, securityPosition.getId, quantity, price)
     val tradeSide = getTradeSide(securityPosition.getLedgerId)
     val t = Transaction(accountId, securityPosition.getSecurityId,

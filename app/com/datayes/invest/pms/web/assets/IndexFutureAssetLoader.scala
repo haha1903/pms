@@ -65,7 +65,7 @@ class IndexFutureAssetLoader(position: SecurityPosition, asOfDate: LocalDate, tr
     }
     
     // other fields
-    futureAsset.assetClass = AssetClassType.EQUITY
+    futureAsset.assetClass = AssetClassType.INDEX_FUTURE
     futureAsset.exchange = security.getExchangeCode()
     futureAsset.industry = DefaultValues.UNKNOWN_INDUSTRY
   }

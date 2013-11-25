@@ -65,12 +65,15 @@ class StockIndexFutureTransactionLogic extends TransactionLogicBase with Logging
     
     (commissionShouldPay, feeShouldPay)
   }
-  // TODO (zhang wei) rename this function
+
   private def isMarginEnough(accountId: Long, turnover: BigDecimal, side: TradeSide, securityId: Long,
       asOfDate: LocalDate): (Boolean, BigDecimal) = {
     var result: Boolean = true
     
     val marginPosition = cashPositionDao.findByAccountIdLedgerId(accountId, LedgerType.MARGIN.getDbValue)
+    if (marginPosition == null) {
+      throw new BusinessException("Failed to find margin position for account #" + accountId)
+    }
     val marginPositionHist = findPositionHist(marginPosition.getId, asOfDate)
     var marginAmountAvailable = marginPositionHist.getQuantity
 

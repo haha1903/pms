@@ -317,9 +317,8 @@ public class MarketDataServiceImpl implements MarketDataService {
                 marketdataMap.put(securityId, md);
             }
             else {
-                LOGGER.error("Cannot find Real time Marketdata for Security Id: {} in cache, " +
-                        "now trying to find in Database",
-                        securityId);
+                LOGGER.debug("Cannot find Real time Marketdata for Security Id: {} in cache, " +
+                        "now trying to find in Database", securityId);
             }
         }
         return marketdataMap;

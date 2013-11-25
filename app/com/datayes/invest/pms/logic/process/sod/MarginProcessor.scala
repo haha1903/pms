@@ -63,14 +63,20 @@ class MarginProcessor extends Processor with Logging {
 
   private def refreshAccount(accountId: Long, asOfDate: LocalDate): Unit = {
     val securityPositionList = securityPostionDao.findByAccountId(accountId)
-    val futurePositionList = securityPositionList.filter(p => filterFuture(p))
+    val futurePositionList = securityPositionList.filter(p => filterFuture(p, asOfDate))
     futurePositionList.map(p => refreshMargin(accountId, p, asOfDate))
   }
 
-  private def filterFuture(securityPosition: SecurityPosition): Boolean = {
+  private def filterFuture(securityPosition: SecurityPosition, asOfDate: LocalDate): Boolean = {
     val security = securityDao.findById(securityPosition.getSecurityId)
     security match {
-      case future: Future => true
+      case future: Future =>
+        if (future.getDeliveryDate() == null) {
+          true
+        } else {
+          val deliveryDate = future.getDeliveryDate().toLocalDate()
+          asOfDate.isEqual(deliveryDate) && asOfDate.isBefore(deliveryDate)
+        }
       case _ => false
     }
   }

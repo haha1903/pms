@@ -20,29 +20,41 @@ import com.datayes.invest.pms.dbtype.AccountClassType
 import com.datayes.invest.pms.dbtype.AccountTypeType
 import com.datayes.invest.pms.dbtype.LedgerType
 import com.datayes.invest.pms.dbtype.PositionClass
+import scala.collection.mutable
 
 class AccountCsvImporter extends Logging {
 
   private val POSITION = "POSITION"
 
   private val TURN = "TURN"
+    
+  @Inject
+  private var cashRecordHandler: CashRecordHandler = null
+  
+  @Inject
+  private var equityRecordHandler: EquityRecordHandler = null
+  
+  @Inject var indexFutureRecordHandler: IndexFutureRecordHandler = null
 
   @Inject
   private var accountDao: AccountDao = null
 
-  @Inject
-  private var securityDao: SecurityDao = null
+//  @Inject
+//  private var securityDao: SecurityDao = null
 
-  @Inject
-  private var marketDataService: MarketDataService = null
+//  @Inject
+//  private var marketDataService: MarketDataService = null
 
   @Inject
   private var accountInitializer: AccountInitializer = null
 
   @Inject
   private var sourceTransactionDao: SourceTransactionDao = null
+  
+  private var recordHandlers: List[RecordHandler] = null
 
   def importCsv(file: File): Account = {
+    recordHandlers = List(cashRecordHandler, equityRecordHandler, indexFutureRecordHandler)
     val accountId = try {
       parseAndCreateAccount(file)
     } catch {
@@ -69,15 +81,18 @@ class AccountCsvImporter extends Logging {
     val sDate = accountInfoMap("Date")
     val openDate = LocalDateTime.parse(sDate)
 
+    val context = new Context(openDate, accountInfoMap("Currency"))
+    
     // create position source data list
-    val positions = createPositionList(positionList, openDate)
+    val positions = createPositionList(positionList, context)
     val accountSourceData = getAccountSourceData(accountInfoMap, openDate, positions)
 
     // initialize account and positions in database
     val accountId = accountInitializer.initializeAccount(accountSourceData)
 
+    context.accountId = accountId
     // create source transactions
-    createSourceTransactionsRecursive(transactionList, accountId)
+    createSourceTransactionsRecursive(context, transactionList)
 
     val account = accountDao.findById(accountId)
     account
@@ -109,27 +124,29 @@ class AccountCsvImporter extends Logging {
     (accountInfoList, positionList, transactionList)
   }
 
-  private def createSourceTransactionsRecursive(csvList: List[Array[String]], accountId: Long): Unit = {
+  private def createSourceTransactionsRecursive(context: Context, csvList: List[Array[String]]): Unit = {
     if (csvList.isEmpty) {
       return
     }
     val (turns, rest) = csvList.tail.span(l => l(0) != TURN)
-    createSourceTransactions(csvList.head :: turns, accountId)
+    createSourceTransactions(context, csvList.head :: turns)
     if (rest.nonEmpty) {
-      createSourceTransactionsRecursive(rest, accountId)
+      createSourceTransactionsRecursive(context, rest)
     }
   }
 
-  private def createSourceTransactions(csvList: List[Array[String]], accountId: Long): Unit = {
+  private def createSourceTransactions(context: Context, csvList: List[Array[String]]): Unit = {
     val header = csvList(0)
     val asOfDate = LocalDate.parse(header(1))
+    context.asOfDate = asOfDate
 
     for (line <- csvList.tail) {
-      val (symbol, quantityDelta, priceOpt) = getSecurityLine(line)
-      createOneSourceTransaction(symbol, quantityDelta, priceOpt, asOfDate, accountId)
+      val handler = findRecordHandler(context, line)
+      val srcTransaction = handler.createSourceTransaction(context, line)
+      sourceTransactionDao.save(srcTransaction)
     }
   }
-
+/*
   private def createOneSourceTransaction(symbol: String, quantityDelta: BigDecimal, priceOpt: Option[BigDecimal],
       asOfDate: LocalDate, accountId: Long): Unit = {
     
@@ -157,6 +174,7 @@ class AccountCsvImporter extends Logging {
 
     sourceTransactionDao.save(srcTransaction)
   }
+  */
 
   private def getAccountSourceData(accountInfoMap: Map[String, String], openDate: LocalDateTime,
                                       positions: Seq[PositionSourceData]): AccountSourceData = {
@@ -193,7 +211,7 @@ class AccountCsvImporter extends Logging {
     )
   }
     
-  private def getSecurityLine(line: Array[String]): (String, BigDecimal, Option[BigDecimal]) = {
+  /*private def getSecurityLine(line: Array[String]): (String, BigDecimal, Option[BigDecimal]) = {
     val symbol = line(0)
     val quantity = BigDecimal(line(1))
     val priceOpt = if (line.size < 3) {
@@ -202,17 +220,28 @@ class AccountCsvImporter extends Logging {
       Some(BigDecimal(line(2)))
     }
     (symbol, quantity, priceOpt)
+  }*/
+
+  private def createPositionList(csvList: List[Array[String]], context: Context): List[PositionSourceData] = {
+    val buf = mutable.ListBuffer.empty[PositionSourceData]
+    for (csv <- csvList.tail) {    // skip POSITION line
+      val handler = findRecordHandler(context, csv)
+      val psd = handler.createInitialPosition(context, csv)
+      buf.append(psd)
+    }
+    buf.toList
+  }
+  
+  private def findRecordHandler(context: Context, values: Array[String]): RecordHandler = {
+    for (h <- recordHandlers) {
+      if (h.matches(context, values)) {
+        return h
+      }
+    }
+    throw new RuntimeException("Cannot found matched handler for line: " + values)
   }
 
-  private def createPositionList(csvList: List[Array[String]], openDate: LocalDateTime): List[PositionSourceData] = {
-    for {
-      csv <- csvList.tail    // skip POSITION line
-      (symbol, quantity, priceOpt) = getSecurityLine(csv)
-      psd = createPositionSourceData(symbol, quantity, priceOpt, openDate)
-    } yield psd
-  }
-
-  private def createPositionSourceData(symbol: String, quantity: BigDecimal, priceOpt: Option[BigDecimal], openDate: LocalDateTime): PositionSourceData = {
+  /*private def createPositionSourceData(symbol: String, quantity: BigDecimal, priceOpt: Option[BigDecimal], openDate: LocalDateTime): PositionSourceData = {
 
     val securityOpt = findSecurity(symbol)
     val exchange = securityOpt.map(_.getExchangeCode).getOrElse("XSHG")
@@ -255,9 +284,9 @@ class AccountCsvImporter extends Logging {
     )
 
     psd
-  }
+  }*/
 
-  private def getCurrencyOfSecurity(securityOpt: Option[Security]): String = {
+  /*private def getCurrencyOfSecurity(securityOpt: Option[Security]): String = {
     val c = securityOpt match {
       case Some(e: Equity) => e.getIssueCurrency
       case Some(f: Future) => f.getCurrencyCode
@@ -269,9 +298,9 @@ class AccountCsvImporter extends Logging {
       c
     }
     currency
-  }
+  }*/
 
-  private def getPriceOfSecurity(securityId: Long, asOfDate: LocalDate): BigDecimal = {
+  /*private def getPriceOfSecurity(securityId: Long, asOfDate: LocalDate): BigDecimal = {
     // TODO refine this
     val md = marketDataService.getMarketData(securityId, asOfDate)
     val price = if (md == null || md.getPrice() == null) {
@@ -280,9 +309,9 @@ class AccountCsvImporter extends Logging {
       md.getPrice()
     }
     price
-  }
+  }*/
 
-  private def findSecurity(symbol: String): Option[Security] = {
+  /*private def findSecurity(symbol: String): Option[Security] = {
     // TODO how to determine if a ledger is security ledger
     val positionClass = getPositionClassForSymbol(symbol)
     if (positionClass != PositionClass.SECURITY) {
@@ -302,9 +331,9 @@ class AccountCsvImporter extends Logging {
       Some(list(0))
     }
 
-  }
+  }*/
 
-  private def fixSecuritySymbol(symbol: String): String = {
+  /*private def fixSecuritySymbol(symbol: String): String = {
     try {
       Integer.valueOf(symbol)
     } catch {
@@ -332,6 +361,6 @@ class AccountCsvImporter extends Logging {
     } catch {
       case e: Throwable => PositionClass.SECURITY
     }
-  }
+  }*/
 
 }

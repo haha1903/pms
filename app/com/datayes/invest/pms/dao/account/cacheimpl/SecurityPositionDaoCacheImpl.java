@@ -34,7 +34,15 @@ public class SecurityPositionDaoCacheImpl extends DaoCacheImpl<SecurityPosition,
 
 	@Override
 	public SecurityPosition findById(Long id) {
-		throw new UnsupportedOperationException();
+	    if (id == null) {
+	        return null;
+	    }
+		for (SecurityPosition pos : getCache().getAll()) {
+		    if (id.equals(pos.getId())) {
+		        return pos;
+		    }
+		}
+		return null;
 	}
 
 	@Override
@@ -44,9 +52,6 @@ public class SecurityPositionDaoCacheImpl extends DaoCacheImpl<SecurityPosition,
 		    long id = idGenerator.getNextPositionId();
 		    entity.setId(id);
 		}
-        if (entity.getId().equals(Long.valueOf(96L))) {
-            System.out.println("stop");
-        }
 		getCache().put(key(entity), entity);
 	}
 

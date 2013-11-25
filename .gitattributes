@@ -250,7 +250,13 @@ app/com/datayes/invest/pms/system/TransactionProcess.scala -text
 app/com/datayes/invest/pms/system/TransactionThread.scala -text
 app/com/datayes/invest/pms/system/ValuationThread.scala -text
 app/com/datayes/invest/pms/tools/importer/AccountCsvImporter.scala -text
+app/com/datayes/invest/pms/tools/importer/CashRecordHandler.scala -text
+app/com/datayes/invest/pms/tools/importer/Context.scala -text
+app/com/datayes/invest/pms/tools/importer/EquityRecordHandler.scala -text
 app/com/datayes/invest/pms/tools/importer/ImportManager.scala -text
+app/com/datayes/invest/pms/tools/importer/IndexFutureRecordHandler.scala -text
+app/com/datayes/invest/pms/tools/importer/RecordHandler.scala -text
+app/com/datayes/invest/pms/tools/importer/SecurityRecordHandlerBase.scala -text
 app/com/datayes/invest/pms/tools/importer/SimulationRunner.scala -text
 app/com/datayes/invest/pms/tools/importer/SimulationRunnerCacheFlusher.java -text
 app/com/datayes/invest/pms/tools/importer/SimulationRunnerCacheLoader.java -text
@@ -362,6 +368,7 @@ sample/import/account/csv/sample.csv -text
 sample/import/account/csv/主动投资组合A.csv -text
 sample/import/account/csv/量化策略A.csv -text
 sample/import/account/csv/量化策略B(带成交价).csv -text
+sample/import/account/csv/量化策略C(有期货).csv -text
 sample/import/account/json/sample-account-file.json -text
 /svnignore.exclude -text
 test/ApplicationSpec.scala -text

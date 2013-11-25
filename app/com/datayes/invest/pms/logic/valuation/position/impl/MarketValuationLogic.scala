@@ -27,6 +27,7 @@ import com.datayes.invest.pms.entity.security.Equity
 import com.datayes.invest.pms.entity.security.Future
 import com.datayes.invest.pms.entity.security.Repo
 import scala.Some
+import com.datayes.invest.pms.util.FutureMultiplierHelper
 
 
 class MarketValuationLogic extends PositionValuationLogic with Logging {
@@ -145,11 +146,17 @@ class MarketValuationLogic extends PositionValuationLogic with Logging {
           case future: Future =>
             logger.debug("Future #{}", securityPosition.getSecurityId)
             // TODO How to get STOCK_INDEX_FUTURE_PRICE_RATIO?
-            val p = getFutureMarketPrice(securityPosition.getSecurityId) * DefaultValues.STOCK_INDEX_FUTURE_PRICE_RATIO
+            val p = if (future.getDeliveryDate() != null && future.getDeliveryDate().toLocalDate().isAfter(asOfDate)) {
+              val ratio = FutureMultiplierHelper.getRatio(future.getContractMultiplier())
+              val v = getFutureMarketPrice(securityPosition.getSecurityId) * ratio
+              v
+            } else {
+              BigDecimalConstants.ZERO
+            }
             val c = securityPosition.getCurrencyCode
             (p, c)
 
-          case repo: Repo => (BigDecimal(0), securityPosition.getCurrencyCode)            
+          case repo: Repo => (BigDecimal(0), securityPosition.getCurrencyCode)
           
           case x =>
             throw new RuntimeException("Unable to handle security " + x.getClass)

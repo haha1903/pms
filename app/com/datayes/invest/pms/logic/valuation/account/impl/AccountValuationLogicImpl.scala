@@ -46,8 +46,8 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
   @Inject
   private var futureDao: FutureDao = null
 
-  @Inject
-  private var marketDataService: MarketDataService = null
+//  @Inject
+//  private var marketDataService: MarketDataService = null
 
   @Inject
   private var positionDao: PositionDao = null
@@ -323,7 +323,7 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
   }
   */
 
-  private def findPriceSettle(positionId: Long): Double = {
+  /*private def findPriceSettle(positionId: Long): Double = {
     val secPosition = secPositionDao.findById(positionId)
 
     if (secPosition != null) {
@@ -346,12 +346,12 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
       logger.error("No Security Position with positionId: " + positionId + "exists in data base")
       0d
     }
-  }
+  }*/
 
   private def valuateFutureValueDirection(positions: List[Position],
     ledgerType: LedgerType): BigDecimal = {
 
-    def getQuantity(positionId: Long): BigDecimal = {
+    /*def getQuantity(positionId: Long): BigDecimal = {
       val positionHist = positionHistDao.findByPositionIdAsOfDate(positionId, asOfDate)
       if (null == positionHist) {
         logger.error("Cannot find Position Id: {} in POSITION_HIST on {}", positionId, asOfDate)
@@ -359,17 +359,21 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
       } else {
         positionHist.getQuantity
       }
-    }
+    }*/
 
     val specifiedPositions = findSpecifiedPositions(positions, ledgerType.getDbValue)
-    val valueList = specifiedPositions.map(p => {
-      val positionId = p.getId
-      val price = findPriceSettle(positionId)
-      val quantity = getQuantity(positionId)
-      price * quantity * DefaultValues.STOCK_INDEX_FUTURE_PRICE_RATIO
-    })
-
-    valueList.foldLeft(BigDecimal(0))(_ + _)
+    /*val valueList = specifiedPositions.map { p =>
+//      val positionId = p.getId
+//      val price = findPriceSettle(positionId)
+//      val quantity = getQuantity(positionId)
+//      price * quantity * DefaultValues.STOCK_INDEX_FUTURE_PRICE_RATIO
+      
+      
+    }*/
+    val positionIds = specifiedPositions.map(_.getId())
+    val hists = positionValuationHistDao.findByPositionIdListTypeIdAsOfDate(positionIds, ledgerType.getDbValue(), asOfDate)
+    val values = hists.map(_.getValueAmount())
+    values.foldLeft(BigDecimal(0))(_ + _)
   }
 
   private def valuateFutureLongValue(account: Account,
