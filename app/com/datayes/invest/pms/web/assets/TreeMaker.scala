@@ -5,6 +5,7 @@ import com.datayes.invest.pms.web.assets.enums.AssetNodeType
 import scala.collection.mutable.ListBuffer
 import com.datayes.invest.pms.web.assets.models._
 import com.datayes.invest.pms.entity.account.Account
+import play.api.i18n.Messages
 
 
 class TreeMaker(groupings: List[AssetNodeType], accounts: Seq[Account] /*accountIdNameMap: Map[Long, String]*/) extends Logging {
@@ -14,7 +15,7 @@ class TreeMaker(groupings: List[AssetNodeType], accounts: Seq[Account] /*account
   def create(assets: Seq[AssetCommon]): AssetTree = {
     val validGroupings = validateGroupings(groupings)
     val trees = makeTreeRecursivly(assets, validGroupings)
-    val root = new AssetTree(AssetNodeType.ROOT, "ROOT", "ROOT")
+    val root = new AssetTree(AssetNodeType.ROOT, "ROOT", Messages("AssetNodeType.ROOT"))
     root.children = trees
     
     rollup(root)

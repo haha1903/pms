@@ -7,6 +7,7 @@ import com.datayes.invest.pms.util.gson.adapter.LocalDateTypeAdapterFactory;
 import com.datayes.invest.pms.util.gson.adapter.ScalaBigDecimalTypeAdapterFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapterFactory;
 
 
 public class PmsGsonBuilder {
@@ -33,6 +34,11 @@ public class PmsGsonBuilder {
     
     public PmsGsonBuilder setPrettyPrinting() {
         builder.setPrettyPrinting();
+        return this;
+    }
+    
+    public PmsGsonBuilder registerTypeAdapterFactory(TypeAdapterFactory factory) {
+        builder.registerTypeAdapterFactory(factory);
         return this;
     }
 }

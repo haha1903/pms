@@ -1,0 +1,6 @@
+AssetNodeType.ROOT=所有持仓
+
+AssetClassType.EQUITY=股票
+AssetClassType.CASH=现金
+AssetClassType.INDEX_FUTURE=股指期货
+AssetClassType.BOND=债券

@@ -348,6 +348,7 @@ conf/application-logger.xml -text
 conf/application.conf -text
 conf/application.pms.conf.sample -text
 conf/ehcache.xml -text
+conf/messages -text
 conf/routes -text
 database/README.md -text
 database/data/AccountMasterBasic.sql -text
