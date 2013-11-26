@@ -57,10 +57,12 @@ class EquityAssetLoader(position: SecurityPosition, asOfDate: LocalDate, tranObj
     val security = tranObj.securityDao.findById(position.getSecurityId())
     equityAsset.benchmarkIndexWeight = tranObj.marketIndexService.getIndexWeight(benchmarkIndex, asOfDate, security.getId())
     
-    // transaction PnL - TODO wait for Feng Baoan
-    
-    // holding PnL - TODO wait for Feng Baoan
-    
+    // trade PnL and holding PnL
+    if (tranObj.positionYield != null) {
+      val positionYield = tranObj.positionYield;
+      equityAsset.tradePnL = positionYield.getTradeEarnCamt()
+      equityAsset.holdingPnL = positionYield.getEarnLossCamt() - positionYield.getTradeEarnCamt()
+    }
     
     // other fields
     equityAsset.assetClass = AssetClassType.EQUITY

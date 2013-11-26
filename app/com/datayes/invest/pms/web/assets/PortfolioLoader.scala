@@ -30,6 +30,8 @@ import com.datayes.invest.pms.dao.account.AccountValuationHistDao
 import com.datayes.invest.pms.dbtype.AccountValuationType
 import com.datayes.invest.pms.util.BigDecimalConstants
 import com.datayes.invest.pms.entity.account.AccountValuationHist
+import com.datayes.invest.pms.dao.account.PositionYieldDao
+import com.datayes.invest.pms.entity.account.PositionYield
 
 class PortfolioLoader extends Logging {
 
@@ -62,6 +64,9 @@ class PortfolioLoader extends Logging {
 
   @Inject
   private var positionValuationHistDao: PositionValuationHistDao = null
+  
+  @Inject
+  private var positionYieldDao: PositionYieldDao = null
 
   @Inject
   private var priceVolumeDao: PriceVolumeDao = null
@@ -128,6 +133,7 @@ class PortfolioLoader extends Logging {
     val carryingValueHistMap = loadCarryingValueHists(positions, asOfDate)
     val positionValuationHistMap = loadPositionValuationHists(positions, asOfDate)
     val prevPositionValuationHistMap = loadPositionValuationHists(positions, asOfDate.minusDays(1))
+    val positionYieldMap = loadPositionYields(positions, asOfDate)
     
     val assetList = mutable.ListBuffer.empty[models.AssetCommon]
     for (p <- positions) {
@@ -138,6 +144,7 @@ class PortfolioLoader extends Logging {
         carryingValueHist = carryingValueHistMap.get(positionId).getOrElse(null),
         positionValuationHist = positionValuationHistMap.get(positionId).getOrElse(null),
         prevPositionValuationHist = prevPositionValuationHistMap.get(positionId).getOrElse(null),
+        positionYield = positionYieldMap.get(positionId).getOrElse(null),
         benchmarkIndexOpt = benchmarkIndexOpt,
         marketDataService = marketDataService,
         industryService = industryService,
@@ -192,6 +199,13 @@ class PortfolioLoader extends Logging {
         logger.warn("Unable to find asset loader for security {}", x)
         null
     }
+  }
+  
+  private def loadPositionYields(positions: Seq[Position], asOfDate: LocalDate): Map[Long, PositionYield] = {
+    val ids = positions.map(_.getId)
+    val yields = positionYieldDao.findByPositionIdsAsOfDate(ids, asOfDate)
+    val map = yields.map { y => (y.getPositionId().toLong -> y) }.toMap
+    map
   }
 
   private def loadCarryingValueHists(positions: Seq[Position], asOfDate: LocalDate): Map[Long, CarryingValueHist] = {

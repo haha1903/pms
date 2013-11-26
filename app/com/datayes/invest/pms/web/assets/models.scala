@@ -43,6 +43,7 @@ package object models {
     def code: String
     def name: String
     
+    // this is for front-end to determine the leaf node
     val leaf: Boolean = true
     
     var holdingQuantity: Long = 0L
