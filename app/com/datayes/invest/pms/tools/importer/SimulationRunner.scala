@@ -15,6 +15,7 @@ import com.datayes.invest.pms.logic.valuation.position.PositionValuationLogicFac
 import com.datayes.invest.pms.logic.valuation.account.AccountValuationLogicFactory
 import com.datayes.invest.pms.logic.valuation.account.AccountValuationLogicFactory
 import com.datayes.invest.pms.dbtype.PositionValuationType
+import java.sql.Timestamp
 
 class SimulationRunner extends Thread with Logging {
   
@@ -74,12 +75,20 @@ class SimulationRunner extends Thread with Logging {
 
     try {
       process(account, startDate, endDate)
+      setAccountActive(account)
       fireProgressEvent(100, ProgressStatus.COMPLETED)
     } catch {
       case e: Throwable =>
         logger.warn("Error processing imported account #" + account.getId, e)
         fireProgressEvent(percentComplete, ProgressStatus.FAILED)
     }
+  }
+  
+  private def setAccountActive(account: Account): Unit = {
+    account.setStatus(null)
+    val ts = new Timestamp(System.currentTimeMillis())
+    account.setStatusChangeDate(ts)
+    accountDao.update(account)
   }
 
   private def preloadCache(cacheWorkspace: CacheWorkspace, account: Account, asOfDate: LocalDate): Unit = {

@@ -1,5 +1,7 @@
 package com.datayes.invest.pms.entity.account;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,6 +39,10 @@ public class Account extends EntityBase {
     
     private LocalDateTime openDate;
     
+    private String status;
+    
+    private Timestamp statusChangeDate;
+
     @SuppressWarnings("unused")
     private Account() {
         // used by persistence library
@@ -126,5 +132,23 @@ public class Account extends EntityBase {
 
     public void setOpenDate(LocalDateTime openDate) {
         this.openDate = openDate;
+    }
+    
+    @Column(name = "ACCOUNT_STATUS")
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
+    @Column(name = "STATUS_CHANGE_DATE")
+    public Timestamp getStatusChangeDate() {
+        return statusChangeDate;
+    }
+
+    public void setStatusChangeDate(Timestamp statusChangeDate) {
+        this.statusChangeDate = statusChangeDate;
     }
 }

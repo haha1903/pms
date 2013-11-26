@@ -21,6 +21,7 @@ import com.datayes.invest.pms.dbtype.AccountTypeType
 import com.datayes.invest.pms.dbtype.LedgerType
 import com.datayes.invest.pms.dbtype.PositionClass
 import scala.collection.mutable
+import java.sql.Timestamp
 
 class AccountCsvImporter extends Logging {
 
@@ -95,7 +96,16 @@ class AccountCsvImporter extends Logging {
     createSourceTransactionsRecursive(context, transactionList)
 
     val account = accountDao.findById(accountId)
+    setAccountInactive(account)
+    
     account
+  }
+  
+  private def setAccountInactive(account: Account): Unit = {
+    account.setStatus("INACTIVE")
+    val ts = new Timestamp(System.currentTimeMillis())
+    account.setStatusChangeDate(ts)
+    accountDao.update(account)
   }
 
   private def tryGetLines(file: File): List[String] = {

@@ -42,7 +42,7 @@ public class IdGeneratorImpl extends EntityManagerProvider implements IdGenerato
                 }
             }
         }
-        long id = nextPositionId.getAndIncrement();
+        long id = nextPositionYieldId.getAndIncrement();
         return id;
     }
     

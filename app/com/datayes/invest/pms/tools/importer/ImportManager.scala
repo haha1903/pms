@@ -9,6 +9,9 @@ import com.datayes.invest.pms.util.progress.{ProgressStatus, ProgressReport, Pro
 import com.google.inject.Inject
 import com.datayes.invest.pms.system.SystemInjectors
 import com.datayes.invest.pms.dao.account.cacheimpl.cache.CacheWorkspace
+import com.datayes.invest.pms.dao.account.AccountDao
+import java.sql.Timestamp
+import com.datayes.invest.pms.entity.account.Account
 
 
 class ImportManager extends ProgressListener with Logging {
@@ -16,6 +19,9 @@ class ImportManager extends ProgressListener with Logging {
   // TODO refactor with provider
   @Inject
   private var accountImporter: AccountCsvImporter = null
+  
+  @Inject
+  private var accountDao: AccountDao = null
   
   private val PROGRESS_TTL = 1000 * 60 * 60 * 5    // TTL 5 hours
 
@@ -44,9 +50,17 @@ class ImportManager extends ProgressListener with Logging {
 
       ImportResponse(runner.uuid, estimateTimeInMinutes)
     } else {
-      // if not run simulation, return an empty string
+      // if not run simulation, set account active and return an empty string
+      setAccountActive(account)
       ImportResponse("", 0)
     }
+  }
+  
+  private def setAccountActive(account: Account): Unit = transaction {
+    account.setStatus(null)
+    val ts = new Timestamp(System.currentTimeMillis())
+    account.setStatusChangeDate(ts)
+    accountDao.update(account)
   }
 
   private def calcEstimateTime(openDate: LocalDate, endDate: LocalDate): Int = {

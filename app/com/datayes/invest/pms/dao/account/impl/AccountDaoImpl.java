@@ -19,7 +19,7 @@ public class AccountDaoImpl extends GenericAccountMasterDaoImpl<Account, Long> i
 
     @SuppressWarnings("unchecked")
     public List<Account> findEffectiveAccounts(LocalDate asOfDate) {
-        Query q = getEntityManager().createQuery("from Account where openDate <= (:asOfDate)");
+        Query q = getEntityManager().createQuery("from Account where openDate <= (:asOfDate) and (status is null or status = 'ACTIVE')");
         q.setParameter("asOfDate", new LocalDateTime(asOfDate.toDateTimeAtStartOfDay()));
         enableCache(q);
         List<Account> list = (List<Account>) q.getResultList();

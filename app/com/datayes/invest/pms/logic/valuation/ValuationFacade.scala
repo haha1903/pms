@@ -22,7 +22,7 @@ class ValuationFacade extends Logging {
   @Inject
   private var positionYieldLogic: PositionYieldLogicImpl = null
   
-  def valuate(account: Account, asOfDate: LocalDate): Unit = ValuationLock.withLocking {
+  def valuate(account: Account, asOfDate: LocalDate): Unit = {
     for (t <- PositionValuationType.values()) {
       val logic = positionValuationLogicFactory.get(t)
       logic.process(account, asOfDate);
