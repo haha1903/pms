@@ -1,14 +1,16 @@
 package com.datayes.invest.pms.web.assets
 
+import com.datayes.invest.pms.entity.account.Account
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.web.assets.enums.AssetNodeType
-import scala.collection.mutable.ListBuffer
-import com.datayes.invest.pms.web.assets.models._
-import com.datayes.invest.pms.entity.account.Account
+import com.datayes.invest.pms.web.assets.models.AssetCommon
+import com.datayes.invest.pms.web.assets.models.AssetNode
+import com.datayes.invest.pms.web.assets.models.AssetTree
+
 import play.api.i18n.Messages
 
 
-class TreeMaker(groupings: List[AssetNodeType], accounts: Seq[Account] /*accountIdNameMap: Map[Long, String]*/) extends Logging {
+class TreeMaker(groupings: List[AssetNodeType], accounts: Seq[Account]) extends Logging {
   
   private val accountIdNameMap: Map[Long, String] = createAccountIdNameMap(accounts)
 
@@ -20,20 +22,9 @@ class TreeMaker(groupings: List[AssetNodeType], accounts: Seq[Account] /*account
     
     rollup(root)
     logger.debug("root.marketValue: {}", root.marketValue)
-//    if (root.marketValue > 0) {
-//      calculateWeight(root, root.marketValue)
-//    }    // TODO how the weight should be calculated?
+
     root
   }
-
-//  private def calculateWeight(node: AssetNode, totalMarketValue: BigDecimal): Unit = {
-//    node.weight = node.marketValue / totalMarketValue
-//    node match {
-//      case tree: AssetTree =>
-//        tree.children foreach { calculateWeight(_, totalMarketValue) }
-//      case _ => return
-//    }
-//  }
 
   private def rollup(node: AssetNode): Unit = node match {
     case asset: AssetCommon =>
@@ -80,7 +71,7 @@ class TreeMaker(groupings: List[AssetNodeType], accounts: Seq[Account] /*account
   private def groupByAssetClass(assets: Seq[AssetCommon]): List[(IdName, Seq[AssetCommon])] = {
     val list = assets.groupBy { a => a.assetClass.toString }.toList
     list.map { case (name, seq) =>
-      (IdName(name, name), seq)
+      (IdName(name, Messages("AssetClassType." + name)), seq)
     }
   }
 

@@ -39,7 +39,7 @@ class PortfolioController extends PmsController with Logging {
   @Inject
   private var userPref: UserPref = null
   
-  private val gson = new PmsGsonBuilder().registerTypeAdapterFactory(new AssetClassTypeTypeAdapterFactory).create()
+  private val gson = new PmsGsonBuilder().create()
 
   def list = PmsAction { implicit req =>
     val asOfDate: LocalDate = paramAsOfDateOrToday()
@@ -130,6 +130,7 @@ class PortfolioController extends PmsController with Logging {
   
 }
 
+/*
 class AssetClassTypeTypeAdapterFactory extends TypeAdapterFactory {
   
   override def create[T](gson: Gson, typeToken: TypeToken[T]): TypeAdapter[T] = {
@@ -151,4 +152,4 @@ class AssetClassTypeTypeAdapterFactory extends TypeAdapterFactory {
     }
     override def read(in: JsonReader): AssetClassType = throw new UnsupportedOperationException()
   }
-}
+}*/
