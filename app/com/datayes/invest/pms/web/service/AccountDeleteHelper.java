@@ -14,6 +14,7 @@ import com.datayes.invest.pms.dao.account.PositionDao;
 import com.datayes.invest.pms.dao.account.PositionHistDao;
 import com.datayes.invest.pms.dao.account.PositionInitDao;
 import com.datayes.invest.pms.dao.account.PositionValuationHistDao;
+import com.datayes.invest.pms.dao.account.PositionYieldDao;
 import com.datayes.invest.pms.dao.account.SourceTransactionDao;
 import com.datayes.invest.pms.dao.account.TransactionDao;
 import com.datayes.invest.pms.entity.account.Account;
@@ -51,6 +52,9 @@ public class AccountDeleteHelper {
 
     @Inject
     private PositionValuationHistDao positionValuationHistDao;
+    
+    @Inject
+    private PositionYieldDao positionYieldDao;
 
     @Inject
     private SourceTransactionDao sourceTransactionDao;
@@ -73,13 +77,17 @@ public class AccountDeleteHelper {
         deleteTransactions(accountId);
         deleteSourceTransactions(accountId);
         deleteCarryingValueHists(accountId);
+        deletePositionYield(accountId);
         deletePositions(accountId);
-        deletePositionInits(accountId);
         deleteAccountValuationHists(accountId);
         deleteAccountValuationInits(accountId);
         deleteFees(accountId);
         accountDao.delete(account);
         LOGGER.info("Account #" + accountId + " deleted");
+    }
+
+    private void deletePositionYield(Long accountId) {
+        positionYieldDao.deleteByAccountId(accountId);
     }
 
     private void deleteSourceTransactions(Long accountId) {
@@ -100,10 +108,6 @@ public class AccountDeleteHelper {
 
     private void deleteCarryingValueHists(Long accountId) {
         carryingValueHistDao.deleteByAccountId(accountId);
-    }
-
-    private void deletePositionInits(Long accountId) {
-
     }
 
     private void deletePositions(Long accountId) {

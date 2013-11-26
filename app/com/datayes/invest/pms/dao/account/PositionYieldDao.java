@@ -9,4 +9,6 @@ import java.util.List;
 public interface PositionYieldDao extends GenericAccountMasterDao<PositionYield, Long>{
 
     List<PositionYield> findByPositionIdsAsOfDate(List<Long> positionIds, LocalDate asOfDate);
+    
+    void deleteByAccountId(Long accountId);
 }
