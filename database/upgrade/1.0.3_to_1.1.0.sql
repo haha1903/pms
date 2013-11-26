@@ -13,6 +13,9 @@ create table MARKET_DATA
 )DEFAULT CHARACTER SET=utf8;
 
 /*
- * Add new column TRADE_EARN_CAMT into POSITION_YIELD
+ * 1. Add new column TRADE_EARN_CAMT into POSITION_YIELD
+ * 2. Add foreign keys
  */
 alter table POSITION_YIELD add TRADE_EARN_CAMT decimal(31,11) default 0 not null comment "交易盈亏";
+alter table POSITION_YIELD add constraint fk_PositionId foreign key (POSITION_ID) references POSITION(POSITION_ID);
+alter table POSITION_YIELD add constraint fk_AccountId foreign key (ACCOUNT_ID) references ACCOUNT(ACCOUNT_ID);
