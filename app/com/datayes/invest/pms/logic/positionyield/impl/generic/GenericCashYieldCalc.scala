@@ -3,6 +3,7 @@ package com.datayes.invest.pms.logic.positionyield.impl.generic
 import com.datayes.invest.pms.entity.account.Position
 import org.joda.time.LocalDate
 import com.datayes.invest.pms.logic.positionyield.impl.singleyield.SingleCashYieldCalc
+import com.datayes.invest.pms.util.BigDecimalConstants
 
 
 abstract class GenericCashYieldCalc extends GenericYieldCalc with SingleCashYieldCalc {
@@ -19,7 +20,7 @@ abstract class GenericCashYieldCalc extends GenericYieldCalc with SingleCashYiel
     positions.filter(position => carryingValues.contains(position.getId)).map(position => {
       val positionId = position.getId.toLong
       val carryingValue = carryingValues(positionId)
-      val rate = BigDecimal(0)
+      val rate = BigDecimalConstants.ZERO
       val dailyInterest = calculateSingleDailyInterest(carryingValue, rate)
       (positionId, dailyInterest)
     }).toMap

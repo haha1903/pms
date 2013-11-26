@@ -11,7 +11,7 @@ import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.entity.account.Position
 import com.datayes.invest.pms.entity.account.SecurityPosition
 import com.datayes.invest.pms.entity.account.PositionYield
-import com.datayes.invest.pms.util.DefaultValues
+import com.datayes.invest.pms.util.{BigDecimalConstants, DefaultValues}
 import com.datayes.invest.pms.entity.account.CarryingValueHist
 import com.datayes.invest.pms.entity.account.PositionHist
 import com.datayes.invest.pms.entity.security.EquityDividend
@@ -58,7 +58,7 @@ abstract class GenericYieldCalc extends PositionYieldCalc with SingleGenericYiel
       val endValues = calculateEndValue(positions, asOfDate)
       val earnLoss = calculateEarnLoss(beginValues, endValues, inCamts, outCamts, dividends)
       val increments = calculateIncrement(earnLoss, priceDiffs)
-      val tradeEarn = calculateTradeEarn(positions, inCamts, outCamts, asOfDate)
+      val tradeEarns = calculateTradeEarn(positions, inCamts, outCamts, asOfDate)
 
       val positionYields = positions.map(position => {
         val positionId: Long = position.getId
@@ -66,27 +66,29 @@ abstract class GenericYieldCalc extends PositionYieldCalc with SingleGenericYiel
           case p: SecurityPosition => p.getSecurityId
           case _ => null
         }
-        new PositionYield(
+        val positionYield = new PositionYield(
           asOfDate,
           positionId,
           position.getAccountId,
-          securityId,
-          currency_type,
-          position.getCurrencyCode,
-          posCarryingValues(positionId),
-          secCarryingValues(positionId),
-          dailyInterest(positionId),
-          dividends(positionId),
-          priceDiffs(positionId),
-          increments(positionId),
-          beginValues(positionId),
-          endValues(positionId),
-          inCamts(positionId)._2,
-          outCamts(positionId)._2,
-          earnLoss(positionId),
-          tradeEarn(positionId),
-          lastUserId,
-          isLocked)
+          securityId)
+        positionYield.setCurrencyTypeCode(currency_type)
+        positionYield.setCurrencyCode(position.getCurrencyCode)
+        positionYield.setPositionCarryingValue(posCarryingValues(positionId))
+        positionYield.setSecurityCarryingValue(secCarryingValues(positionId))
+        positionYield.setDailyInterestCamt(dailyInterest(positionId))
+        positionYield.setDividendCamt(dividends(positionId))
+        positionYield.setPriceDiffEarnCamt(priceDiffs(positionId))
+        positionYield.setIncrementCamt(increments(positionId))
+        positionYield.setBeginValueCamt(beginValues(positionId))
+        positionYield.setEndValueCamt(endValues(positionId))
+        positionYield.setInCamt(inCamts(positionId)._2)
+        positionYield.setOutCamt(outCamts(positionId)._2)
+        positionYield.setEarnLossCamt(earnLoss(positionId))
+        positionYield.setTradeEarnCamt(tradeEarns(positionId))
+        positionYield.setLastChangeUserId(lastUserId)
+        positionYield.setIsLocked(isLocked)
+
+        positionYield
       })
       savePositionYields(positionYields, asOfDate)
     }
@@ -184,7 +186,7 @@ abstract class GenericYieldCalc extends PositionYieldCalc with SingleGenericYiel
       val key = kv._1
       kv._2 match {
         case Some(o) => (key, valueGetter(o))
-        case _ => (key, BigDecimal(0))
+        case _ => (key, BigDecimalConstants.ZERO)
       }
     }).toMap
   }
@@ -196,11 +198,11 @@ abstract class GenericYieldCalc extends PositionYieldCalc with SingleGenericYiel
     *
    */
   private def createDefaultSimpleMap(positions: List[Position]): Map[Long, BigDecimal] = {
-    positions.map(position => (position.getId.toLong, BigDecimal(0))).toMap
+    positions.map(position => (position.getId.toLong, BigDecimalConstants.ZERO)).toMap
   }
   
   private def createDefualtTupleMap(positions: List[Position]): Map[Long, (BigDecimal, BigDecimal)] = {
-    positions.map(position => (position.getId.toLong, (BigDecimal(0), BigDecimal(0)))).toMap
+    positions.map(position => (position.getId.toLong, (BigDecimalConstants.ZERO, BigDecimalConstants.ZERO))).toMap
   }
 
 }

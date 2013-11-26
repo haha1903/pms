@@ -2,6 +2,7 @@ package com.datayes.invest.pms.logic.positionyield.impl.singleyield
 
 import com.datayes.invest.pms.entity.account.SecurityTransaction
 import com.datayes.invest.pms.logging.Logging
+import com.datayes.invest.pms.util.BigDecimalConstants
 
 
 trait SingleSecurityYieldCalc extends SingleGenericYieldCalc with Logging {
@@ -19,8 +20,8 @@ trait SingleSecurityYieldCalc extends SingleGenericYieldCalc with Logging {
   }
 
   def sumSingleSecurityTransaction(transactions: List[SecurityTransaction]): (BigDecimal, BigDecimal) = {
-    val sumQuantity = transactions.foldLeft(BigDecimal(0))(_ + _.getAmount)
-    val sumValue = transactions.foldLeft(BigDecimal(0))((start, transaction) => start + transaction.getAvgPrice * transaction.getAmount)
+    val sumQuantity = transactions.foldLeft(BigDecimalConstants.ZERO)(_ + _.getAmount)
+    val sumValue = transactions.foldLeft(BigDecimalConstants.ZERO)((start, transaction) => start + transaction.getAvgPrice * transaction.getAmount)
     (sumQuantity, sumValue)
   }
 

@@ -70,27 +70,11 @@ public class PositionYield extends EntityBase {
         
     }
 
-    public PositionYield(LocalDate asOfDate, Long positionId, Long accountId, Long securityId, Character currencyTypeCode, String currencyCode, BigDecimal positionCarryingValue, BigDecimal securityCarryingValue, BigDecimal dailyInterestCamt, BigDecimal dividendCamt, BigDecimal priceDiffEarnCamt, BigDecimal incrementCamt, BigDecimal beginValueCamt, BigDecimal endValueCamt, BigDecimal inCamt, BigDecimal outCamt, BigDecimal earnLossCamt, BigDecimal tradeEarnCamt, String lastChangeUserId, char locked) {
+    public PositionYield(LocalDate asOfDate, Long positionId, Long accountId, Long securityId) {
         this.asOfDate = asOfDate;
         this.positionId = positionId;
         this.accountId = accountId;
         this.securityId = securityId;
-        this.currencyTypeCode = currencyTypeCode;
-        this.currencyCode = currencyCode;
-        this.positionCarryingValue = positionCarryingValue;
-        this.securityCarryingValue = securityCarryingValue;
-        this.dailyInterestCamt = dailyInterestCamt;
-        this.dividendCamt = dividendCamt;
-        this.priceDiffEarnCamt = priceDiffEarnCamt;
-        this.incrementCamt = incrementCamt;
-        this.beginValueCamt = beginValueCamt;
-        this.endValueCamt = endValueCamt;
-        this.inCamt = inCamt;
-        this.outCamt = outCamt;
-        this.earnLossCamt = earnLossCamt;
-        this.tradeEarnCamt = tradeEarnCamt;
-        this.lastChangeUserId = lastChangeUserId;
-        this.isLocked = locked;
     }
 
     @Id

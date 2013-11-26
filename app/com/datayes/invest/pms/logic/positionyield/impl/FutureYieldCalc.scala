@@ -4,6 +4,7 @@ import com.datayes.invest.pms.logic.positionyield.impl.generic.GenericSecurityYi
 import com.datayes.invest.pms.entity.account.Position
 import org.joda.time.LocalDate
 import com.datayes.invest.pms.dbtype.TradeSide
+import com.datayes.invest.pms.util.BigDecimalConstants
 
 
 class FutureYieldCalc extends GenericSecurityYieldCalc {
@@ -24,7 +25,7 @@ class FutureYieldCalc extends GenericSecurityYieldCalc {
 
   private def mergeMap(map1: Map[Long, (BigDecimal, BigDecimal)], map2: Map[Long, (BigDecimal, BigDecimal)]): Map[Long, (BigDecimal, BigDecimal)] = {
     map1 ++ map2.map{ case(k, v) => {
-      val tupleValue = map1.get(k).getOrElse((BigDecimal(0), BigDecimal(0)))
+      val tupleValue = map1.get(k).getOrElse((BigDecimalConstants.ZERO, BigDecimalConstants.ZERO))
       k -> ((v._1 + tupleValue._1, v._2 + tupleValue._2))
     }}
   }

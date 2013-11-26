@@ -83,8 +83,8 @@ abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecu
       val carryingValue = kv._2
       val positionQuantity = positionHistQuantities(positionId)
       val sellTransaction = outCamts(positionId)
-      val priceDiff = if ( BigDecimal(0) == positionQuantity ) {
-        BigDecimal(0)
+      val priceDiff = if ( BigDecimalConstants.ZERO == positionQuantity ) {
+        BigDecimalConstants.ZERO
       }
       else {
         calculateSinglePriceDiff(carryingValue, positionQuantity, sellTransaction)
@@ -150,7 +150,7 @@ abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecu
         sumSingleSecurityTransaction(oneSecTransactionsOpt.get)
       }
       else {
-        (BigDecimal(0),BigDecimal(0))
+        (BigDecimalConstants.ZERO,BigDecimalConstants.ZERO)
       }
       (positionId, quantitySum)
     }).toMap
