@@ -90,6 +90,9 @@ abstract class GenericYieldCalc extends PositionYieldCalc with SingleGenericYiel
       })
       savePositionYields(positionYields, asOfDate)
     }
+    else {
+      logger.warn("No position found, to check the ledger type, see last log")
+    }
   }
 
 
@@ -203,40 +206,6 @@ abstract class GenericYieldCalc extends PositionYieldCalc with SingleGenericYiel
     positions.map(position => (position.getId.toLong, (BigDecimal(0), BigDecimal(0)))).toMap
   }
 
-  /*
-  private def genericGetId(o: AnyRef): Option[Long] = o match {
-    case p: Position => Some(p.getId)
-    case cvh: CarryingValueHist => Some(cvh.getPK.getPositionId)
-    case ph: PositionHist =>  Some(ph.getPK.getPositionId)
-    case ed: EquityDividend => Some(ed.getSecurityId)
-    case pvh: PositionValuationHist => Some(pvh.getPK.getPositionId)
-    case _ => None
-
-  }
-  */
-  /*
-  def convert[T, K](list: List[T], T => K): Map[K, T] = {
-
-  }
-
-  convert(positions, { p : Position => p,print() } )
-  */
-
-  /*
-  protected def convertListToMapWithId[T](list: List[T], idList: List[Long], idGetter: () => Long): Map[Long, T] = {
-    val tmpMap = collection.mutable.Map.empty[Long, T]
-    idList.foreach(id => tmpMap.put(id, null))
-
-    list.foreach{
-      element =>
-        val id = idGetter()
-        tmpMap.put(id, element)
-    }
-
-    // Convert mutable map to immutable
-    tmpMap.map(kv => (kv._1, kv._2)).toMap
-  }
-  */
 }
 
 

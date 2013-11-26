@@ -8,15 +8,6 @@ import com.datayes.invest.pms.dbtype.TradeSide
 
 class FutureYieldCalc extends GenericSecurityYieldCalc {
 
-  /*
-    *
-    * Common
-    *
-   */
-  override protected def calculateDailyInterest(positions: List[Position], asOfDate: LocalDate, carryingValues: Map[Long, BigDecimal]): Map[Long, BigDecimal] = {
-    defaultSimpleMap
-  }
-
   override protected def calculateInCamt(positions: List[Position], asOfDate: LocalDate): Map[Long, (BigDecimal, BigDecimal)] = {
     val buyFutureMap = calculateInOutCamt(positions, asOfDate, TradeSide.BUY)
     val shortFutureMap = calculateInOutCamt(positions, asOfDate, TradeSide.SHORT)

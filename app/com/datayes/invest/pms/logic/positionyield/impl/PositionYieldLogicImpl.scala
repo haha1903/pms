@@ -21,6 +21,7 @@ class PositionYieldLogicImpl extends PositionYieldLogic with Logging {
   private var positionYieldCalcFactory: PositionYieldCalcFactory = null
 
   override def process(account: Account, asOfDate: LocalDate): Unit = {
+    logger.debug("Start calculating position yield for Account: {} on {}", account.getId, asOfDate)
     val accountId = account.getId
     val cashPositions = cashPositionDao.findByAccountId(accountId).filter(position => LedgerType.CASH.getDbValue == position.getLedgerId ).toList
     val secPositions = securityPositionDao.findByAccountId(accountId).toList
@@ -34,6 +35,7 @@ class PositionYieldLogicImpl extends PositionYieldLogic with Logging {
   }
 
   private def doProcess(positions: List[Position], asOfDate: LocalDate, ledgerType: LedgerType): Unit = {
+    logger.debug("Process position yield for {} {} positions on {}", positions.size, ledgerType.toString, asOfDate)
     val positionYieldCalc = positionYieldCalcFactory.get(ledgerType)
     positionYieldCalc.process(positions, asOfDate)
   }

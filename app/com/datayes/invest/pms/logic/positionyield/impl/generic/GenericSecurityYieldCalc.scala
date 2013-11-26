@@ -33,6 +33,10 @@ abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecu
       * Calculation method for Security Position
       *
   */
+  override protected def calculateDailyInterest(positions: List[Position], asOfDate: LocalDate, carryingValues: Map[Long, BigDecimal]): Map[Long, BigDecimal] = {
+    defaultSimpleMap
+  }
+
   override protected def calculatePositionCarryingValue(positions: List[Position], asOfDate: LocalDate): Map[Long, BigDecimal] = {
     val positionIds = positions.map(_.getId)
     val carryingValueHists = carryingValueHistDao.findByPositionIdListTypeIdAsOfDate(positionIds, DefaultValues.CARRYING_VALUE_TYPE, asOfDate).toList
@@ -118,7 +122,7 @@ abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecu
 
   /*
     *
-    * Inheritance methods
+    * Inheritance methods for sub-classes
     *                                                                                                 z
    */
   protected def calculateInOutCamt(positions: List[Position], asOfDate: LocalDate, tradeSide: TradeSide): Map[Long, (BigDecimal, BigDecimal)] = {
