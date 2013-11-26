@@ -55,6 +55,8 @@ GET     /assets/*file                                         controllers.Assets
 GET     /tools                                                @controllers.Application.tools
 GET     /tools/process                                        @controllers.tools.RunProcessController.runProcess
 POST    /tools/process                                        @controllers.tools.RunProcessController.runProcessPost
+GET     /tools/positionYield                                  @controllers.tools.PositionYieldController.runProcess
+POST    /tools/positionYield                                  @controllers.tools.PositionYieldController.runPositionYield
 
 
 #Cache Observation

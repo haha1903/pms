@@ -154,7 +154,7 @@ class AccountCsvImporter extends Logging {
       throw new RuntimeException(symbol + " is not a security and not supported")
     )
 
-    val price = getPriceOfSecurity(security.getId, asOfDate)
+    val price = getPriceOfSecurity(security.getId, asOfDate) - 1 //TODO need to delete "-1"
 
     val tradeSide = if (quantityDelta >= 0) TradeSide.BUY else TradeSide.SELL
 

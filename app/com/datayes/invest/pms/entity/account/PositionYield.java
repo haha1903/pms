@@ -9,10 +9,11 @@ import javax.persistence.Table;
 
 import org.hibernate.annotations.Proxy;
 import org.joda.time.LocalDate;
-
 import scala.math.BigDecimal;
 
 import com.datayes.invest.pms.entity.EntityBase;
+
+import java.sql.Timestamp;
 
 @Entity
 @Table(name = "POSITION_YIELD")
@@ -56,13 +57,40 @@ public class PositionYield extends EntityBase {
     private BigDecimal outCamt;
     
     private BigDecimal earnLossCamt;
+
+    private BigDecimal tradeEarnCamt;
     
     private String lastChangeUserId;
+
+    private Timestamp lastUpdate;
     
     private char isLocked;
     
     private PositionYield() {
         
+    }
+
+    public PositionYield(LocalDate asOfDate, Long positionId, Long accountId, Long securityId, Character currencyTypeCode, String currencyCode, BigDecimal positionCarryingValue, BigDecimal securityCarryingValue, BigDecimal dailyInterestCamt, BigDecimal dividendCamt, BigDecimal priceDiffEarnCamt, BigDecimal incrementCamt, BigDecimal beginValueCamt, BigDecimal endValueCamt, BigDecimal inCamt, BigDecimal outCamt, BigDecimal earnLossCamt, BigDecimal tradeEarnCamt, String lastChangeUserId, char locked) {
+        this.asOfDate = asOfDate;
+        this.positionId = positionId;
+        this.accountId = accountId;
+        this.securityId = securityId;
+        this.currencyTypeCode = currencyTypeCode;
+        this.currencyCode = currencyCode;
+        this.positionCarryingValue = positionCarryingValue;
+        this.securityCarryingValue = securityCarryingValue;
+        this.dailyInterestCamt = dailyInterestCamt;
+        this.dividendCamt = dividendCamt;
+        this.priceDiffEarnCamt = priceDiffEarnCamt;
+        this.incrementCamt = incrementCamt;
+        this.beginValueCamt = beginValueCamt;
+        this.endValueCamt = endValueCamt;
+        this.inCamt = inCamt;
+        this.outCamt = outCamt;
+        this.earnLossCamt = earnLossCamt;
+        this.tradeEarnCamt = tradeEarnCamt;
+        this.lastChangeUserId = lastChangeUserId;
+        this.isLocked = locked;
     }
 
     @Id
@@ -122,11 +150,11 @@ public class PositionYield extends EntityBase {
     }
 
     @Column(name = "CURRENCY_TYPE_CD")
-    public char getCurrencyTypeCode() {
+    public Character getCurrencyTypeCode() {
         return currencyTypeCode;
     }
 
-    public void setCurrencyTypeCode(char currencyTypeCode) {
+    public void setCurrencyTypeCode(Character currencyTypeCode) {
         this.currencyTypeCode = currencyTypeCode;
     }
 
@@ -238,6 +266,15 @@ public class PositionYield extends EntityBase {
         this.earnLossCamt = earnLossCamt;
     }
 
+    @Column(name = "TRADE_EARN_CAMT")
+    public BigDecimal getTradeEarnCamt() {
+        return tradeEarnCamt;
+    }
+
+    public void setTradeEarnCamt(BigDecimal tradeEarnCamt) {
+        this.tradeEarnCamt = tradeEarnCamt;
+    }
+
     @Column(name = "LAST_CHANGE_USER_ID")
     public String getLastChangeUserId() {
         return lastChangeUserId;
@@ -245,6 +282,15 @@ public class PositionYield extends EntityBase {
 
     public void setLastChangeUserId(String lastChangeUserId) {
         this.lastChangeUserId = lastChangeUserId;
+    }
+
+    @Column(name = "LAST_UPDATE")
+    public Timestamp getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Timestamp lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 
     @Column(name = "IS_LOCKED")
