@@ -79,7 +79,7 @@ public class PositionYield extends EntityBase {
 
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+//    @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
         return id;
     }

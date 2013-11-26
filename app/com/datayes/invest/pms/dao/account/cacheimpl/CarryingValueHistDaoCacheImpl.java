@@ -26,16 +26,6 @@ public class CarryingValueHistDaoCacheImpl extends DaoCacheImpl<CarryingValueHis
 	}
 
 	@Override
-	public void delete(CarryingValueHist entity) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void detach(CarryingValueHist entity) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public CarryingValueHist findById(CarryingValueHist.PK pk) {
 		Key key = key(pk.getPositionId(), pk.getTypeId(), pk.getAsOfDate());
 		return getCache().get(key);

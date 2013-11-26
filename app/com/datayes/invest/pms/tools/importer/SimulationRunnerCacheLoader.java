@@ -14,12 +14,14 @@ import com.datayes.invest.pms.dao.account.impl.CarryingValueHistDaoImpl;
 import com.datayes.invest.pms.dao.account.impl.PositionDaoImpl;
 import com.datayes.invest.pms.dao.account.impl.PositionHistDaoImpl;
 import com.datayes.invest.pms.dao.account.impl.PositionValuationHistDaoImpl;
+import com.datayes.invest.pms.dao.account.impl.PositionYieldDaoImpl;
 import com.datayes.invest.pms.entity.account.AccountValuationHist;
 import com.datayes.invest.pms.entity.account.CarryingValueHist;
 import com.datayes.invest.pms.entity.account.CashPosition;
 import com.datayes.invest.pms.entity.account.Position;
 import com.datayes.invest.pms.entity.account.PositionHist;
 import com.datayes.invest.pms.entity.account.PositionValuationHist;
+import com.datayes.invest.pms.entity.account.PositionYield;
 import com.datayes.invest.pms.entity.account.SecurityPosition;
 
 public class SimulationRunnerCacheLoader {
@@ -39,6 +41,9 @@ public class SimulationRunnerCacheLoader {
 	@Inject
 	private CarryingValueHistDaoImpl carryingValueHistDao;
 	
+	@Inject
+	private PositionYieldDaoImpl positionYieldDao;
+	
 	public void load(CacheWorkspace cacheWorkspace, Long accountId, LocalDate asOfDate) {
 		List<Long> positionIds = loadPositions(cacheWorkspace, accountId, asOfDate);
 
@@ -46,10 +51,18 @@ public class SimulationRunnerCacheLoader {
 		loadPositionValuationHists(cacheWorkspace, positionIds, asOfDate);
 		loadAccountValuationHists(cacheWorkspace, accountId, asOfDate);
 		loadCarryingValueHists(cacheWorkspace, positionIds, asOfDate);
+		loadPositionYields(cacheWorkspace, positionIds, asOfDate);
 	}
 	
-	private void loadCarryingValueHists(CacheWorkspace cacheWorkspace, List<Long> positionIds, LocalDate asOfDate) {
+	private void loadPositionYields(CacheWorkspace cacheWorkspace, List<Long> positionIds, LocalDate asOfDate) {
+        List<PositionYield> yields = positionYieldDao.findByPositionIdsAsOfDate(positionIds, asOfDate);
+        for (PositionYield y : yields) {
+            Key key = new Key(y.getPositionId(), asOfDate);
+            cacheWorkspace.get(PositionYield.class).preload(key, y);
+        }
+    }
 
+    private void loadCarryingValueHists(CacheWorkspace cacheWorkspace, List<Long> positionIds, LocalDate asOfDate) {
 		List<CarryingValueHist> hists = carryingValueHistDao.findByPositionIdListAsOfDate(positionIds, asOfDate);
 		for (CarryingValueHist hist : hists) {
 			Key key = new Key(hist.getPK().getPositionId(), hist.getPK().getTypeId(), asOfDate);

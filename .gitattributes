@@ -42,6 +42,7 @@ app/com/datayes/invest/pms/dao/account/cacheimpl/DaoCacheImpl.java -text
 app/com/datayes/invest/pms/dao/account/cacheimpl/PositionDaoCacheImpl.java -text
 app/com/datayes/invest/pms/dao/account/cacheimpl/PositionHistDaoCacheImpl.java -text
 app/com/datayes/invest/pms/dao/account/cacheimpl/PositionValuationHistDaoCacheImpl.java -text
+app/com/datayes/invest/pms/dao/account/cacheimpl/PositionYieldDaoCacheImpl.java -text
 app/com/datayes/invest/pms/dao/account/cacheimpl/SecurityPositionDaoCacheImpl.java -text
 app/com/datayes/invest/pms/dao/account/cacheimpl/cache/Cache.java -text
 app/com/datayes/invest/pms/dao/account/cacheimpl/cache/CacheWorkspace.java -text

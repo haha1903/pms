@@ -24,12 +24,14 @@ import com.datayes.invest.pms.dao.account.impl.CarryingValueHistDaoImpl;
 import com.datayes.invest.pms.dao.account.impl.PositionDaoImpl;
 import com.datayes.invest.pms.dao.account.impl.PositionHistDaoImpl;
 import com.datayes.invest.pms.dao.account.impl.PositionValuationHistDaoImpl;
+import com.datayes.invest.pms.dao.account.impl.PositionYieldDaoImpl;
 import com.datayes.invest.pms.entity.account.AccountValuationHist;
 import com.datayes.invest.pms.entity.account.CarryingValueHist;
 import com.datayes.invest.pms.entity.account.CashPosition;
 import com.datayes.invest.pms.entity.account.Position;
 import com.datayes.invest.pms.entity.account.PositionHist;
 import com.datayes.invest.pms.entity.account.PositionValuationHist;
+import com.datayes.invest.pms.entity.account.PositionYield;
 import com.datayes.invest.pms.entity.account.SecurityPosition;
 import com.datayes.invest.pms.persist.Persist;
 import com.datayes.invest.pms.persist.Transaction;
@@ -37,20 +39,25 @@ import com.datayes.invest.pms.persist.Transaction;
 public class SimulationRunnerCacheFlusher {
 	private final static Logger logger = LoggerFactory.getLogger(SimulationRunnerCacheFlusher.class);
 
-	@Inject
-	private PositionDaoImpl positionDao;
-
-	@Inject
-	private PositionHistDaoImpl positionHistDao;
-
-	@Inject
-	private PositionValuationHistDaoImpl positionValuationHistDao;
 
 	@Inject
 	private AccountValuationHistDaoImpl accountValuationHistDao;
 
 	@Inject
 	private CarryingValueHistDaoImpl carryingValueHistDao;
+
+    @Inject
+    private PositionDaoImpl positionDao;
+
+    @Inject
+    private PositionHistDaoImpl positionHistDao;
+
+    @Inject
+    private PositionValuationHistDaoImpl positionValuationHistDao;
+    
+	@Inject
+	private PositionYieldDaoImpl positionYieldDao;
+	
 
 	private ExecutorService threadExecutor = Executors.newSingleThreadExecutor();
 
@@ -82,6 +89,7 @@ public class SimulationRunnerCacheFlusher {
     				Set<Long> positionIds = flushPosition(cacheWorkspace, accountId);
     				flushPositionHist(cacheWorkspace, positionIds, asOfDate);
     				flushPositionValuationHist(cacheWorkspace, positionIds, asOfDate);
+    				flushPositionYield(cacheWorkspace, positionIds, asOfDate);
     				flushAccountValuationHist(cacheWorkspace, accountId, asOfDate);
     				flushCarryingValueHist(cacheWorkspace, accountId, asOfDate);
     				
@@ -134,6 +142,28 @@ public class SimulationRunnerCacheFlusher {
 			iter.remove();
 		}
 	}
+	
+	private void flushPositionYield(CacheWorkspace cacheWorkspace, Set<Long> positionIds, LocalDate asOfDate) {
+        Cache cache = cacheWorkspace.get(PositionYield.class);
+        Iterator<Key> iter = cache.keysIterator();
+        while (iter.hasNext()) {
+            Key key = iter.next();
+            Element e = (Element) cache.getElement(key);
+            PositionYield py = (PositionYield) e.getValue();
+            Long posId = py.getPositionId();
+            LocalDate date = py.getAsOfDate();
+            if (!positionIds.contains(posId) || !date.equals(asOfDate)) {
+                continue;
+            }
+            if (e.getState() == Element.State.CREATED) {
+                positionYieldDao.save(py);
+            }
+            if (e.getState() == Element.State.UPDATED) {
+                positionYieldDao.update(py);
+            }
+            iter.remove();
+        }
+    }
 
 	private void flushPositionValuationHist(CacheWorkspace cacheWorkspace, Set<Long> positionIds, LocalDate asOfDate) {
 		Cache cache = cacheWorkspace.get(PositionValuationHist.class);

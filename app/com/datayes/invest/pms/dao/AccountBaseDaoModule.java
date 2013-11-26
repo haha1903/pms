@@ -51,7 +51,6 @@ public class AccountBaseDaoModule extends AbstractModule {
         bind(PositionClassDao.class).to(PositionClassDaoImpl.class).in(Scopes.SINGLETON);
         bind(PositionInitDao.class).to(PositionInitDaoImpl.class).in(Scopes.SINGLETON);
         bind(PositionValuationTypeDao.class).to(PositionValuationTypeDaoImpl.class).in(Scopes.SINGLETON);
-        bind(PositionYieldDao.class).to(PositionYieldDaoImpl.class).in(Scopes.SINGLETON);
         bind(RateTypeDao.class).to(RateTypeDaoImpl.class).in(Scopes.SINGLETON);
         bind(SecurityTransactionDao.class).to(SecurityTransactionDaoImpl.class).in(Scopes.SINGLETON);
         bind(SourceTransactionDao.class).to(SourceTransactionDaoImpl.class).in(Scopes.SINGLETON);

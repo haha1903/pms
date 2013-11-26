@@ -6,6 +6,7 @@ import com.datayes.invest.pms.dao.account.CashPositionDao;
 import com.datayes.invest.pms.dao.account.PositionDao;
 import com.datayes.invest.pms.dao.account.PositionHistDao;
 import com.datayes.invest.pms.dao.account.PositionValuationHistDao;
+import com.datayes.invest.pms.dao.account.PositionYieldDao;
 import com.datayes.invest.pms.dao.account.SecurityPositionDao;
 import com.datayes.invest.pms.dao.account.cacheimpl.AccountValuationHistDaoCacheImpl;
 import com.datayes.invest.pms.dao.account.cacheimpl.CarryingValueHistDaoCacheImpl;
@@ -13,6 +14,7 @@ import com.datayes.invest.pms.dao.account.cacheimpl.CashPositionDaoCacheImpl;
 import com.datayes.invest.pms.dao.account.cacheimpl.PositionDaoCacheImpl;
 import com.datayes.invest.pms.dao.account.cacheimpl.PositionHistDaoCacheImpl;
 import com.datayes.invest.pms.dao.account.cacheimpl.PositionValuationHistDaoCacheImpl;
+import com.datayes.invest.pms.dao.account.cacheimpl.PositionYieldDaoCacheImpl;
 import com.datayes.invest.pms.dao.account.cacheimpl.SecurityPositionDaoCacheImpl;
 import com.google.inject.AbstractModule;
 
@@ -26,6 +28,7 @@ public class AccountExtraDaoCacheModule extends AbstractModule {
         bind(PositionDao.class).to(PositionDaoCacheImpl.class);
         bind(PositionHistDao.class).to(PositionHistDaoCacheImpl.class);
         bind(PositionValuationHistDao.class).to(PositionValuationHistDaoCacheImpl.class);
+        bind(PositionYieldDao.class).to(PositionYieldDaoCacheImpl.class);
         bind(SecurityPositionDao.class).to(SecurityPositionDaoCacheImpl.class);
     }
 
