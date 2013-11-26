@@ -1,5 +1,7 @@
 package com.datayes.invest.pms.dao.account.cacheimpl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,7 +22,16 @@ public class CashPositionDaoCacheImpl extends DaoCacheImpl<CashPosition, Long> i
 
 	@Override
 	public List<CashPosition> findByAccountId(Long accountId) {
-		throw new UnsupportedOperationException();
+	    if (accountId == null) {
+	        return Collections.emptyList();
+	    }
+	    List<CashPosition> list = new ArrayList<CashPosition>();
+		for (CashPosition p : getCache().getAll()) {
+		    if (accountId.equals(p.getAccountId())) {
+		        list.add(p);
+		    }
+		}
+		return list;
 	}
 
 	@Override

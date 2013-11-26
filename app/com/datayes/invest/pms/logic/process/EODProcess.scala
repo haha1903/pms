@@ -8,34 +8,19 @@ import com.datayes.invest.pms.entity.account.Account
 import com.datayes.invest.pms.logic.valuation.position.PositionValuationLogicFactory
 import com.datayes.invest.pms.logic.valuation.account.AccountValuationLogicFactory
 import com.datayes.invest.pms.dbtype.PositionValuationType
+import com.datayes.invest.pms.logic.valuation.ValuationFacade
 
 class EODProcess extends Logging {
   
   @Inject
   private var forceLiquidationProcessor: ForceLiquidationProcessor = null
-  
+
   @Inject
-  private var positionValuationLogicFactory: PositionValuationLogicFactory = null
-  
-  @Inject
-  private var accountValuationLogicFactory: AccountValuationLogicFactory = null
+  private var valuationFacade: ValuationFacade = null
 
   def process(account: Account, asOfDate: LocalDate): Unit = {
-    forceLiquidationFuturesOnClosingDay(account, asOfDate)
-    doValuation(account, asOfDate)
+    forceLiquidationProcessor.process(account, asOfDate)
+    valuationFacade.valuate(account, asOfDate)
   }
 
-  private def forceLiquidationFuturesOnClosingDay(account: Account, asOfDate: LocalDate): Unit = {
-    forceLiquidationProcessor.process(account, asOfDate)
-  }
-  
-  private def doValuation(account: Account, asOfDate: LocalDate): Unit = {
-    for (pvt <- PositionValuationType.values()) {
-      val logic = positionValuationLogicFactory.get(pvt)
-      logic.process(account, asOfDate)
-    }
-    
-    val acctLogic = accountValuationLogicFactory.get()
-    acctLogic.process(account, asOfDate)
-  }
 }

@@ -43,7 +43,7 @@ class EquityAssetLoader(position: SecurityPosition, asOfDate: LocalDate, tranObj
     val previousDate = asOfDate.minusDays(1)
     val previousMd = tranObj.marketDataService.getMarketData(position.getSecurityId(), previousDate)
     val previousPrice = if (previousMd == null) null else previousMd.getPrice()
-    if (previousPrice != null) {
+    if (previousPrice != null && asset.marketPrice != null) {
       equityAsset.priceChange = asset.marketPrice / previousPrice - 1
     }
     

@@ -13,6 +13,7 @@ import com.datayes.invest.pms.service.calendar.CalendarService
 import com.datayes.invest.pms.logic.positionyield.impl.singleyield.SingleSecurityYieldCalc
 import com.datayes.invest.pms.service.marketdata.MarketDataService
 import com.datayes.invest.pms.util.DefaultValues
+import com.datayes.invest.pms.util.BigDecimalConstants
 
 
 abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecurityYieldCalc {
@@ -61,12 +62,11 @@ abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecu
       val posQuantity = positionHistQuantities(positionId)
       val cashDividendRate = rmbMap(securityId)
 
-      val dividendYield =  if (cashDividendRate != null && cashDividendRate > BigDecimal(0)) {
+      val dividendYield =  if (cashDividendRate != null && cashDividendRate > BigDecimalConstants.ZERO) {
         calculateSingleDividend(cashDividendRate, posQuantity)
       }
       else {
-        logger.warn("The cash dividend rate is null or smaller/equal to 0 for securityId: {} on {}", securityId, asOfDate)
-        BigDecimal(0)
+        BigDecimalConstants.ZERO
       }
       (positionId, dividendYield)
     }).toMap
@@ -107,23 +107,32 @@ abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecu
 
   override protected def calculateTradeEarn(positions: List[Position], inCamt: Map[Long, (BigDecimal, BigDecimal)], outCamt: Map[Long, (BigDecimal, BigDecimal)], asOfDate: LocalDate): Map[Long, BigDecimal] = {
     val securityIds = positions.map(position => position.asInstanceOf[SecurityPosition].getSecurityId).toSet
-    val marketDataMap = marketDataService.getMarketData(securityIds, asOfDate)
+    val marketDataMap = marketDataService.getMarketData(securityIds, asOfDate).toMap
     val posSecMap: Map[Long, Long] = positions.map(position => (position.getId.toLong, position.asInstanceOf[SecurityPosition].getSecurityId.toLong)).toMap
 
-    inCamt.map(kv => {
+    inCamt.map { kv =>
       val positionId = kv._1
       val buyTransaction = kv._2
       val sellTransaction = outCamt(positionId)
-      val price = marketDataMap(posSecMap(positionId)).getPrice
-      val tradeEarn = calculateSingleTradeEarn(buyTransaction, sellTransaction, price)
-      (positionId, tradeEarn)
-    })
+      val securityId = posSecMap(positionId)
+      val marketDataOpt = marketDataMap.get(securityId)
+      if ( marketDataOpt.nonEmpty ) {
+        val price = marketDataOpt.get.getPrice
+        val tradeEarn = calculateSingleTradeEarn(buyTransaction, sellTransaction, price)
+        (positionId, tradeEarn)
+      }
+      else {
+        logger.warn("Cannot get market data for Security Id: {} on {}", securityId, asOfDate)
+        (positionId, BigDecimalConstants.ZERO)
+      }
+      
+    }
   }
 
   /*
     *
     * Inheritance methods for sub-classes
-    *                                                                                                 z
+    *
    */
   protected def calculateInOutCamt(positions: List[Position], asOfDate: LocalDate, tradeSide: TradeSide): Map[Long, (BigDecimal, BigDecimal)] = {
     val securityIds = positions.map(position => position.asInstanceOf[SecurityPosition].getSecurityId)

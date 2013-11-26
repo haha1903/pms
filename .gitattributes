@@ -203,6 +203,7 @@ app/com/datayes/invest/pms/logic/transaction/impl/StockIndexFutureTransactionLog
 app/com/datayes/invest/pms/logic/transaction/impl/StockTradeTransactionLogic.scala -text
 app/com/datayes/invest/pms/logic/transaction/impl/TransactionLogicBase.scala -text
 app/com/datayes/invest/pms/logic/valuation/ValuationFacade.scala -text
+app/com/datayes/invest/pms/logic/valuation/ValuationLock.scala -text
 app/com/datayes/invest/pms/logic/valuation/account/AccountValuationLogic.scala -text
 app/com/datayes/invest/pms/logic/valuation/account/AccountValuationLogicFactory.scala -text
 app/com/datayes/invest/pms/logic/valuation/account/impl/AccountValuationCalc.scala -text

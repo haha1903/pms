@@ -77,8 +77,8 @@ abstract class GenericYieldCalc extends PositionYieldCalc with SingleGenericYiel
           secCarryingValues(positionId),
           dailyInterest(positionId),
           dividends(positionId),
-          increments(positionId),
           priceDiffs(positionId),
+          increments(positionId),
           beginValues(positionId),
           endValues(positionId),
           inCamts(positionId)._2,
@@ -89,9 +89,6 @@ abstract class GenericYieldCalc extends PositionYieldCalc with SingleGenericYiel
           isLocked)
       })
       savePositionYields(positionYields, asOfDate)
-    }
-    else {
-      logger.warn("No position found, to check the ledger type, see last log")
     }
   }
 

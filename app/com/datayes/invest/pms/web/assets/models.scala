@@ -43,6 +43,8 @@ package object models {
     def code: String
     def name: String
     
+    val leaf: Boolean = true
+    
     var holdingQuantity: Long = 0L
     var holdingValuePrice: BigDecimal = null
     var marketPrice: BigDecimal = null
