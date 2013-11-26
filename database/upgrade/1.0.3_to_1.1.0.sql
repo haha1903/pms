@@ -14,6 +14,7 @@ create table MARKET_DATA
 
 /*
  * 1. Add new column TRADE_EARN_CAMT into POSITION_YIELD
- * 2. Add foreign keys
+ * 2. Drop not null constraint for POSITION_YIELD.SECURITY_ID
  */
 alter table POSITION_YIELD add TRADE_EARN_CAMT decimal(31,11) default 0 not null comment "交易盈亏";
+alter table POSITION_YIELD modify SECURITY_ID bigint null default null ;
