@@ -20,6 +20,7 @@ import com.datayes.invest.pms.dbtype.AccountClassType
 import com.datayes.invest.pms.dbtype.AccountTypeType
 import com.datayes.invest.pms.dbtype.LedgerType
 import com.datayes.invest.pms.dbtype.PositionClass
+import scala.collection.mutable
 
 class AccountCsvImporter extends Logging {
 
@@ -52,17 +53,27 @@ class AccountCsvImporter extends Logging {
     }
     accountId
   }
+  
+  
 
   private def parseAndCreateAccount(file: File): Account = {
     val lines = tryGetLines(file)
 
-    // Remove empty lines and comments line
-    val nonEmptyLines = lines.filter(s => s.trim.nonEmpty && !s.trim.startsWith("#"))
-    val csvList = nonEmptyLines.map { s =>
-      val values = s.split(",")
-      values.map(_.trim())
-    }.toList
-
+//    // Remove empty lines and comments line
+//    val nonEmptyLines = lines.filter(s => s.trim.nonEmpty && !s.trim.startsWith("#"))
+//    val csvList = nonEmptyLines.map { s =>
+//      val values = s.split(",")
+//      values.map(_.trim())
+//    }.toList
+    
+    val buffer = mutable.ListBuffer.empty[Array[String]]
+    val csvList = (for {
+      line <- lines
+      if line.trim().nonEmpty && !line.trim().startsWith("#")   // skip empty line and comments
+      values = line.split(",").map(_.trim)
+      if values.exists(_.nonEmpty)
+    } yield (values)).toList
+      
     // split at POSITION to find Account Info
     val (accountInfoList, positionList, transactionList) = splitParts(csvList)
     val accountInfoMap = accountInfoList.map { l => (l(0), l(1)) }.toMap
