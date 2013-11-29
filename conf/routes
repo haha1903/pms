@@ -41,6 +41,7 @@ GET     /portfolio/settings/set                              @controllers.Portfo
 # Proxy for attribution
 GET     /attribution                                          @controllers.ProxyController.attribution
 POST    /attrupload                                           @controllers.ProxyController.upload
+GET     /fund/riskEvaluation                                  @controllers.ProxyController.riskEvaluation
 
 
 # Map static resources from the /public folder to the /assets URL path

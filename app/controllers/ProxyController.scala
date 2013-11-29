@@ -32,8 +32,9 @@ class ProxyController extends PmsController with Logging {
   def attribution() = AuthAction { implicit req =>
     val queryStrings = req.queryString.map { case (k, seq) => (k, seq.head) }.toSeq
 
+    val path = attributionHost + "/attribution"
 
-    val response = WS.url(attributionHost).
+    val response = WS.url(attributionHost + "/attribution").
       withHeaders(CONTENT_TYPE -> "application/x-www-form-urlencoded").
       withQueryString(queryStrings: _*).withQueryString("clientId" -> clientId).
       withQueryString("odbc" -> odbcName).get
@@ -75,5 +76,23 @@ class ProxyController extends PmsController with Logging {
         )
         InternalServerError(json)
     }
+  }
+
+  def riskEvaluation() = AuthAction { implicit req =>
+    val queryStrings = req.queryString.map { case (k, seq) => (k, seq.head) }.toSeq
+
+    val path = attributionHost + "/fund/riskEvaluation"
+
+    val response = WS.url(path).
+      withHeaders(CONTENT_TYPE -> "application/x-www-form-urlencoded").
+      withQueryString(queryStrings: _*).withQueryString("odbc" -> odbcName).get
+
+    val json = try {
+      Await.result(response, timeout.toLong seconds).body
+    } catch {
+      case e: Throwable => logger.error("the host:{} does not respond within the timeout period", path); null
+    }
+
+    Ok(json).as("application/javascript")
   }
 }
