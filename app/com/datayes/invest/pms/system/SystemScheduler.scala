@@ -11,6 +11,7 @@ import com.datayes.invest.pms.logic.process.SODProcess
 import com.datayes.invest.pms.dao.account.AccountDao
 import scala.collection.JavaConversions._
 import com.datayes.invest.pms.logic.process.EODProcess
+import com.datayes.invest.pms.service.marketdata.MarketDataService
 
 
 class SystemScheduler extends Runnable with Logging {
@@ -24,6 +25,9 @@ class SystemScheduler extends Runnable with Logging {
   
   @Inject
   private var eodProcess: EODProcess = null
+  
+  @Inject
+  private var marketDataService: MarketDataService = null
   
   @Inject
   private var sodProcess: SODProcess = null
@@ -53,6 +57,7 @@ class SystemScheduler extends Runnable with Logging {
         if ( !sodFlag ) {
           logger.info("Run start of day process on {}", now)
 
+          marketDataService.reinitialize()
           processStartOfDay()
           sodFlag = true
           if ( !isInitialized ) {

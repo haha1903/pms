@@ -63,9 +63,13 @@ public class MarketDataServiceImpl implements MarketDataService {
     private SecurityDao securityDao;
 
 
-    private MarketDataCache marketDataCache = new MarketDataCache();
+    private final MarketDataCache marketDataCache = new MarketDataCache();
     
     private boolean isInitialized = false;
+    
+    private Thread equityThread = null;
+    private Thread futureThread = null;
+    private MarketDataDbScheduler marketDataDbscheduler = null;
     
     
     protected MarketDataServiceImpl() {
@@ -145,6 +149,22 @@ public class MarketDataServiceImpl implements MarketDataService {
             // Then load from accountmaster's MARKET_DATA
             List<MarketData>  snapshotList = marketDataDao.findAll();
             for(MarketData md : snapshotList) {
+                // don't need to merge the data from PRICE_VOLUME or FUT_PRICEVOLUME
+                if (md.getSource().equals(Source.PRICE_VOLUME.toString()) || md.getSource().equals(Source.FUT_PRICEVOLUME.toString())) {
+                    continue;
+                }
+                                
+                MarketData bufferedMd = buffer.get(md.getSecurityId());
+                
+                if (bufferedMd != null && bufferedMd.getTimestamp() != null) {
+                    LocalDate bufferedDate = new LocalDate(bufferedMd.getTimestamp());
+                    LocalDate mdDate = new LocalDate(md.getTimestamp().getTime());
+                    if (mdDate.isBefore(bufferedDate)) {
+                        // don't need to merge if MARKET_DATA has old data
+                        continue;
+                    }
+                }
+                
                 buffer.put(md.getSecurityId(), md);
             }
             
@@ -159,25 +179,36 @@ public class MarketDataServiceImpl implements MarketDataService {
             tx.rollback();
         }
     }
+    
+    @Override
+    public void reinitialize() {
+        initialize();
+    }
 
     private void initialize() {
         // load real time market data from MarketData table in Db
         preloadCache();
 
         // Create new thread for receiving stock data
-        EquityCacheUpdateTask equityCacheUpdateTask = new EquityCacheUpdateTask(marketDataCache);
-        Thread equityThread = new Thread(equityCacheUpdateTask);
-        equityThread.start();
+        if (equityThread == null) {
+            EquityCacheUpdateTask equityCacheUpdateTask = new EquityCacheUpdateTask(marketDataCache);
+            equityThread = new Thread(equityCacheUpdateTask);
+            equityThread.start();
+        }
 
         // Create new thread for receiving future data
-        FutureCacheUpdateTask futureCacheUpdateTask = new FutureCacheUpdateTask(marketDataCache);
-        Thread futureThread = new Thread(futureCacheUpdateTask);
-        futureThread.start();
+        if (futureThread == null) {
+            FutureCacheUpdateTask futureCacheUpdateTask = new FutureCacheUpdateTask(marketDataCache);
+            futureThread = new Thread(futureCacheUpdateTask);
+            futureThread.start();
+        }
 
         // Create new timer for scheduling to update Market Data
-        Timer timer = new Timer();
-        MarketDataDbScheduler scheduler = new MarketDataDbScheduler(marketDataCache, marketDataDao);
-        timer.schedule(scheduler, 0, DefaultValues.MARKETDATA_SCHEDULER_INTERVAL());
+        if (marketDataDbscheduler == null) {
+            Timer timer = new Timer();
+            marketDataDbscheduler = new MarketDataDbScheduler(marketDataCache, marketDataDao);
+            timer.schedule(marketDataDbscheduler, 0, DefaultValues.MARKETDATA_SCHEDULER_INTERVAL());
+        }
     }
 
 //    private boolean isTradeTime() {

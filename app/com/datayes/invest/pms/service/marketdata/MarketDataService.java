@@ -11,4 +11,6 @@ public interface MarketDataService {
     Map<Long, MarketData> getMarketData(Set<Long> securityIds, LocalDate asOfDate);
     
     MarketData getMarketData(Long securityId, LocalDate asOfDate);
+    
+    void reinitialize();
 }
