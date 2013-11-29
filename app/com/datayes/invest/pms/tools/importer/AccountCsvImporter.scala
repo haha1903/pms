@@ -21,6 +21,10 @@ import com.datayes.invest.pms.dbtype.AccountTypeType
 import com.datayes.invest.pms.dbtype.LedgerType
 import com.datayes.invest.pms.dbtype.PositionClass
 import scala.collection.mutable
+import java.sql.Timestamp
+import org.joda.time.LocalTime
+import org.joda.time.format.DateTimeFormat
+
 
 class AccountCsvImporter extends Logging {
 
@@ -58,13 +62,6 @@ class AccountCsvImporter extends Logging {
 
   private def parseAndCreateAccount(file: File): Account = {
     val lines = tryGetLines(file)
-
-//    // Remove empty lines and comments line
-//    val nonEmptyLines = lines.filter(s => s.trim.nonEmpty && !s.trim.startsWith("#"))
-//    val csvList = nonEmptyLines.map { s =>
-//      val values = s.split(",")
-//      values.map(_.trim())
-//    }.toList
     
     val buffer = mutable.ListBuffer.empty[Array[String]]
     val csvList = (for {
@@ -78,7 +75,7 @@ class AccountCsvImporter extends Logging {
     val (accountInfoList, positionList, transactionList) = splitParts(csvList)
     val accountInfoMap = accountInfoList.map { l => (l(0), l(1)) }.toMap
     val sDate = accountInfoMap("Date")
-    val openDate = LocalDateTime.parse(sDate)
+    val openDate = parseDate(sDate).toLocalDateTime(LocalTime.MIDNIGHT)
 
     // create position source data list
     val positions = createPositionList(positionList, openDate)
@@ -93,7 +90,23 @@ class AccountCsvImporter extends Logging {
     val account = accountDao.findById(accountId)
     account
   }
-
+  
+  private val extraDateFormat = DateTimeFormat.forPattern("yyyy/M/d")
+  
+  private def parseDate(sDate: String): LocalDate = {
+    try {
+      return LocalDate.parse(sDate)
+    } catch {
+      case e: Throwable =>
+    }
+    try {
+      return LocalDate.parse(sDate, extraDateFormat)
+    } catch {
+      case e: Throwable =>
+    }
+    throw new RuntimeException("Invalid date format in import file: " + sDate)
+  }
+  
   private def tryGetLines(file: File): List[String] = {
     var lines: List[String] = try {
       Source.fromFile(file, "UTF-8").getLines().toList
@@ -133,7 +146,7 @@ class AccountCsvImporter extends Logging {
 
   private def createSourceTransactions(csvList: List[Array[String]], accountId: Long): Unit = {
     val header = csvList(0)
-    val asOfDate = LocalDate.parse(header(1))
+    val asOfDate = parseDate(header(1))
 
     for (line <- csvList.tail) {
       val symbol = line(0)
