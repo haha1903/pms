@@ -22,6 +22,9 @@ import com.datayes.invest.pms.dbtype.LedgerType
 import com.datayes.invest.pms.dbtype.PositionClass
 import scala.collection.mutable
 import java.sql.Timestamp
+import org.joda.time.LocalTime
+import org.joda.time.format.DateTimeFormat
+import play.pms.ClientException
 
 class AccountCsvImporter extends Logging {
 
@@ -39,12 +42,6 @@ class AccountCsvImporter extends Logging {
 
   @Inject
   private var accountDao: AccountDao = null
-
-//  @Inject
-//  private var securityDao: SecurityDao = null
-
-//  @Inject
-//  private var marketDataService: MarketDataService = null
 
   @Inject
   private var accountInitializer: AccountInitializer = null
@@ -65,22 +62,25 @@ class AccountCsvImporter extends Logging {
     }
     accountId
   }
+  
+  
 
   private def parseAndCreateAccount(file: File): Account = {
     val lines = tryGetLines(file)
-
-    // Remove empty lines and comments line
-    val nonEmptyLines = lines.filter(s => s.trim.nonEmpty && !s.trim.startsWith("#"))
-    val csvList = nonEmptyLines.map { s =>
-      val values = s.split(",")
-      values.map(_.trim())
-    }.toList
-
+    
+    val buffer = mutable.ListBuffer.empty[Array[String]]
+    val csvList = (for {
+      line <- lines
+      if line.trim().nonEmpty && !line.trim().startsWith("#")   // skip empty line and comments
+      values = line.split(",").map(_.trim)
+      if values.exists(_.nonEmpty)
+    } yield (values)).toList
+      
     // split at POSITION to find Account Info
     val (accountInfoList, positionList, transactionList) = splitParts(csvList)
     val accountInfoMap = accountInfoList.map { l => (l(0), l(1)) }.toMap
     val sDate = accountInfoMap("Date")
-    val openDate = LocalDateTime.parse(sDate)
+    val openDate = parseDate(sDate).toLocalDateTime(LocalTime.MIDNIGHT)
 
     val context = new Context(openDate, accountInfoMap("Currency"))
     
@@ -99,6 +99,22 @@ class AccountCsvImporter extends Logging {
     setAccountInactive(account)
     
     account
+  }
+  
+  private val extraDateFormat = DateTimeFormat.forPattern("yyyy/M/d")
+  
+  private def parseDate(sDate: String): LocalDate = {
+    try {
+      return LocalDate.parse(sDate)
+    } catch {
+      case e: Throwable =>
+    }
+    try {
+      return LocalDate.parse(sDate, extraDateFormat)
+    } catch {
+      case e: Throwable =>
+    }
+    throw new ClientException("Invalid date format in import file: " + sDate)
   }
   
   private def setAccountInactive(account: Account): Unit = {
@@ -147,7 +163,7 @@ class AccountCsvImporter extends Logging {
 
   private def createSourceTransactions(context: Context, csvList: List[Array[String]]): Unit = {
     val header = csvList(0)
-    val asOfDate = LocalDate.parse(header(1))
+    val asOfDate = parseDate(header(1))
     context.asOfDate = asOfDate
 
     for (line <- csvList.tail) {

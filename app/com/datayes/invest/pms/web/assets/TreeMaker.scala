@@ -17,7 +17,7 @@ class TreeMaker(groupings: List[AssetNodeType], accounts: Seq[Account]) extends 
   def create(assets: Seq[AssetCommon]): AssetTree = {
     val validGroupings = validateGroupings(groupings)
     val trees = makeTreeRecursivly(assets, validGroupings)
-    val root = new AssetTree(AssetNodeType.ROOT, "ROOT", Messages("AssetNodeType.ROOT"))
+    val root = new AssetTree(AssetNodeType.ROOT, Messages("AssetNodeType.ROOT"))
     root.children = trees
     
     rollup(root)
@@ -51,7 +51,7 @@ class TreeMaker(groupings: List[AssetNodeType], accounts: Seq[Account]) extends 
       }
       val trees = groupList map { case (idName, seq) =>
         val children = makeTreeRecursivly(seq, ts)
-        val tr = new AssetTree(nodeType, idName.id, idName.name)
+        val tr = new AssetTree(nodeType, idName.name)
         tr.children = children
         tr
       }

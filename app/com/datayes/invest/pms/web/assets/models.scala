@@ -18,7 +18,6 @@ package object models {
   
   abstract class AssetNode {
     def nodeType: AssetNodeType
-    def id: String
     def name: String
     
     // these field are roll-up-able
@@ -30,7 +29,6 @@ package object models {
   
   class AssetTree(
     val nodeType: AssetNodeType,
-    val id: String,
     val name: String
     
   ) extends AssetNode {
@@ -55,7 +53,6 @@ package object models {
     // override super classes abstract defs
     val securityId = -1L
     val code = name
-    val id = name
     val nodeType = AssetNodeType.LEAF
   }
   
@@ -73,7 +70,6 @@ package object models {
     var benchmarkIndexWeight: BigDecimal = null
     
     // override super classes abstract defs
-    val id = securityId.toString()
     val nodeType = AssetNodeType.LEAF
   }
   
@@ -88,7 +84,6 @@ package object models {
     var marginOccupied: BigDecimal = null
     
     // override super classes abstract defs
-    val id = securityId.toString()
     val nodeType = AssetNodeType.LEAF
   }
 }

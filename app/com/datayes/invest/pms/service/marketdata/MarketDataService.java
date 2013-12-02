@@ -15,4 +15,6 @@ public interface MarketDataService {
     MarketData getMarketData(Long securityId, LocalDate asOfDate);
     
     List<MarketData> getMarketDataBetweenDates(Long securityId, LocalDate startDate, LocalDate endDate);
+    
+    void reinitialize();
 }
