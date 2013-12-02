@@ -54,21 +54,21 @@ public class SecurityTransaction extends Transaction {
         // for hibernate
     }
     
-    public SecurityTransaction(Long _accountId, Integer _transactionSourceId, String _transactionClassCode,
+    public SecurityTransaction(Long _accountId, LocalDate _asOfDate, Integer _transactionSourceId, String _transactionClassCode,
                     Long _securityId, String _tradeSideCode) {
-        super(_accountId, _transactionSourceId, _transactionClassCode);
+        super(_accountId, _asOfDate, _transactionSourceId, _transactionClassCode);
         this.securityId = _securityId;
         this.tradeSideCode = _tradeSideCode;
     }
 
-    public SecurityTransaction(Long _accountId, Integer _transactionSourceId,
+    public SecurityTransaction(Long _accountId, LocalDate _asOfDate, Integer _transactionSourceId,
                     String _transactionClassCode, Long _orderId, String _sourceTransactionId,
                     LocalDateTime _sourceTransactionDate, String _transactionStatus, LocalDateTime _statusChangeDate,
                     Long _securityId, BigDecimal _amount, BigDecimal _avgPrice, String _settleCurrCode,
                     Long _traderId, Long _brokerId, String _tradeSideCode, BigDecimal _fxRate2, BigDecimal _commissions,
                     BigDecimal _fees, LocalDateTime _executionDate, LocalDate _settlementDate, String _reason) {
-        super(_accountId, _transactionSourceId, _transactionClassCode, _orderId, _sourceTransactionId, _sourceTransactionDate,
-                        _transactionStatus, _statusChangeDate);
+        super(_accountId, _asOfDate, _transactionSourceId, _transactionClassCode, _orderId, _sourceTransactionId,
+                _sourceTransactionDate, _transactionStatus, _statusChangeDate);
         this.securityId = _securityId;
         this.amount = _amount;
         this.avgPrice = _avgPrice;

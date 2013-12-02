@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Proxy;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import com.datayes.invest.pms.entity.EntityBase;
@@ -26,6 +27,8 @@ public class Transaction extends EntityBase {
     private Long id;
     
     private Long accountId;
+
+    private LocalDate asOfDate;
     
     private Integer transactionSourceId;
     
@@ -45,16 +48,18 @@ public class Transaction extends EntityBase {
      // for hibernate
     }
     
-    protected Transaction(Long _accountId, Integer _transactionSourceId, String _transactionClassCode) {
+    protected Transaction(Long _accountId, LocalDate _asOfDate, Integer _transactionSourceId, String _transactionClassCode) {
         this.accountId = _accountId;
+        this.asOfDate = _asOfDate;
         this.transactionSourceId = _transactionSourceId;
         this.transactionClassCode = _transactionClassCode;
     }
     
-    public Transaction(Long _accountId, Integer _transactionSourceId, String _transactionClassCode, 
+    public Transaction(Long _accountId, LocalDate _asOfDate, Integer _transactionSourceId, String _transactionClassCode,
                     Long _orderId, String _sourceTransactionId, LocalDateTime _sourceTransactionDate, 
                     String _transactionStatus, LocalDateTime _statusChangeDate) {
         this.accountId = _accountId;
+        this.asOfDate = _asOfDate;
         this.transactionSourceId = _transactionSourceId;
         this.transactionClassCode = _transactionClassCode;
         this.orderId = _orderId;
@@ -82,6 +87,15 @@ public class Transaction extends EntityBase {
 
     public void setAccountId(Long accountId) {
         this.accountId = accountId;
+    }
+
+    @Column(name = "AS_OF_DATE")
+    public LocalDate getAsOfDate() {
+        return asOfDate;
+    }
+
+    public void setAsOfDate(LocalDate asOfDate) {
+        this.asOfDate = asOfDate;
     }
 
     @Column(name = "TRAN_SOURCE_ID")

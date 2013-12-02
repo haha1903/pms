@@ -633,6 +633,7 @@ create table TRANSACTION
 (
    TRANSACTION_ID       bigint not null AUTO_INCREMENT,
    ACCOUNT_ID           bigint not null,
+   AS_OF_DATE           date not null,
    TRAN_SOURCE_ID       int not null,
    TRANSACTION_CLASS_CD varchar(20) not null,
    ORDER_ID             bigint,
@@ -646,7 +647,7 @@ create table TRANSACTION
 ) DEFAULT CHARACTER SET=utf8;
 
 /*==============================================================*/
-/* Table: TRANSACTION_CLASS                                     */
+/* table: TRANSACTION_CLASS                                     */
 /*==============================================================*/
 create table TRANSACTION_CLASS
 (

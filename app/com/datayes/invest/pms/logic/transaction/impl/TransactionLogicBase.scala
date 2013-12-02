@@ -10,7 +10,6 @@ import com.datayes.invest.pms.dao.account.SecurityPositionDao
 import com.datayes.invest.pms.dao.account.PositionHistDao
 import com.datayes.invest.pms.dao.account.CarryingValueHistDao
 import com.datayes.invest.pms.dao.account.CashPositionDao
-import com.datayes.invest.pms.dao.account.FeeDao
 import com.datayes.invest.pms.dbtype.TradeSide
 import com.datayes.invest.pms.dbtype.RateType
 import com.datayes.invest.pms.dbtype.LedgerType
@@ -118,7 +117,7 @@ abstract class TransactionLogicBase extends TransactionLogic {
   }
 
   protected def saveTransaction(t: Transaction, commissionAndFee: (BigDecimal, BigDecimal), asOfDate: LocalDate, repoFields: (BigDecimal, LocalDate, Integer) = null): Unit = {
-    val securityTransaction = new SecurityTransaction(t.accountId, t.transactionSourceId, t.transactionClass.getDbValue(),
+    val securityTransaction = new SecurityTransaction(t.accountId, asOfDate, t.transactionSourceId, t.transactionClass.getDbValue(),
       t.securityId, t.side.getDbValue())
 
     securityTransaction.setOrderId(null)

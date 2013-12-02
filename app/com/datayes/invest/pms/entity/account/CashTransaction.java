@@ -8,6 +8,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Proxy;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
 import scala.math.BigDecimal;
@@ -42,21 +43,21 @@ public class CashTransaction extends Transaction {
         // for hibernate
     }
     
-    public CashTransaction(Long _accountId, Integer _transactionSourceId, String _transactionClassCode,
+    public CashTransaction(Long _accountId, LocalDate _asOfDate, Integer _transactionSourceId, String _transactionClassCode,
                     String _typeCode, String _methodCode, String _reasonCode) {
-        super(_accountId, _transactionSourceId, _transactionClassCode);
+        super(_accountId, _asOfDate, _transactionSourceId, _transactionClassCode);
         this.typeCode = _typeCode;
         this.methodCode = _methodCode;
         this.reasonCode = _reasonCode;
     }
     
-    public CashTransaction(Long _accountId, Integer _transactionSourceId, String _transactionClassCode, 
+    public CashTransaction(Long _accountId, LocalDate _asOfDate, Integer _transactionSourceId, String _transactionClassCode,
                     Long _orderId, String _sourceTransactionId, LocalDateTime _sourceTransactionDate, 
                     String _transactionStatus, LocalDateTime _statusChangeDate, 
                     String _typeCode, String _methodCode, String _reasonCode, Long _partyId, 
                     Long _intAcctId, String _extAcctCode, BigDecimal _amount, String _currency2Code, BigDecimal _fxRate1) {
-        super(_accountId, _transactionSourceId, "CASH", _orderId, _sourceTransactionId, _sourceTransactionDate,
-                        _transactionStatus, _statusChangeDate);
+        super(_accountId, _asOfDate, _transactionSourceId, "CASH", _orderId, _sourceTransactionId, _sourceTransactionDate,
+                _transactionStatus, _statusChangeDate);
         this.typeCode = _typeCode;
         this.methodCode = _methodCode;
         this.reasonCode = _reasonCode;

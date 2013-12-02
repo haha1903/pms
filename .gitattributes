@@ -342,7 +342,6 @@ app/play/pms/PmsResult.scala -text
 app/play/pms/exceptions.scala -text
 app/test/TestIdGenerator.java -text
 app/test/TestPersist.java -text
-app/test/TestTransaction.scala -text
 app/test/assetsloader/TestPortfolioLoader.scala -text
 app/test/assetsloader/TestWorker.scala -text
 app/test/gson/Filterable.java -text

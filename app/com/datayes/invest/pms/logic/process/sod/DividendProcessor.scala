@@ -107,7 +107,7 @@ class DividendProcessor extends Logging {
   }
 
   private def createCashTransaction(accountId: Long, asOfDate: LocalDate): CashTransaction = {
-    val cashTransaction = new CashTransaction(accountId, TransactionSource.PMS.getDbValue,
+    val cashTransaction = new CashTransaction(accountId, asOfDate, TransactionSource.PMS.getDbValue,
       TransactionClass.CASH.getDbValue(), CashTransactionType.DEBIT.getDbValue(), CashTransactionMethod.TRANSFER.getDbValue(),
       CashTransactionReason.CAPMOVE.getDbValue())
 
@@ -173,7 +173,7 @@ class DividendProcessor extends Logging {
   }
 
   private def createSecurityTransaction(accountId: Long, asOfDate: LocalDate, securityId: Long, quantity: BigDecimal): SecurityTransaction = {
-    val securityTransaction = new SecurityTransaction(accountId, TransactionSource.PMS.getDbValue,
+    val securityTransaction = new SecurityTransaction(accountId, asOfDate, TransactionSource.PMS.getDbValue,
       TransactionClass.TRADE.getDbValue(), securityId, TradeSide.BUY.getDbValue())
 
     securityTransaction.setOrderId(null)

@@ -131,7 +131,7 @@ class CashSettlementProcessor extends Processor with Logging {
   private def createTransaction(accountId: Long, transactionType: CashTransactionType, transactionReason: String,
       asOfDate: LocalDate): CashTransaction = {
 
-    val cashTransaction = new CashTransaction(accountId, TransactionSource.PMS.getDbValue,
+    val cashTransaction = new CashTransaction(accountId, asOfDate, TransactionSource.PMS.getDbValue,
       TransactionClass.CASH.getDbValue(), transactionType.getDbValue(), CashTransactionMethod.TRANSFER.getDbValue(),
       transactionReason)
 
