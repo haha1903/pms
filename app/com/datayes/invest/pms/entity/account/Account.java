@@ -20,7 +20,7 @@ import com.datayes.invest.pms.entity.EntityBase;
 @Entity
 @Table(name = "ACCOUNT")
 @Proxy(lazy = false)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class Account extends EntityBase {
     
     private Long id;

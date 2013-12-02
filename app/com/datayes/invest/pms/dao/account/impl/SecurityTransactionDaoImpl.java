@@ -1,17 +1,18 @@
 package com.datayes.invest.pms.dao.account.impl;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import com.datayes.invest.pms.dbtype.TradeSide;
-import org.joda.time.LocalDate;
-
 import com.datayes.invest.pms.dao.account.SecurityTransactionDao;
-import com.datayes.invest.pms.entity.account.SecurityTransaction;
 import com.datayes.invest.pms.dbtype.AssetClass;
+import com.datayes.invest.pms.dbtype.TradeSide;
+import com.datayes.invest.pms.entity.account.SecurityTransaction;
+import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class SecurityTransactionDaoImpl extends AccountRelatedDaoImpl<SecurityTransaction, Long> implements
 		SecurityTransactionDao {
@@ -20,7 +21,28 @@ public class SecurityTransactionDaoImpl extends AccountRelatedDaoImpl<SecurityTr
 		super(SecurityTransaction.class);
 	}
 
-	public List<SecurityTransaction> findRepoTransactionWithInterests(Long accountId, LocalDate asOfDate) {
+    @Override
+    public List<SecurityTransaction> findByAccountIdListBetweenDates(List<Long> accountIds, LocalDate startDate, LocalDate endDate) {
+        if (accountIds == null || accountIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        if (startDate.isAfter(endDate)) {
+            return Collections.emptyList();
+        }
+
+        TypedQuery<SecurityTransaction> q = getEntityManager().createQuery(
+                "from SecurityTransaction where accountId in (:accountIds) and sourceTransactionDate >= (:startDateTime)"
+                        + " and sourceTransactionDate < (:endDateTime)", SecurityTransaction.class);
+        q.setParameter("accountIds", accountIds);
+        q.setParameter("startDateTime", startDate.toLocalDateTime(LocalTime.MIDNIGHT));
+        q.setParameter("endDateTime", endDate.plusDays(1).toLocalDateTime(LocalTime.MIDNIGHT));
+        List<SecurityTransaction> list = q.getResultList();
+
+        return list;
+    }
+
+
+    public List<SecurityTransaction> findRepoTransactionWithInterests(Long accountId, LocalDate asOfDate) {
 		List<SecurityTransaction> list = findRepoTransaction(accountId, asOfDate);
 		List<SecurityTransaction> result = new LinkedList<SecurityTransaction>();
 		for (SecurityTransaction transaction : list) {

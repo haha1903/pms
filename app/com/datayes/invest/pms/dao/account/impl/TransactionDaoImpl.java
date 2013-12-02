@@ -1,12 +1,11 @@
 package com.datayes.invest.pms.dao.account.impl;
 
-import javax.persistence.Query;
-
+import com.datayes.invest.pms.dao.account.TransactionDao;
+import com.datayes.invest.pms.entity.account.Transaction;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 
-import com.datayes.invest.pms.dao.account.TransactionDao;
-import com.datayes.invest.pms.entity.account.Transaction;
+import javax.persistence.Query;
 
 public class TransactionDaoImpl extends GenericAccountMasterDaoImpl<Transaction, Long> implements TransactionDao {
 
@@ -20,8 +19,8 @@ public class TransactionDaoImpl extends GenericAccountMasterDaoImpl<Transaction,
                         "delete from Transaction where accountId = :accountId and sourceTransactionDate >= (:startDateTime)"
                         + " and sourceTransactionDate < (:endDateTime)");
         q.setParameter("accountId", accountId);
-        q.setParameter("startDateTime", asOfDate.toLocalDateTime(LocalTime.parse("00:00:00")));
-        q.setParameter("endDateTime", asOfDate.plusDays(1).toLocalDateTime(LocalTime.parse("00:00:00")));
+        q.setParameter("startDateTime", asOfDate.toLocalDateTime(LocalTime.MIDNIGHT));
+        q.setParameter("endDateTime", asOfDate.plusDays(1).toLocalDateTime(LocalTime.MIDNIGHT));
         q.executeUpdate();
     }
 

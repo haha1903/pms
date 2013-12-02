@@ -135,6 +135,7 @@ package object models {
   )
   
   case class Trade(
+    accountId: Long,
     accountNo: String,
     securityName: String,
     securitySymbol: String,
@@ -298,6 +299,7 @@ package object models {
     
     implicit object TradeWrites extends Writes[Trade] {
       def writes(o: Trade) = Json.obj(
+        "accountId" -> o.accountId,
         "accountNo" -> o.accountNo,
         "securityName" -> o.securityName,
         "securitySymbol" -> o.securitySymbol,

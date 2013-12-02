@@ -15,15 +15,13 @@ import play.api.mvc.Request
 import play.api.mvc.Results.BadRequest
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.Results.Ok
-import play.api.mvc.Result
-import play.api.libs.json.JsValue
 
 
 trait PmsActionBuilder extends Logging {
   
   // This flag is used by PMS developer
   // Should be set to true when deployed
-  private val useDyResponse = true
+  private val useDyResponse = false
   
   
   def apply(block: Request[AnyContent] => PmsResult): Action[AnyContent] = apply(BodyParsers.parse.anyContent)(block)

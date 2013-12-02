@@ -3,11 +3,11 @@
 ###############
 
 # Index
-GET     /                                                     @controllers.Application.index
+GET     /                                                    @controllers.Application.index
 
 # SAML SSO
-POST    /saml/*path                                           @controllers.Application.saml(path)
-GET     /saml/*path                                           @controllers.Application.saml(path)
+POST    /saml/*path                                          @controllers.Application.saml(path)
+GET     /saml/*path                                          @controllers.Application.saml(path)
 
 # Common
 GET     /common/industries                                   @controllers.CommonController.industries
@@ -31,6 +31,8 @@ GET     /fund/topHoldingStock                                @controllers.FundCo
 GET     /fund/dashboard/layout/get                           @controllers.FundController.getDashboardLayout
 GET     /fund/dashboard/layout/set                           @controllers.FundController.setDashboardLayout
 
+GET     /fund/riskEvaluation                                 @controllers.ProxyController.riskEvaluation
+
 # Portfolio
 GET     /portfolio/list                                      @controllers.PortfolioController.list
 GET     /portfolio/chart                                     @controllers.PortfolioController.chart
@@ -38,12 +40,11 @@ GET     /portfolio/settings/get                              @controllers.Portfo
 GET     /portfolio/settings/set                              @controllers.PortfolioController.setGroupingSettings
 
 # Trade
-#GET     /trade/histroy                                       @controllers.TradeController.history
+GET     /trading/history                                     @controllers.TradeController.history
 
 # Proxy for attribution
-GET     /attribution                                          @controllers.ProxyController.attribution
-POST    /attrupload                                           @controllers.ProxyController.upload
-GET     /fund/riskEvaluation                                  @controllers.ProxyController.riskEvaluation
+GET     /attribution                                         @controllers.ProxyController.attribution
+POST    /attrupload                                          @controllers.ProxyController.upload
 
 
 # Map static resources from the /public folder to the /assets URL path
@@ -55,16 +56,16 @@ GET     /assets/*file                                         controllers.Assets
 ###################
 
 # test
-GET     /tools                                                @controllers.Application.tools
-GET     /tools/process                                        @controllers.tools.RunProcessController.runProcess
-POST    /tools/process                                        @controllers.tools.RunProcessController.runProcessPost
-GET     /tools/positionYield                                  @controllers.tools.PositionYieldController.runProcess
-POST    /tools/positionYield                                  @controllers.tools.PositionYieldController.runPositionYield
+GET     /tools                                               @controllers.Application.tools
+GET     /tools/process                                       @controllers.tools.RunProcessController.runProcess
+POST    /tools/process                                       @controllers.tools.RunProcessController.runProcessPost
+GET     /tools/positionYield                                 @controllers.tools.PositionYieldController.runProcess
+POST    /tools/positionYield                                 @controllers.tools.PositionYieldController.runPositionYield
 
 
-#Cache Observation
-GET     /debug/mds/monitor                                    @controllers.debug.MDSMonitorController.monitor
-GET     /debug/mds/initMds                                    @controllers.debug.MDSMonitorController.initMds
-GET     /debug/mds/cacheData                                  @controllers.debug.MDSMonitorController.cacheData
-GET     /debug/mds/cacheSize                                  @controllers.debug.MDSMonitorController.cacheSize
-GET     /debug/mds/cacheMssing                                @controllers.debug.MDSMonitorController.cacheMissing
+# MarketData Cache Monitor
+GET     /debug/mds/monitor                                   @controllers.debug.MDSMonitorController.monitor
+GET     /debug/mds/initMds                                   @controllers.debug.MDSMonitorController.initMds
+GET     /debug/mds/cacheData                                 @controllers.debug.MDSMonitorController.cacheData
+GET     /debug/mds/cacheSize                                 @controllers.debug.MDSMonitorController.cacheSize
+GET     /debug/mds/cacheMssing                               @controllers.debug.MDSMonitorController.cacheMissing
