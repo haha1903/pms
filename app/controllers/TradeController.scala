@@ -15,10 +15,10 @@ class TradeController extends PmsController with Logging {
 
   def history() = PmsAction { implicit req =>
     val accountIdOpt: Option[Long] = param("accountId")
-    val startDate: LocalDate = param("startDate")
-    val endDate: LocalDate = param("endDate").default(LocalDate.now())
+    val startDateOpt: Option[LocalDate] = param("startDate")
+    val endDateOpt: Option[LocalDate] = param("endDate")
 
-    val history = tradeService.getHistory(accountIdOpt, startDate, endDate)
+    val history = tradeService.getHistory(accountIdOpt, startDateOpt, endDateOpt)
     val json = Json.toJson(history)
 
     PmsResult(json)

@@ -144,7 +144,7 @@ package object models {
     amount: BigDecimal,
     orderPrice: BigDecimal,
     executionPrice: BigDecimal,
-    executionTime: LocalDateTime
+    executionDate: LocalDate
   )
 
   /*
@@ -308,7 +308,7 @@ package object models {
         "amount" -> o.amount,
         "orderPrice" -> o.orderPrice,
         "executionPrice" -> o.executionPrice,
-        "executionTime" -> o.executionTime
+        "executionDate" -> o.executionDate
       )
     }
   }

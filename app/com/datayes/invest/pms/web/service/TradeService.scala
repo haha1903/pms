@@ -11,6 +11,7 @@ import com.datayes.invest.pms.dao.security.SecurityDao
 import com.datayes.invest.pms.util.BigDecimalConstants
 import com.datayes.invest.pms.dbtype.TradeSide
 import javax.inject.Inject
+import com.datayes.invest.pms.entity.account.Account
 
 class TradeService {
 
@@ -23,7 +24,7 @@ class TradeService {
   @Inject
   private var securityTransactionDao: SecurityTransactionDao = null
 
-  def getHistory(accountIdOpt: Option[Long], startDate: LocalDate, endDate: LocalDate): List[Trade] = transaction {
+  def getHistory(accountIdOpt: Option[Long], startDateOpt: Option[LocalDate], endDateOpt: Option[LocalDate]): List[Trade] = transaction {
     val accounts = accountIdOpt match {
       case Some(aid) =>
         val a = accountDao.findById(aid)
@@ -32,13 +33,15 @@ class TradeService {
         }
         List(a)
       case None =>
-        val list = accountDao.findEffectiveAccounts(endDate)
+        val list = accountDao.findEffectiveAccounts(endDateOpt.getOrElse(LocalDate.now()))
         list.toList
     }
     val accountIdList = accounts.map(_.getId)
     val accountMap = accounts.map { a => (a.getId, a)}.toMap
+    val minOpenDate = findMinOpenDate(accounts)
 
-    val transactions = securityTransactionDao.findByAccountIdListBetweenDates(accountIdList, startDate, endDate)
+    val transactions = securityTransactionDao.findByAccountIdListBetweenDates(
+      accountIdList, startDateOpt.getOrElse(minOpenDate), endDateOpt.getOrElse(LocalDate.now()))
     val trades = ListBuffer.empty[Trade]
 
     for (tran <- transactions) {
@@ -61,12 +64,28 @@ class TradeService {
         amount = tran.getAmount,
         orderPrice = BigDecimalConstants.ZERO,
         executionPrice = tran.getAvgPrice,
-        executionTime = tran.getExecutionDate
+        executionDate = tran.getAsOfDate
       )
 
       trades.append(trd)
     }
 
     trades.toList
+  }
+
+  private def findMinOpenDate(accounts: List[Account]): LocalDate = {
+    var min: LocalDate = null
+    for (a <- accounts) {
+      if (a.getOpenDate != null) {
+        val openDate = a.getOpenDate.toLocalDate
+        if (min == null) {
+          min = openDate
+        } else if (openDate.isBefore(min)) {
+          min = openDate
+        }
+      }
+    }
+
+    min
   }
 }

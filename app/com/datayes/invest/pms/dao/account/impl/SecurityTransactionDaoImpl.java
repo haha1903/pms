@@ -31,11 +31,11 @@ public class SecurityTransactionDaoImpl extends AccountRelatedDaoImpl<SecurityTr
         }
 
         TypedQuery<SecurityTransaction> q = getEntityManager().createQuery(
-                "from SecurityTransaction where accountId in (:accountIds) and sourceTransactionDate >= (:startDateTime)"
-                        + " and sourceTransactionDate < (:endDateTime)", SecurityTransaction.class);
+                "from SecurityTransaction where accountId in (:accountIds) and asOfDate >= (:startDate)"
+                        + " and asOfDate < (:endDate)", SecurityTransaction.class);
         q.setParameter("accountIds", accountIds);
-        q.setParameter("startDateTime", startDate.toLocalDateTime(LocalTime.MIDNIGHT));
-        q.setParameter("endDateTime", endDate.plusDays(1).toLocalDateTime(LocalTime.MIDNIGHT));
+        q.setParameter("startDate", startDate);
+        q.setParameter("endDate", endDate.plusDays(1));
         List<SecurityTransaction> list = q.getResultList();
 
         return list;
