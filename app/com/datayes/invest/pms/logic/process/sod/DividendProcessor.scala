@@ -6,8 +6,7 @@ import com.datayes.invest.pms.dao.account.{ SecurityPositionDao, SecurityTransac
 import com.datayes.invest.pms.dao.security.EquityDividendDao
 import com.datayes.invest.pms.entity.security.EquityDividend
 import com.datayes.invest.pms.util.DefaultValues
-import org.joda.time.LocalDate
-import org.joda.time.LocalDateTime
+import org.joda.time.{LocalTime, LocalDate, LocalDateTime}
 import javax.inject.Inject
 import scala.collection.JavaConversions._
 import scala.math.BigDecimal._
@@ -176,9 +175,10 @@ class DividendProcessor extends Logging {
   private def createSecurityTransaction(accountId: Long, asOfDate: LocalDate, securityId: Long, quantity: BigDecimal): SecurityTransaction = {
     val securityTransaction = new SecurityTransaction(accountId, TransactionSource.PMS.getDbValue,
       TransactionClass.TRADE.getDbValue(), securityId, TradeSide.BUY.getDbValue())
+
     securityTransaction.setOrderId(null)
     securityTransaction.setSourceTransactionId(DefaultValues.PMS_SOURCE_TRANSACTION_ID)
-    securityTransaction.setSourceTransactionDate(new LocalDateTime(asOfDate.toDateTimeAtCurrentTime()))
+    securityTransaction.setSourceTransactionDate(asOfDate.toLocalDateTime(LocalTime.MIDNIGHT))
     securityTransaction.setTransactionStatus(null)
     securityTransaction.setStatusChangeDate(null)
     securityTransaction.setAmount(quantity.bigDecimal)
@@ -192,6 +192,7 @@ class DividendProcessor extends Logging {
     securityTransaction.setExecutionDate(new LocalDateTime(asOfDate.toDateTimeAtCurrentTime))
     securityTransaction.setSettlementDate(asOfDate)
     securityTransaction.setTransactionReason(null)
+
     securityTransaction
   }
 }

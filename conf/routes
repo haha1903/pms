@@ -37,6 +37,8 @@ GET     /portfolio/chart                                     @controllers.Portfo
 GET     /portfolio/settings/get                              @controllers.PortfolioController.getGroupingSettings
 GET     /portfolio/settings/set                              @controllers.PortfolioController.setGroupingSettings
 
+# Trade
+#GET     /trade/histroy                                       @controllers.TradeController.history
 
 # Proxy for attribution
 GET     /attribution                                          @controllers.ProxyController.attribution

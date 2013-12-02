@@ -25,7 +25,7 @@ class StockTradeTransactionLogic extends TransactionLogicBase with Logging {
 
   override def process(t: Transaction): Unit = {
     checkParameter(t)
-    val asOfDate = t.executionDate
+    val asOfDate = t.executionDate.toLocalDate
     val commissionAndFee = updateCashPositionHist(t, asOfDate)
     updateSecurityPosition(t, asOfDate)
     saveTransaction(t, commissionAndFee, asOfDate)

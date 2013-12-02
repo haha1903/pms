@@ -7,7 +7,7 @@ import com.datayes.invest.pms.entity.account.{Account, SecurityPosition}
 import com.datayes.invest.pms.entity.security.{ Equity, Future }
 import com.datayes.invest.pms.util.DefaultValues
 import scala.math.BigDecimal.int2bigDecimal
-import org.joda.time.LocalDate
+import org.joda.time.{LocalTime, LocalDate}
 import javax.inject.Inject
 import scala.collection.JavaConversions._
 import com.datayes.invest.pms.service.marketdata.MarketDataService
@@ -79,7 +79,7 @@ class ForceLiquidationProcessor extends Processor with Logging {
             accountId, securityPosition.getId, quantity, price)
     val tradeSide = getTradeSide(securityPosition.getLedgerId)
     val t = Transaction(accountId, securityPosition.getSecurityId,
-            DefaultValues.PMS_SOURCE_TRANSACTION_ID, getLongOption(null), getLongOption(null), asOfDate, 
+            DefaultValues.PMS_SOURCE_TRANSACTION_ID, getLongOption(null), getLongOption(null), asOfDate.toLocalDateTime(LocalTime.MIDNIGHT),
             null, tradeSide, price, quantity, TransactionSource.PMS.getDbValue, TransactionClass.TRADE)
     val engine = transactionLogicFactory.get(t)
     engine.process(t)

@@ -40,7 +40,7 @@ class RepoTransactionLogic extends TransactionLogicBase with Logging {
   override def process(t: Transaction) = {
     checkParameter(t)
 
-    var asOfDate = t.executionDate
+    var asOfDate: LocalDate = t.executionDate.toLocalDate
 
     // security pos
     updateSecurityPosition(t, asOfDate)
@@ -187,19 +187,20 @@ class RepoTransactionLogic extends TransactionLogicBase with Logging {
 
   private def calculatePartialInterest(startDate: LocalDate, endDate: LocalDate, days: Integer, interest: BigDecimal): BigDecimal =
     if (endDate.isBefore(startDate)) BigDecimal(0) else {
-      var interestDays = Days.daysBetween(startDate, endDate).getDays() + 1
-      var result: BigDecimal = interest * interestDays / BigDecimal(days)
+      val interestDays = Days.daysBetween(startDate, endDate).getDays() + 1
+      val result: BigDecimal = interest * interestDays / BigDecimal(days)
       setScale(result)
     }
 
   private def calculateRepoFields(t: Transaction): (BigDecimal, LocalDate, Integer) = {
-    var (interest, returnDate) = repoDao.findById(t.securityId) match {
+    val (interest, returnDate) = repoDao.findById(t.securityId) match {
       case repo: Repo => {
-        var settleDate = calendarService.nextCalendarDay(t.executionDate)
-        var returnDate = calendarService.nextTradeDay(t.executionDate, repo.getExchangeCode(), repo.getMaturity()) // T+days
+        val execDate = t.executionDate.toLocalDate
+        val settleDate = calendarService.nextCalendarDay(execDate)
+        val returnDate = calendarService.nextTradeDay(execDate, repo.getExchangeCode(), repo.getMaturity()) // T+days
         t.settlementDate = calendarService.nextTradeDay(returnDate, repo.getExchangeCode(), 1) // T+days+1         
-        var interestDays = Days.daysBetween(settleDate, returnDate).getDays() + 1
-        var interest: BigDecimal = interestDays * t.amount * t.price / 100.0 / BigDecimal(repo.getBaseDays())
+        val interestDays = Days.daysBetween(settleDate, returnDate).getDays() + 1
+        val interest: BigDecimal = interestDays * t.amount * t.price / 100.0 / BigDecimal(repo.getBaseDays())
         (setScale(interest), returnDate)
       }
       case _ => throw new BusinessException("not valid Repo security")

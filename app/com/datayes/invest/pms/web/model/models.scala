@@ -2,72 +2,13 @@ package com.datayes.invest.pms.web.model
 
 import org.joda.time.LocalDate
 import org.joda.time.LocalDateTime
-
 import com.datayes.invest.pms.dbtype.AccountTypeType
 import com.datayes.invest.pms.util.BigDecimalConstants.ZERO
 import com.datayes.invest.pms.web.assets.enums.AssetClassType
-
 import play.api.libs.json._
+import com.datayes.invest.pms.dbtype.TradeSide
 
 package object models {
-
-  /*
-   * Types for portfolio position tree
-   */
-
-  /*
-  object AssetClassType extends Enumeration {
-    type Type = Value
-    val none = Value("none")
-    val equity = Value("equity")
-    val future = Value("future")
-    val bond = Value("bond")
-    val cash = Value("cash")
-    // TODO more asset classes in the future
-  }
-
-  object AssetNodeType extends Enumeration {
-    type Type = Value
-    val leaf = Value("leaf")
-    val root = Value("root")
-
-    val account = Value("account")
-    val industry = Value("industry")
-    val assetClass = Value("assetClass")
-  }
-
-  sealed abstract class AssetNode {
-    val nodeType: AssetNodeType.Type
-    val id: String
-    val name: String
-    var marketValue: BigDecimal = ZERO
-    var weight: BigDecimal = ZERO
-    var holdingValue: BigDecimal = ZERO
-    var dailyPnL: BigDecimal = ZERO
-    var floatPnL: BigDecimal = ZERO
-  }
-
-  case class AssetTree(nodeType: AssetNodeType.Type, id: String, name: String, children: Seq[AssetNode]) extends AssetNode
-
-  case class Asset(name: String, code: String, securityId: Long) extends AssetNode {
-    override val nodeType = AssetNodeType.leaf
-    override val id = securityId.toString
-    var marketPrice: BigDecimal = ZERO
-    var priceChange: BigDecimal = ZERO
-    var holdingQuantity: Long = 0L
-    var holdingValuePrice: BigDecimal = ZERO
-    var interest: BigDecimal = ZERO
-    var earnedPnL: BigDecimal = ZERO
-    var benchmarkIndexWeight: BigDecimal = ZERO
-
-    // The following fields are used for grouping and should not be sent to client
-    var accountId: Long = 0L
-    var accountName: String = ""
-    var assetClass: AssetClassType.Type = AssetClassType.none
-    var industry: String = ""
-    var exchange: String = ""
-  }*/
-
 
   /*
    * Charts
@@ -192,6 +133,18 @@ package object models {
   	pnl: BigDecimal = ZERO,
   	cash: BigDecimal = ZERO
   )
+  
+  case class Trade(
+    accountNo: String,
+    securityName: String,
+    securitySymbol: String,
+    exchange: String,
+    tradeSide: TradeSide,
+    amount: BigDecimal,
+    orderPrice: BigDecimal,
+    executionPrice: BigDecimal,
+    executionTime: LocalDateTime
+  )
 
   /*
    * Json writes
@@ -210,54 +163,6 @@ package object models {
     implicit object LocalDateTimeWrites extends Writes[LocalDateTime] {
       def writes(o: LocalDateTime) = JsString(o.toString)
     }
-
-    /*
-     * AssetNode
-     */
-
-    /*
-    implicit object AssetNodeWrites extends Writes[AssetNode] {
-
-      def writes(n: AssetNode) = n match {
-        case t: AssetTree => assetTreeToJson(t)
-        case a: Asset => assetToJson(a)
-      }
-
-      private def assetNodeToJson(a: AssetNode) = Json.obj(
-        "type" -> a.nodeType.toString,
-        "name" -> a.name,
-        "id" -> a.id,
-        "marketValue" -> a.marketValue,
-        "weight" -> a.weight,
-        "holdingValue" -> a.holdingValue,
-        "dailyPnL" -> a.dailyPnL,
-        "floatPnL" -> a.floatPnL
-      )
-
-      private def assetTreeToJson(a: AssetTree) = {
-        val json = assetNodeToJson(a)
-        json ++ Json.obj(
-          "children" -> a.children
-        )
-      }
-
-      private def assetToJson(a: Asset) = {
-        val json = assetNodeToJson(a)
-        json ++ Json.obj(
-          "securityId" -> a.securityId,
-          "code" -> a.code,
-          "marketPrice" -> a.marketPrice,
-          "priceChange" -> a.priceChange,
-          "holdingQuantity" -> a.holdingQuantity,
-          "holdingValuePrice" -> a.holdingValuePrice,
-          "interest" -> a.interest,
-          "earnedPnL" -> a.earnedPnL,
-          "benchmarkIndexWeight" -> a.benchmarkIndexWeight
-        )
-      }
-
-    }*/
-
 
     /*
      * Charts
@@ -391,5 +296,18 @@ package object models {
       )
     }
     
+    implicit object TradeWrites extends Writes[Trade] {
+      def writes(o: Trade) = Json.obj(
+        "accountNo" -> o.accountNo,
+        "securityName" -> o.securityName,
+        "securitySymbol" -> o.securitySymbol,
+        "exchange" -> o.exchange,
+        "tradeSide" -> o.tradeSide.toString(),
+        "amount" -> o.amount,
+        "orderPrice" -> o.orderPrice,
+        "executionPrice" -> o.executionPrice,
+        "executionTime" -> o.executionTime
+      )
+    }
   }
 }

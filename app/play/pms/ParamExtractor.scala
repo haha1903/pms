@@ -18,23 +18,23 @@ trait ParamExtractor {
    * Implicit conversions
    */
   implicit def param2String(p: Param): String = {
-    val s = p.request.getQueryString(p.name).getOrElse(throw new MissingParamException(p.name))
+    val s = getNonEmptyQueryString(p.request, p.name).getOrElse(throw new MissingParamException(p.name))
     s
   }
   
-  implicit def param2StringOpt(p: Param): Option[String] = p.request.getQueryString(p.name)
+  implicit def param2StringOpt(p: Param): Option[String] = getNonEmptyQueryString(p.request, p.name)
   
   implicit def paramDefault2String(p: ParamDefault[String]): String = {
     param2StringOpt(p.underlying).getOrElse(p.default)
   }
   
   implicit def param2Int(p: Param): Int = {
-    val s = p.request.getQueryString(p.name).getOrElse(throw new MissingParamException(p.name))
+    val s = getNonEmptyQueryString(p.request, p.name).getOrElse(throw new MissingParamException(p.name))
     parseInt(p.name, s)
   }
   
   implicit def param2IntOpt(p: Param): Option[Int] = {
-    p.request.getQueryString(p.name) match {
+    getNonEmptyQueryString(p.request, p.name) match {
       case Some(s) => Some(parseInt(p.name, s))
       case None => None
     }
@@ -45,12 +45,12 @@ trait ParamExtractor {
   }
   
   implicit def param2Long(p: Param): Long = {
-    val s = p.request.getQueryString(p.name).getOrElse(throw new MissingParamException(p.name))
+    val s = getNonEmptyQueryString(p.request, p.name).getOrElse(throw new MissingParamException(p.name))
     parseLong(p.name, s)
   }
   
   implicit def param2LongOpt(p: Param): Option[Long] = {
-    p.request.getQueryString(p.name) match {
+    getNonEmptyQueryString(p.request, p.name) match {
       case Some(s) => Some(parseLong(p.name, s))
       case None => None
     }
@@ -61,12 +61,12 @@ trait ParamExtractor {
   }
   
   implicit def param2LocalDate(p: Param): LocalDate = {
-    val s = p.request.getQueryString(p.name).getOrElse(throw new MissingParamException(p.name))
+    val s = getNonEmptyQueryString(p.request, p.name).getOrElse(throw new MissingParamException(p.name))
     parseLocalDate(p.name, s)
   }
   
   implicit def param2LocalDateOpt(p: Param): Option[LocalDate] = {
-    p.request.getQueryString(p.name) match {
+    getNonEmptyQueryString(p.request, p.name) match {
       case Some(s) => Some(parseLocalDate(p.name, s))
       case None => None
     }
@@ -79,6 +79,13 @@ trait ParamExtractor {
   /*
    * Helper functions
    */
+  private def getNonEmptyQueryString(req: Request[AnyContent], name: String): Option[String] = {
+    req.getQueryString(name) match {
+      case Some(s) if s != null && s.trim.nonEmpty => Some(s)
+      case _ => None
+    }
+  }
+  
   private def parseInt(name: String, s: String): Int =  try {
     Integer.parseInt(s)
   } catch {

@@ -62,7 +62,7 @@ class TransactionProcess extends Logging {
 
     val executionDate = e.executionDate.toString() match { 
       case "-1" => throw new BusinessException("executionDate cannot be null") 
-      case _ => new LocalDate(e.executionDate) 
+      case _ => new LocalDateTime(e.executionDate)
     }
     val sourceTransactionId = e.executionID.toString()
     val settlementDate = e.settlementDate.toString() match { case "-1" => null case _ => new LocalDate(e.settlementDate) }
@@ -76,7 +76,7 @@ class TransactionProcess extends Logging {
   
   private def saveSourceTransaction(t: Transaction) {
     val sourceTransaction = new SourceTransaction(t.accountId, t.securityId, t.sourceTransactionId,
-            getLongOrNull(t.traderId), getLongOrNull(t.brokerId), new LocalDateTime(t.executionDate.toDateTimeAtCurrentTime), 
+            getLongOrNull(t.traderId), getLongOrNull(t.brokerId), t.executionDate,
             t.settlementDate, t.side.toString, t.price.bigDecimal, t.amount.bigDecimal, t.transactionSourceId,
             t.transactionClass.getDbValue())
     sourceTransactionDao.save(sourceTransaction)

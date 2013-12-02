@@ -41,7 +41,7 @@ class ApplyTransactionProcessor extends Logging {
       sourceTransaction.getSourceTransactionId,
       getLongOption(sourceTransaction.getTraderId),
       getLongOption(sourceTransaction.getBrokerId),
-      sourceTransaction.getExecutionDate.toLocalDate,
+      sourceTransaction.getExecutionDate,
       sourceTransaction.getSettlementDate,
       TradeSide.valueOf(sourceTransaction.getTradeSideCode),
       sourceTransaction.getPrice,

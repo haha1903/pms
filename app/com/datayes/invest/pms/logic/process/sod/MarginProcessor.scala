@@ -6,8 +6,7 @@ import com.datayes.invest.pms.dao.account.{ PositionHistDao, SecurityPositionDao
 import com.datayes.invest.pms.dao.security.{ FutureDao, SecurityDao, PriceVolumeDao, FuturePriceVolumeDao }
 import com.datayes.invest.pms.entity.account.{Account, CashTransaction, SecurityPosition}
 import com.datayes.invest.pms.util.DefaultValues
-import org.joda.time.LocalDate
-import org.joda.time.LocalDateTime
+import org.joda.time.{LocalTime, LocalDate, LocalDateTime}
 import javax.inject.Inject
 import scala.collection.JavaConversions._
 import scala.math.BigDecimal._
@@ -171,7 +170,7 @@ class MarginProcessor extends Processor with Logging {
 
     cashTransaction.setOrderId(null)
     cashTransaction.setSourceTransactionId("MARGIN PROCESS")    // TODO fix this
-    cashTransaction.setSourceTransactionDate(new LocalDateTime(asOfDate.toDateTimeAtCurrentTime()))
+    cashTransaction.setSourceTransactionDate(asOfDate.toLocalDateTime(LocalTime.MIDNIGHT))
     cashTransaction.setTransactionStatus(null)
     cashTransaction.setTransactionStatus(null)
     cashTransaction.setStatusChangeDate(null)

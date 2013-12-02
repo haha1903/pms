@@ -32,10 +32,7 @@ public class LocalDateTimeTypeDescriptor extends AbstractTypeDescriptor<LocalDat
         if (java.sql.Timestamp.class.isAssignableFrom(wrapType)) {
             return (X) (new java.sql.Timestamp(value.toDate().getTime()));
         }
-        
-        if (java.sql.Date.class.isAssignableFrom(wrapType)) {
-            return (X) (new java.sql.Date(value.toDate().getTime()));
-        }
+
         throw unknownUnwrap(wrapType);
     }
 

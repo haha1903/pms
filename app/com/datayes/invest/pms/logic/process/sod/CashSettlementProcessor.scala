@@ -4,8 +4,7 @@ import com.datayes.invest.pms.logging.Logging
 import javax.inject.Inject
 import scala.math.BigDecimal._
 import scala.collection.JavaConversions._
-import org.joda.time.LocalDate
-import org.joda.time.LocalDateTime
+import org.joda.time.{LocalTime, LocalDate, LocalDateTime}
 import com.datayes.invest.pms.logic.process.Processor
 import com.datayes.invest.pms.dao.account.CashPositionDao
 import com.datayes.invest.pms.dao.account.PositionHistDao
@@ -138,7 +137,7 @@ class CashSettlementProcessor extends Processor with Logging {
 
     cashTransaction.setOrderId(null)
     cashTransaction.setSourceTransactionId("SETTLEMENT")    // TODO what is this source transaction id?
-    cashTransaction.setSourceTransactionDate(new LocalDateTime(asOfDate.toDateTimeAtCurrentTime()))
+    cashTransaction.setSourceTransactionDate(asOfDate.toLocalDateTime(LocalTime.MIDNIGHT))
     cashTransaction.setTransactionStatus(null)
     cashTransaction.setTransactionStatus(null)
     cashTransaction.setStatusChangeDate(null)
