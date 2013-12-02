@@ -19,11 +19,6 @@ import play.api.mvc.Results.Ok
 
 trait PmsActionBuilder extends Logging {
   
-  // This flag is used by PMS developer
-  // Should be set to true when deployed
-  private val useDyResponse = false
-  
-  
   def apply(block: Request[AnyContent] => PmsResult): Action[AnyContent] = apply(BodyParsers.parse.anyContent)(block)
   
   def apply(block: => PmsResult): Action[AnyContent] = apply(BodyParsers.parse.anyContent)(_ => block)
@@ -47,7 +42,7 @@ trait PmsActionBuilder extends Logging {
   })
 
   private def respond(res: PmsJsResult, callback: Option[String]) = {
-    val respjson = if (useDyResponse) {
+    val respjson = if (PmsAction.useDyResponse) {
       val dyresp = DYJsResponse(Status.OK, "", res.json)
       Json.toJson(dyresp)
     } else {
@@ -61,7 +56,7 @@ trait PmsActionBuilder extends Logging {
     
   private def respond(res: PmsStrResult, callback: Option[String]) = {
     val content = res.content
-    val resp = if (useDyResponse) {
+    val resp = if (PmsAction.useDyResponse) {
       val dyresp = DYStrResponse.create(Status.OK, "", content)
       dyresp
     } else {
@@ -77,7 +72,7 @@ trait PmsActionBuilder extends Logging {
   private def jsonp(data: String, callback: String): String = callback + "(" + data + ");"
   
   private def exception(e: ClientException, callback: Option[String]) = {
-    if (useDyResponse) {
+    if (PmsAction.useDyResponse) {
       val dyresp = DYJsResponse(Status.BAD_REQUEST, e.getMessage(), JsString(e.getStackTraceString))
       val respjson = Json.toJson(dyresp)
       callback match {
@@ -91,7 +86,7 @@ trait PmsActionBuilder extends Logging {
     
   private def exception(e: Throwable, callback: Option[String]) = {
     logger.warn("Internal server error: {}", e.getMessage(), e)
-    if (useDyResponse) {
+    if (PmsAction.useDyResponse) {
       val dyresp = DYJsResponse(Status.INTERNAL_SERVER_ERROR, e.getMessage, JsString(e.getStackTraceString))
       val respjson = Json.toJson(dyresp)
       callback match {
@@ -107,4 +102,16 @@ trait PmsActionBuilder extends Logging {
 object PmsAction extends PmsActionBuilder {
   
   lazy val ssoEnabled = Config.INSTANCE.getBoolean("paas.sso.enabled", false)
+
+  val useDyResponse = getUseDyResponse()
+
+  /* set -DuseDyResponse=false to disable DY response */
+  private def getUseDyResponse(): Boolean = {
+    val s = System.getProperty("useDyResponse")
+    if (s == null || s.trim.isEmpty) {
+      true
+    } else {
+      s.toBoolean
+    }
+  }
 }
