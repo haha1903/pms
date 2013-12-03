@@ -2,24 +2,15 @@ package com.datayes.invest.pms.tools.importer
 
 import java.io.File
 import javax.inject.Inject
-import com.datayes.invest.pms.dao.security.SecurityDao
 import com.datayes.invest.pms.logic.accountinit.{AccountInitializer, PositionSourceData, AccountSourceData}
 import scala.io.Source
 import org.joda.time.{LocalDate, LocalDateTime}
-import scala.collection.JavaConversions._
-import com.datayes.invest.pms.entity.security.{Future, Equity, Security}
 import com.datayes.invest.pms.util.DefaultValues
 import com.datayes.invest.pms.logging.Logging
-import com.datayes.invest.pms.service.marketdata.MarketDataService
-import com.datayes.invest.pms.entity.account.{Account, SourceTransaction}
+import com.datayes.invest.pms.entity.account.Account
 import com.datayes.invest.pms.dao.account.{AccountDao, SourceTransactionDao}
-import com.datayes.invest.pms.dbtype.TradeSide
-import com.datayes.invest.pms.dbtype.TransactionSource
-import com.datayes.invest.pms.dbtype.TransactionClass
 import com.datayes.invest.pms.dbtype.AccountClassType
 import com.datayes.invest.pms.dbtype.AccountTypeType
-import com.datayes.invest.pms.dbtype.LedgerType
-import com.datayes.invest.pms.dbtype.PositionClass
 import scala.collection.mutable
 import java.sql.Timestamp
 import org.joda.time.LocalTime
@@ -172,35 +163,6 @@ class AccountCsvImporter extends Logging {
       sourceTransactionDao.save(srcTransaction)
     }
   }
-/*
-  private def createOneSourceTransaction(symbol: String, quantityDelta: BigDecimal, priceOpt: Option[BigDecimal],
-      asOfDate: LocalDate, accountId: Long): Unit = {
-    
-    val security = findSecurity(symbol).getOrElse(
-      throw new RuntimeException(symbol + " is not a security and not supported")
-    )
-
-    val price = getPriceOfSecurity(security.getId, asOfDate) - 1 //TODO need to delete "-1"
-
-    val tradeSide = if (quantityDelta >= 0) TradeSide.BUY else TradeSide.SELL
-
-    val srcTransaction = new SourceTransaction(
-      accountId,
-      security.getId,
-      "",
-      null, // traderId
-      null, // brokerId
-      new LocalDateTime(asOfDate.toDateTimeAtCurrentTime), // executionDate
-      asOfDate, // settlementData
-      tradeSide.toString,
-      price,
-      quantityDelta.abs,
-      TransactionSource.PMS.getDbValue,
-      TransactionClass.TRADE.toString)
-
-    sourceTransactionDao.save(srcTransaction)
-  }
-  */
 
   private def getAccountSourceData(accountInfoMap: Map[String, String], openDate: LocalDateTime,
                                       positions: Seq[PositionSourceData]): AccountSourceData = {
@@ -236,17 +198,6 @@ class AccountCsvImporter extends Logging {
       fees = DefaultValues.DEFAULT_FEES
     )
   }
-    
-  /*private def getSecurityLine(line: Array[String]): (String, BigDecimal, Option[BigDecimal]) = {
-    val symbol = line(0)
-    val quantity = BigDecimal(line(1))
-    val priceOpt = if (line.size < 3) {
-      None
-    } else {
-      Some(BigDecimal(line(2)))
-    }
-    (symbol, quantity, priceOpt)
-  }*/
 
   private def createPositionList(csvList: List[Array[String]], context: Context): List[PositionSourceData] = {
     val buf = mutable.ListBuffer.empty[PositionSourceData]
@@ -266,127 +217,5 @@ class AccountCsvImporter extends Logging {
     }
     throw new RuntimeException("Cannot found matched handler for line: " + values)
   }
-
-  /*private def createPositionSourceData(symbol: String, quantity: BigDecimal, priceOpt: Option[BigDecimal], openDate: LocalDateTime): PositionSourceData = {
-
-    val securityOpt = findSecurity(symbol)
-    val exchange = securityOpt.map(_.getExchangeCode).getOrElse("XSHG")
-    val currency = getCurrencyOfSecurity(securityOpt)
-
-    val price: BigDecimal = securityOpt match {
-      case Some(sec: Security) => getPriceOfSecurity(sec.getId, openDate.toLocalDate)
-      case _ => 1
-    }
-
-    val carryingValueOpt = securityOpt match {
-      case Some(e: Equity) =>
-        val v = quantity * price
-        Some(v)
-
-      case Some(f: Future) =>
-        throw new RuntimeException("Importer does not support future")
-
-      case _ =>
-        None
-    }
-
-    val ledgerType = try {
-      LedgerType.valueOf(symbol)
-    } catch {
-      case e: Throwable => LedgerType.SECURITY
-    }
-
-    val positionClass = getPositionClassForSymbol(symbol)
-
-    val psd = PositionSourceData(
-      positionClass = positionClass,
-      ledgerType = ledgerType,
-      openDate = openDate,
-      currencyCode = currency,
-      quantity = quantity,
-      carryingValue = carryingValueOpt,
-      securityId = securityOpt.map(_.getId),
-      exchangeCode = exchange
-    )
-
-    psd
-  }*/
-
-  /*private def getCurrencyOfSecurity(securityOpt: Option[Security]): String = {
-    val c = securityOpt match {
-      case Some(e: Equity) => e.getIssueCurrency
-      case Some(f: Future) => f.getCurrencyCode
-      case _ => null
-    }
-    val currency = if (c == null || c.trim.isEmpty) {
-      DefaultValues.CURRENCY_CODE
-    } else {
-      c
-    }
-    currency
-  }*/
-
-  /*private def getPriceOfSecurity(securityId: Long, asOfDate: LocalDate): BigDecimal = {
-    // TODO refine this
-    val md = marketDataService.getMarketData(securityId, asOfDate)
-    val price = if (md == null || md.getPrice() == null) {
-      throw new RuntimeException("Failed to find market data for security #" + securityId + " on " + asOfDate)
-    } else {
-      md.getPrice()
-    }
-    price
-  }*/
-
-  /*private def findSecurity(symbol: String): Option[Security] = {
-    // TODO how to determine if a ledger is security ledger
-    val positionClass = getPositionClassForSymbol(symbol)
-    if (positionClass != PositionClass.SECURITY) {
-      return None
-    }
-
-    val fixedSymbol = fixSecuritySymbol(symbol)
-
-    val list = securityDao.findByTickerSymbol(fixedSymbol)
-    if (list == null || list.isEmpty) {
-      throw new RuntimeException("Import error. Cannot find security for symbol " + fixedSymbol)
-    }
-    if (list.size() > 1) {
-      logger.warn("Multiple security found for symbol " + fixedSymbol)
-      list.find(isAGuStock(_))
-    } else {
-      Some(list(0))
-    }
-
-  }*/
-
-  /*private def fixSecuritySymbol(symbol: String): String = {
-    try {
-      Integer.valueOf(symbol)
-    } catch {
-      case e: NumberFormatException =>
-        return symbol
-    }
-    val builder = new StringBuilder
-    for (i <- 0 until (6 - symbol.size)) {
-      builder.append("0")
-    }
-    builder.toString + symbol
-  }
-
-  private def isAGuStock(security: Security): Boolean = {
-    security match {
-      case e: Equity => e.getTypeCode() == 1
-      case _ =>
-        throw new RuntimeException("Error. Only equity may have duplicate symbol")
-    }
-  }
-
-  private def getPositionClassForSymbol(symbol: String): PositionClass = {
-    try {
-      LedgerType.valueOf(symbol).getPositionClass
-    } catch {
-      case e: Throwable => PositionClass.SECURITY
-    }
-  }*/
 
 }

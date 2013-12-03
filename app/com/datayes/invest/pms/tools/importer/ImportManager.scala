@@ -8,7 +8,6 @@ import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.util.progress.{ProgressStatus, ProgressReport, ProgressListener, ProgressEvent}
 import com.google.inject.Inject
 import com.datayes.invest.pms.system.SystemInjectors
-import com.datayes.invest.pms.dao.account.cacheimpl.cache.CacheWorkspace
 import com.datayes.invest.pms.dao.account.AccountDao
 import java.sql.Timestamp
 import com.datayes.invest.pms.entity.account.Account
