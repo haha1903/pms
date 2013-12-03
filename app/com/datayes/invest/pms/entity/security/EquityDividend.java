@@ -29,6 +29,8 @@ public class EquityDividend extends EntityBase {
     
     private LocalDate exDividate;
 
+    private LocalDate rightRegdate;
+
     @Id
     @Column(name = "id")
     public Long getId() {
@@ -82,5 +84,14 @@ public class EquityDividend extends EntityBase {
 
     public void setExDividate(LocalDate exDividate) {
         this.exDividate = exDividate;
+    }
+
+    @Column(name = "right_regdate")
+    public LocalDate getRightRegdate() {
+        return rightRegdate;
+    }
+
+    public void setRightRegdate(LocalDate rightRedate) {
+        this.rightRegdate = rightRedate;
     }
 }

@@ -47,23 +47,36 @@ abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecu
   }
 
   override protected def calculateDividend(positions: List[Position], asOfDate: LocalDate): Map[Long, BigDecimal] = {
-    val positionHistQuantities = getPositionHistQuantity(positions, asOfDate)
     val securityIds = positions.map(position => position.asInstanceOf[SecurityPosition].getSecurityId)
 
     val dividendList = equityDividendDao.findBySecurityIdsExDiviDate(securityIds, asOfDate).toList
     // Key: securityId, value: EquityDividend
     val dividendMap = convertListToMapWithId(dividendList, securityIds, {dividend => dividend.asInstanceOf[EquityDividend].getSecurityId})
-    val rmbMap = convertToValueMap(dividendMap, {dividend => dividend.asInstanceOf[EquityDividend].getActualCashDivirmb})
 
     positions.map(position => {
       val positionId = position.getId.toLong
       val securityId = position.asInstanceOf[SecurityPosition].getSecurityId
+      val dividendOpt = dividendMap(securityId)
 
-      val posQuantity = positionHistQuantities(positionId)
-      val cashDividendRate = rmbMap(securityId)
+      val dividendYield = if ( dividendOpt.nonEmpty ) {
+        val dividend = dividendOpt.get.asInstanceOf[EquityDividend]
+        val cashDividendRate = dividend.getActualCashDivirmb
 
-      val dividendYield =  if (cashDividendRate != null && cashDividendRate > BigDecimalConstants.ZERO) {
-        calculateSingleDividend(cashDividendRate, posQuantity)
+        if (cashDividendRate != null && cashDividendRate > BigDecimalConstants.ZERO) {
+          val rightRegDate = dividend.getRightRegdate
+          val positionHist = positionHistDao.findByPositionIdAsOfDate(positionId, rightRegDate)
+
+          if ( positionHist != null ) {
+            val posQuantity = positionHist.getQuantity
+            calculateSingleDividend(cashDividendRate, posQuantity)
+          }
+          else {
+            BigDecimalConstants.ZERO
+          }
+        }
+        else {
+          BigDecimalConstants.ZERO
+        }
       }
       else {
         BigDecimalConstants.ZERO
@@ -92,8 +105,6 @@ abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecu
       (positionId, priceDiff)
     }).toMap
   }
-
-
 
   override protected def calculateIncrement(earnLoss: Map[Long, BigDecimal], priceDiffs: Map[Long, BigDecimal]): Map[Long, BigDecimal] = {
     earnLoss.map( kv => {

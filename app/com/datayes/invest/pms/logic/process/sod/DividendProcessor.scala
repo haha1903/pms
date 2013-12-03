@@ -50,6 +50,7 @@ class DividendProcessor extends Logging {
     logger.info("Dividend done for account #{}", account.getId)
   }
 
+  //TODO: 取Position的数量是权益登记日的日期
   private def dividend(accountId: Long, asOfDate: LocalDate): Unit = {
     val positionList = securityPositionDao.findByAccountId(accountId)
     val dividendList = loadDividends(positionList, asOfDate)
@@ -76,24 +77,30 @@ class DividendProcessor extends Logging {
 
   private def doDividend(accountId: Long, asOfDate: LocalDate, dividend: EquityDividend, positionId: Long): Unit = {
     if (dividend.getActualCashDivirmb != null && dividend.getActualCashDivirmb > 0) {
-      updateCashAmount(accountId, asOfDate, dividend.getActualCashDivirmb, positionId)
+      updateCashAmount(accountId, asOfDate, dividend, positionId)
     }
 
     updateEquityQuantity(accountId, dividend, asOfDate, positionId)
   }
 
-  private def updateCashAmount(accountId: Long, asOfDate: LocalDate, cashDividends: BigDecimal, positionId: Long): Unit = {
+  private def updateCashAmount(accountId: Long, asOfDate: LocalDate, cashDividend: EquityDividend, positionId: Long): Unit = {
     val cashPositionHist = getCashPositionHist(accountId, LedgerType.CASH, asOfDate)
     if (cashPositionHist != null) {
       var cashAmountAvailable = cashPositionHist.getQuantity
-      val positionHist = positionHistDao.findByPositionIdAsOfDate(positionId, asOfDate)
+
+      val rightRegDate = cashDividend.getRightRegdate
+      val diviRmb = cashDividend.getActualCashDivirmb
+
+      val positionHist = positionHistDao.findByPositionIdAsOfDate(positionId, rightRegDate)
       if (positionHist == null) {
         logger.error("Failed to get position hist for position #{} on asOfDate", positionId)
         return
       }
+
       val quantity = positionHist.getQuantity
-      val cashChange = cashDividends * quantity / 10
+      val cashChange = diviRmb * quantity / 10
       cashAmountAvailable = (cashAmountAvailable + cashChange).bigDecimal
+
       cashPositionHist.setQuantity(cashAmountAvailable)
       positionHistDao.update(cashPositionHist)
       saveCashTransaction(accountId, asOfDate, cashChange)
@@ -107,9 +114,10 @@ class DividendProcessor extends Logging {
   }
 
   private def createCashTransaction(accountId: Long, asOfDate: LocalDate): CashTransaction = {
+    //TODO: 2 CORPACT? redundant?
     val cashTransaction = new CashTransaction(accountId, asOfDate, TransactionSource.PMS.getDbValue,
-      TransactionClass.CASH.getDbValue(), CashTransactionType.DEBIT.getDbValue(), CashTransactionMethod.TRANSFER.getDbValue(),
-      CashTransactionReason.CAPMOVE.getDbValue())
+      TransactionClass.CORPACT.getDbValue(), CashTransactionType.DEBIT.getDbValue(), CashTransactionMethod.TRANSFER.getDbValue(),
+      CashTransactionReason.CORPACTION.getDbValue())
 
     cashTransaction.setOrderId(null)
     cashTransaction.setSourceTransactionId("SETTLEMENT")    // TODO what is this source transaction id?
@@ -138,12 +146,14 @@ class DividendProcessor extends Logging {
   }
 
   private def updateEquityQuantity(accountId: Long, dividend: EquityDividend, asOfDate: LocalDate, positionId: Long): Unit = {
-    val positionHist = positionHistDao.findByPositionIdAsOfDate(positionId, asOfDate)
-    if (positionHist == null) {
+    val rightRegdate = dividend.getRightRegdate
+    val regPositionHist = positionHistDao.findByPositionIdAsOfDate(positionId, rightRegdate)
+    val execPositionHist = positionHistDao.findByPositionIdAsOfDate(positionId,asOfDate)
+      if (regPositionHist == null) {
       logger.error("Failed to get position hist for position #{} on asOfDate", positionId)
       return
     }
-    var quantity = positionHist.getQuantity
+    var quantity = regPositionHist.getQuantity
     val bonusShareRatio = if (dividend.getBonusShareRatio != null) {
       dividend.getBonusShareRatio
     } else {
@@ -161,9 +171,12 @@ class DividendProcessor extends Logging {
       return
     }
     logger.debug("quantity = {}, bonusShareRatio = {}, tranAddShareRatio = {}", quantity, bonusShareRatio, tranAddShareRatio)
+
+    quantity = execPositionHist.getQuantity
     quantity = (quantity + quantityChange).bigDecimal.setScale(0, java.math.RoundingMode.DOWN)
-    positionHist.setQuantity(quantity)
-    positionHistDao.update(positionHist)
+
+    execPositionHist.setQuantity(quantity)
+    positionHistDao.update(execPositionHist)
     saveSecurityTransaction(accountId, asOfDate, dividend.getSecurityId, quantityChange)
   }
 
@@ -174,7 +187,7 @@ class DividendProcessor extends Logging {
 
   private def createSecurityTransaction(accountId: Long, asOfDate: LocalDate, securityId: Long, quantity: BigDecimal): SecurityTransaction = {
     val securityTransaction = new SecurityTransaction(accountId, asOfDate, TransactionSource.PMS.getDbValue,
-      TransactionClass.TRADE.getDbValue(), securityId, TradeSide.BUY.getDbValue())
+      TransactionClass.CORPACT.getDbValue(), securityId, TradeSide.BUY.getDbValue())
 
     securityTransaction.setOrderId(null)
     securityTransaction.setSourceTransactionId(DefaultValues.PMS_SOURCE_TRANSACTION_ID)
