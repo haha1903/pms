@@ -9,6 +9,8 @@ import com.datayes.invest.pms.dao.account.AccountDao
 import com.datayes.invest.pms.dao.account.AccountValuationInitDao
 import com.datayes.invest.pms.dao.account.FeeDao
 import com.datayes.invest.pms.dbtype.AccountValuationType
+import scala.collection.JavaConversions._
+import play.pms.ClientException
 
 
 class AccountInitializer extends Logging {
@@ -26,6 +28,18 @@ class AccountInitializer extends Logging {
   @Inject
   private var positionInitializer: PositionInitializer = null
 
+  def initializeAccount(accountSourceData: AccountSourceData): Long = {
+    val accountId = createAccount(accountSourceData)
+    createAccountValuationInit(accountId, accountSourceData.netWorth, accountSourceData.openDate)
+    createFees(accountId, accountSourceData.openDate, accountSourceData.fees)
+    accountId
+  }
+
+  def initializeAccountsByJson(message: String): Long = {
+    val accSrcData = parseJsonValue(message)
+    initializeAccount(accSrcData)
+  }
+
   private def parseJsonValue(message: String): AccountSourceData = {
     val jsValue = Json.parse(message)
     val result = (jsValue \ "AccountSourceData").validate[AccountSourceData]
@@ -37,18 +51,6 @@ class AccountInitializer extends Logging {
         logger.error("error when parsing json")
         null
     }
-  }
-
-  def initializeAccount(accountSourceData: AccountSourceData): Long = {
-    val accountId = createAccount(accountSourceData)
-    createAccountValuationInit(accountId, accountSourceData.netWorth, accountSourceData.openDate)
-    createFees(accountId, accountSourceData.openDate, accountSourceData.fees)
-    accountId
-  }
-
-  def initializeAccountsByJson(message: String): Long = {
-    val accSrcData = parseJsonValue(message)
-    initializeAccount(accSrcData)
   }
 
   private def createFees(accountId: Long, openDate: LocalDateTime, feeList: List[RateSourceData]): Unit = {
@@ -74,6 +76,7 @@ class AccountInitializer extends Logging {
   }
 
   private def createAccount(accSrcData: AccountSourceData): Long = {
+    checkConstraints(accSrcData)
     val zero = BigDecimal("0").bigDecimal
     val account = new Account(
       accSrcData.countryCode,
@@ -106,6 +109,17 @@ class AccountInitializer extends Logging {
       accSrcData.openDate)
 
     accountId
+  }
+
+  private def checkConstraints(accSrcData: AccountSourceData): Unit = {
+    val accounts = accountDao.findAll();
+    if (accounts != null) {
+      for (a <- accounts) {
+        if (a.getAccountNo == accSrcData.accountNo) {
+          throw new ClientException("Duplicate accountNo: " + accSrcData.accountNo)
+        }
+      }
+    }
   }
 
   private def createAccountValuationInit(accountId: Long, netWorth: BigDecimal, openDate: LocalDateTime): Unit = {
