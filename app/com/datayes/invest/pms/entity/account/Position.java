@@ -22,7 +22,7 @@ import com.datayes.invest.pms.entity.EntityBase;
 @Inheritance(strategy=InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="POSITION_CLASS_CD", discriminatorType= DiscriminatorType.STRING)
 @Proxy(lazy = false)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public abstract class Position extends EntityBase {
 
     private Long Id;

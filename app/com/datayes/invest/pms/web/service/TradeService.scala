@@ -44,14 +44,28 @@ class TradeService {
       accountIdList, startDateOpt.getOrElse(minOpenDate), endDateOpt.getOrElse(LocalDate.now()))
     val trades = ListBuffer.empty[Trade]
 
-    for (tran <- transactions) {
-      val accountId = tran.getAccountId()
+    val grouped = transactions.groupBy { tr => (tr.getAccountId,  tr.getSecurityId, tr.getAsOfDate, tr.getTradeSideCode) }
+
+    for (((accountId, securityId, asOfDate, tradeSideCode), transList) <- grouped) {
       val account = accountMap(accountId)
-      val security = securityDao.findById(tran.getSecurityId())
+      val security = securityDao.findById(securityId)
       val securityName = if (security.getNameAbbr != null && security.getNameAbbr.trim.nonEmpty) {
         security.getNameAbbr
       } else {
         security.getName
+      }
+
+      // calculate amount and average price
+      var amount = BigDecimalConstants.ZERO
+      var totalCapital = BigDecimalConstants.ZERO
+      for (t <- transList) {
+        amount += t.getAmount
+        totalCapital += t.getAmount * t.getAvgPrice
+      }
+      val avgPrice = if (amount.abs < BigDecimalConstants.EPSILON) {
+        BigDecimalConstants.ZERO
+      } else {
+        totalCapital / amount
       }
 
       val trd = Trade(
@@ -60,17 +74,18 @@ class TradeService {
         securityName = securityName,
         securitySymbol = security.getTickerSymbol,
         exchange = security.getExchangeCode,
-        tradeSide = TradeSide.fromDbValue(tran.getTradeSideCode),
-        amount = tran.getAmount,
+        tradeSide = TradeSide.fromDbValue(tradeSideCode),
+        amount = amount,
         orderPrice = BigDecimalConstants.ZERO,
-        executionPrice = tran.getAvgPrice,
-        executionDate = tran.getAsOfDate
+        executionPrice = avgPrice,
+        executionDate = asOfDate
       )
 
       trades.append(trd)
     }
 
-    trades.toList
+    val sorted = trades.sortWith { case (t1, t2) => t1.executionDate.isBefore(t2.executionDate) }.toList
+    sorted
   }
 
   private def findMinOpenDate(accounts: List[Account]): LocalDate = {
