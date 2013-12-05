@@ -88,9 +88,6 @@ public class SimulationRunnerCacheLoader {
 
 		for (PositionValuationHist h : hists) {
 			Key key = new Key(h.getPK());
-			if (h.getPK().getPositionId() == 130L) {
-				System.out.println("ValuationCacheLoader positionId = " + 130L);
-			}
 			cacheWorkspace.get(PositionValuationHist.class).preload(key, h);
 		}
 	}

@@ -153,18 +153,6 @@ package object models {
   object ModelWrites {
 
     /*
-     * Dates
-     */
-
-    implicit object LocalDateWrites extends Writes[LocalDate] {
-      def writes(o: LocalDate) = JsString(o.toString)
-    }
-
-    implicit object LocalDateTimeWrites extends Writes[LocalDateTime] {
-      def writes(o: LocalDateTime) = JsString(o.toString)
-    }
-
-    /*
      * Charts
      */
     implicit object ChartTypeWrites extends Writes[ChartType.Type] {

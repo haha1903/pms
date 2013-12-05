@@ -172,12 +172,6 @@ class PortfolioLoader extends Logging {
           None
       }
       
-      if (assetOpt.isDefined) {
-        if (assetOpt.get.securityId == 451) {
-          println("hello")
-        }
-      }
-      
       assetOpt match {
         case Some(asset) if asset.holdingQuantity > 0 =>
           assetList.append(asset)

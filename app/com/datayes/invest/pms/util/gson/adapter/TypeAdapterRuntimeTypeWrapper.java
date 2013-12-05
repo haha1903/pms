@@ -35,11 +35,7 @@ final class TypeAdapterRuntimeTypeWrapper<T> extends TypeAdapter<T> {
     // Second preference: a type adapter registered for the declared type
     // Third preference: reflective type adapter for the runtime type (if it is a sub class of the declared type)
     // Fourth preference: reflective type adapter for the declared type
-      
-    if (delegate == null) {
-        System.out.println("");
-    }
-
+    
     TypeAdapter chosen = delegate;
     Type runtimeType = getRuntimeTypeIfMoreSpecific(type, value);
     if (runtimeType != type) {
@@ -56,9 +52,7 @@ final class TypeAdapterRuntimeTypeWrapper<T> extends TypeAdapter<T> {
         chosen = runtimeTypeAdapter;
       }
     }
-    if (chosen == null) {
-        System.out.println("");
-    }
+
     chosen.write(out, value);
   }
 

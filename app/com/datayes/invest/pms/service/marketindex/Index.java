@@ -6,19 +6,19 @@ public class Index {
 
 	private final String id;
 	
-	private final String desc;
+	private final String name;
 
-	public Index(String id, String desc) {
+	public Index(String id, String name) {
 		this.id = id;
-		this.desc = desc;
+		this.name = name;
 	}
 
 	public String getId() {
 		return id;
 	}
 
-	public String getDesc() {
-		return desc;
+	public String getName() {
+		return name;
 	}
 	
 	@Override
@@ -27,11 +27,11 @@ public class Index {
 	        return false;
 	    }
 	    Index other = (Index) obj;
-	    return ObjectUtils.equals(this.id, other.id) && ObjectUtils.equals(this.desc, other.desc);
+	    return ObjectUtils.equals(this.id, other.id) && ObjectUtils.equals(this.name, other.name);
 	}
 	
 	@Override
 	public String toString() {
-	    return "Index [id=" + id + ", desc=" + desc + "]";
+	    return "Index [id=" + id + ", name=" + name + "]";
 	}
 }

@@ -2,6 +2,7 @@ package controllers
 
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.persist.dsl.transaction
+import com.datayes.invest.pms.web.model.writes.IndexWrites
 import com.datayes.invest.pms.web.service.CommonService
 
 import javax.inject.Inject
@@ -20,6 +21,14 @@ class CommonController extends PmsController with Logging {
       commonService.getIndustries()
     }
     val arr = Json.toJson(inds)
+    PmsResult(arr)
+  }
+
+  def marketIndexes = PmsAction { implicit req =>
+    val indexes = transaction {
+      commonService.getMarketIndexes()
+    }
+    val arr = Json.toJson(indexes)
     PmsResult(arr)
   }
 }
