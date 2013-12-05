@@ -375,7 +375,7 @@ database/ddl/CreateAccountMaster.sql -text
 database/refresh_db.sh -text
 database/testing-script-taot/accountmaster_refresh.sh -text
 database/testing-script-taot/delete_positions.sh -text
-database/upgrade/1.0.3_to_1.1.0.sql -text
+database/upgrade/1.0_to_1.1.sql -text
 lib/jupiter.jar -text svneol=unset#unset
 lib/stpapi.jar -text svneol=unset#unset
 /pom.xml -text

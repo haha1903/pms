@@ -949,6 +949,17 @@ create table MARKET_DATA
    LAST_UPDATE		timestamp not null default current_timestamp on update current_timestamp
 )DEFAULT CHARACTER SET=utf8;
 
+/*
+ * VERSION
+ */
+create table VERSION
+(
+   NAME                 varchar(50) unique,
+   VERSION              varchar(50),
+   DESCRIPTION          varchar(100),
+   LAST_UPDATE          timestamp not null default current_timestamp on update current_timestamp
+) DEFAULT CHARACTER SET=utf8;
+
 alter table ACCOUNT_VALUATION_INIT add constraint fk_AccountId foreign key (ACCOUNT_ID)
       references ACCOUNT (ACCOUNT_ID) on delete restrict on update restrict;
 
