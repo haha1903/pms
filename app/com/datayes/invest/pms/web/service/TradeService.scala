@@ -49,6 +49,7 @@ class TradeService {
     for (((accountId, securityId, asOfDate, tradeSideCode), transList) <- grouped) {
       val account = accountMap(accountId)
       val security = securityDao.findById(securityId)
+      val assetClass = security.getPmsAssetClass()
       val securityName = if (security.getNameAbbr != null && security.getNameAbbr.trim.nonEmpty) {
         security.getNameAbbr
       } else {
@@ -73,6 +74,7 @@ class TradeService {
         accountNo = account.getAccountNo,
         securityName = securityName,
         securitySymbol = security.getTickerSymbol,
+        assetClass = assetClass,
         exchange = security.getExchangeCode,
         tradeSide = TradeSide.fromDbValue(tradeSideCode),
         amount = amount,

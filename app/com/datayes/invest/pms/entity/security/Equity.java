@@ -1,13 +1,9 @@
 package com.datayes.invest.pms.entity.security;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
-
-import org.hibernate.annotations.FilterJoinTable;
+import com.datayes.invest.pms.dbtype.AssetClass;
 import org.hibernate.annotations.Proxy;
-import org.joda.time.LocalDate;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name = "equity")
@@ -36,5 +32,10 @@ public class Equity extends Security {
 
     private void setTypeCode(Integer typeCode) {
         this.typeCode = typeCode;
+    }
+
+    @Transient
+    public AssetClass getPmsAssetClass() {
+        return AssetClass.EQUITY;
     }
 }

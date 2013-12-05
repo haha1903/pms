@@ -1,10 +1,8 @@
 package com.datayes.invest.pms.entity.security;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.datayes.invest.pms.dbtype.AssetClass;
 import org.hibernate.annotations.Proxy;
 import org.joda.time.LocalDateTime;
 
@@ -45,5 +43,10 @@ public class Future extends Security {
 
     public void setContractMultiplier(String contractMultiplier) {
         this.contractMultiplier = contractMultiplier;
+    }
+
+    @Transient
+    public AssetClass getPmsAssetClass() {
+        return AssetClass.INDEX_FUTURE;
     }
 }

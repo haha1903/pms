@@ -2,13 +2,11 @@ package com.datayes.invest.pms.web.assets
 
 import scala.math.BigDecimal.long2bigDecimal
 
-import org.joda.time.LocalDate
-
-import com.datayes.invest.pms.dbtype.LedgerType
+import com.datayes.invest.pms.dbtype.{AssetClass, LedgerType}
 import com.datayes.invest.pms.entity.account.CashPosition
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.util.BigDecimalConstants
-import com.datayes.invest.pms.web.assets.enums.AssetClassType
+import org.joda.time.LocalDate
 
 /*
  * TODO CashAssetLoader fill in fake or default values, this is only used for convenience...
@@ -27,7 +25,7 @@ class CashAssetLoader(position: CashPosition, asOfDate: LocalDate, tranObj: Tran
     val asset = new models.AssetCash(ledger.toString())
     
     asset.accountId = position.getAccountId()
-    asset.assetClass = AssetClassType.CASH
+    asset.assetClass = AssetClass.CASH
     asset.exchange = null
     asset.industry = null
     

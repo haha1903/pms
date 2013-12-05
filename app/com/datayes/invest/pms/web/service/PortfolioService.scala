@@ -1,27 +1,19 @@
 package com.datayes.invest.pms.web.service
 
 import scala.collection.JavaConversions.asScalaBuffer
-import org.joda.time.LocalDate
-import com.datayes.invest.pms.dao.account.AccountDao
-import com.datayes.invest.pms.dao.account.PositionValuationHistDao
-import com.datayes.invest.pms.entity.account.Account
-import com.datayes.invest.pms.entity.account.PositionValuationHist
-import com.datayes.invest.pms.entity.account.SecurityPosition
+
+import com.datayes.invest.pms.dao.account.{AccountDao, PositionValuationHistDao}
+import com.datayes.invest.pms.dbtype.AssetClass
+import com.datayes.invest.pms.entity.account.{Account, PositionValuationHist, SecurityPosition}
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.persist.dsl.transaction
 import com.datayes.invest.pms.util.DefaultValues
-import com.datayes.invest.pms.web.assets.PortfolioLoader
-import com.datayes.invest.pms.web.assets.TreeMaker
+import com.datayes.invest.pms.web.assets.{PortfolioLoader, TreeMaker}
 import com.datayes.invest.pms.web.assets.enums.AssetNodeType
 import com.datayes.invest.pms.web.assets.models.AssetTree
-import com.datayes.invest.pms.web.model.models.Chart
-import com.datayes.invest.pms.web.model.models.ChartDataPoint
-import com.datayes.invest.pms.web.model.models.ChartType
-import com.datayes.invest.pms.web.model.models.FilterParam
-import com.datayes.invest.pms.web.model.models.PortfolioView
+import com.datayes.invest.pms.web.model.models.{Chart, ChartDataPoint, ChartType, FilterParam, PortfolioView}
 import javax.inject.Inject
-import com.datayes.invest.pms.web.assets.enums.AssetClassType
-
+import org.joda.time.LocalDate
 
 class PortfolioService extends Logging {
 
@@ -41,7 +33,7 @@ class PortfolioService extends Logging {
   def getAssetTree(asOfDate: LocalDate, groupings: List[AssetNodeType], filterParam: FilterParam, benchmarkIndexOpt: Option[String]): AssetTree = transaction {
     val accounts = accountDao.findEffectiveAccounts(asOfDate)
     val allAssets = portfolioLoader.load(accounts, asOfDate, benchmarkIndexOpt)
-    val allValidAssets = allAssets.filter { a => a.assetClass != AssetClassType.CASH }
+    val allValidAssets = allAssets.filter { a => a.assetClass != AssetClass.CASH }
     val filtered = FilterHelper.filterAssets(allValidAssets, filterParam)
     val accountIdNameMap = createAccountIdNameMap(accounts.toList)
     val treeMaker = new TreeMaker(groupings, accounts)

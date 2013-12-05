@@ -1,35 +1,19 @@
 package controllers
 
-import org.joda.time.LocalDate
-
+import com.datayes.invest.pms.dbtype.AssetClass
 import com.datayes.invest.pms.logging.Logging
-import com.datayes.invest.pms.userpref.GroupingItem
-import com.datayes.invest.pms.userpref.UserPref
+import com.datayes.invest.pms.userpref.{GroupingItem, UserPref}
 import com.datayes.invest.pms.util.gson.PmsGsonBuilder
-import com.datayes.invest.pms.web.assets.enums.AssetClassType
 import com.datayes.invest.pms.web.assets.enums.AssetNodeType
-import com.datayes.invest.pms.web.model.models.FilterParam
+import com.datayes.invest.pms.web.model.models.{FilterParam, PortfolioView, RangeFilterType}
 import com.datayes.invest.pms.web.model.models.ModelWrites.ChartWrites
-import com.datayes.invest.pms.web.model.models.PortfolioView
-import com.datayes.invest.pms.web.model.models.RangeFilterType
 import com.datayes.invest.pms.web.service.PortfolioService
-import com.google.gson.Gson
-import com.google.gson.TypeAdapter
-import com.google.gson.TypeAdapterFactory
-import com.google.gson.reflect.TypeToken
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonWriter
-
 import javax.inject.Inject
-import play.api.i18n.Messages
-import play.api.libs.json.JsValue
-import play.api.libs.json.Json
+import org.joda.time.LocalDate
+import play.api.libs.json.{JsValue, Json}
 import play.api.libs.json.Json.toJsFieldJsValueWrapper
-import play.api.mvc.AnyContent
-import play.api.mvc.Request
-import play.pms.PmsAction
-import play.pms.PmsController
-import play.pms.PmsResult
+import play.api.mvc.{AnyContent, Request}
+import play.pms.{PmsAction, PmsController, PmsResult}
 
 class PortfolioController extends PmsController with Logging {
   
@@ -70,7 +54,7 @@ class PortfolioController extends PmsController with Logging {
   
   private def paramFilterParam()(implicit req: Request[AnyContent]): FilterParam = {
     val assetClassOpt = try {
-      req.getQueryString("filter.assetClass").map(AssetClassType.valueOf(_))
+      req.getQueryString("filter.assetClass").map(AssetClass.valueOf(_))
     } catch {
       case e: Throwable => None
     }
@@ -129,27 +113,3 @@ class PortfolioController extends PmsController with Logging {
 
   
 }
-
-/*
-class AssetClassTypeTypeAdapterFactory extends TypeAdapterFactory {
-  
-  override def create[T](gson: Gson, typeToken: TypeToken[T]): TypeAdapter[T] = {
-    val rawType = typeToken.getRawType()
-    if (! classOf[AssetClassType].equals(rawType)) {
-      return null
-    }
-    return (new Adapter()).asInstanceOf[TypeAdapter[T]]
-  }
-  
-  private class Adapter extends TypeAdapter[AssetClassType] {
-    override def write(out: JsonWriter, value: AssetClassType): Unit = {
-      if (value == null) {
-        out.nullValue()
-      } else {
-        val s = Messages("AssetClassType." + value.toString)
-        out.value(s)
-      }
-    }
-    override def read(in: JsonReader): AssetClassType = throw new UnsupportedOperationException()
-  }
-}*/

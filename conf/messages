@@ -1,6 +1,16 @@
 AssetNodeType.ROOT=所有持仓
 
-AssetClassType.EQUITY=股票
-AssetClassType.CASH=现金
-AssetClassType.INDEX_FUTURE=股指期货
-AssetClassType.BOND=债券
+AssetClass.EQUITY=股票
+AssetClass.CASH=现金
+AssetClass.INDEX_FUTURE=股指期货
+AssetClass.BOND=债券
+
+TradeSide.EQUITY.BUY=买入
+TradeSide.EQUITY.SELL=卖出
+TradeSide.EQUITY.SHORT=--
+TradeSide.EQUITY.COVER=--
+
+TradeSide.INDEX_FUTURE.BUY=多头开仓
+TradeSide.INDEX_FUTURE.SELL=多头平仓
+TradeSide.INDEX_FUTURE.SHORT=空头开仓
+TradeSide.INDEX_FUTURE.COVER=空头平仓

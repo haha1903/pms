@@ -1,12 +1,10 @@
 package com.datayes.invest.pms.web.model
 
-import org.joda.time.LocalDate
-import org.joda.time.LocalDateTime
-import com.datayes.invest.pms.dbtype.AccountTypeType
+import com.datayes.invest.pms.dbtype.{AccountTypeType, AssetClass, TradeSide}
+import com.datayes.invest.pms.util.I18nUtil
 import com.datayes.invest.pms.util.BigDecimalConstants.ZERO
-import com.datayes.invest.pms.web.assets.enums.AssetClassType
+import org.joda.time.{LocalDate, LocalDateTime}
 import play.api.libs.json._
-import com.datayes.invest.pms.dbtype.TradeSide
 
 package object models {
 
@@ -33,7 +31,7 @@ package object models {
    */
 
   case class FilterParam(
-    assetClass: Option[AssetClassType],
+    assetClass: Option[AssetClass],
     exchange: Option[String],
     industry: Option[String],
     rangeFilterType: Option[RangeFilterType.Type],
@@ -50,7 +48,7 @@ package object models {
    */
 
   case class AssetClassWeight(
-    assetClass: AssetClassType,
+    assetClass: AssetClass,
     var marketValue: BigDecimal = ZERO,
     var weight: BigDecimal = ZERO,
     var floatPnL: BigDecimal = ZERO,
@@ -139,6 +137,7 @@ package object models {
     accountNo: String,
     securityName: String,
     securitySymbol: String,
+    assetClass: AssetClass,
     exchange: String,
     tradeSide: TradeSide,
     amount: BigDecimal,
@@ -303,8 +302,9 @@ package object models {
         "accountNo" -> o.accountNo,
         "securityName" -> o.securityName,
         "securitySymbol" -> o.securitySymbol,
+        "assetClass" -> I18nUtil.translate_AssetClass(o.assetClass),
         "exchange" -> o.exchange,
-        "tradeSide" -> o.tradeSide.toString(),
+        "tradeSide" -> I18nUtil.translate_TradeSide(o.assetClass, o.tradeSide),
         "amount" -> o.amount,
         "orderPrice" -> o.orderPrice,
         "executionPrice" -> o.executionPrice,

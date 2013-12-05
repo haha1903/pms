@@ -4,13 +4,13 @@ import scala.math.BigDecimal.int2bigDecimal
 
 import org.joda.time.LocalDate
 
-import com.datayes.invest.pms.dbtype.LedgerType
+import com.datayes.invest.pms.dbtype.{AssetClass, LedgerType}
 import com.datayes.invest.pms.entity.account.SecurityPosition
 import com.datayes.invest.pms.entity.security.Future
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.util.DefaultValues
 import com.datayes.invest.pms.util.FutureMultiplierHelper
-import com.datayes.invest.pms.web.assets.enums.AssetClassType
+
 import com.datayes.invest.pms.web.assets.enums.LongShort
 
 class IndexFutureAssetLoader(position: SecurityPosition, asOfDate: LocalDate, tranObj: TransferObject)
@@ -65,7 +65,7 @@ class IndexFutureAssetLoader(position: SecurityPosition, asOfDate: LocalDate, tr
     }
     
     // other fields
-    futureAsset.assetClass = AssetClassType.INDEX_FUTURE
+    futureAsset.assetClass = AssetClass.INDEX_FUTURE
     futureAsset.exchange = security.getExchangeCode()
     futureAsset.industry = DefaultValues.UNKNOWN_INDUSTRY
   }

@@ -3,15 +3,15 @@ package com.datayes.invest.pms.web.assets
 import scala.collection.mutable
 
 import com.datayes.invest.pms.util.BigDecimalConstants
-import com.datayes.invest.pms.web.assets.enums.AssetClassType
 import com.datayes.invest.pms.web.assets.enums.AssetNodeType
 import com.datayes.invest.pms.web.assets.enums.LongShort
+import com.datayes.invest.pms.dbtype.AssetClass
 
 package object models {
 
   trait Filterable {
     var accountId: Long = -1
-    var assetClass: AssetClassType = null
+    var assetClass: AssetClass = null
     var exchange: String = null
     var industry: String = null
   }

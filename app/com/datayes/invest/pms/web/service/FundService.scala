@@ -1,37 +1,23 @@
 package com.datayes.invest.pms.web.service
 
-import scala.collection.JavaConversions.asScalaBuffer
 import scala.collection.mutable
+import scala.collection.JavaConversions.asScalaBuffer
 import scala.math.BigDecimal.int2bigDecimal
-import scala.util.control.Breaks.break
-import scala.util.control.Breaks.breakable
-import org.joda.time.LocalDate
-import com.datayes.invest.pms.dao.account.AccountDao
-import com.datayes.invest.pms.dao.account.AccountValuationHistDao
-import com.datayes.invest.pms.dao.security.EquityDao
-import com.datayes.invest.pms.dao.security.PriceVolumeDao
-import com.datayes.invest.pms.dao.security.SecurityDao
-import com.datayes.invest.pms.dbtype.AccountValuationType
+import scala.util.control.Breaks.{break, breakable}
+
+import com.datayes.invest.pms.dao.account.{AccountDao, AccountValuationHistDao}
+import com.datayes.invest.pms.dao.security.{EquityDao, PriceVolumeDao, SecurityDao}
+import com.datayes.invest.pms.dbtype.{AccountValuationType, AssetClass}
 import com.datayes.invest.pms.entity.account.AccountValuationHist
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.persist.dsl.transaction
 import com.datayes.invest.pms.service.marketdata.MarketDataService
-import com.datayes.invest.pms.util.BigDecimalConstants
-import com.datayes.invest.pms.util.DefaultValues
+import com.datayes.invest.pms.util.{BigDecimalConstants, DefaultValues}
 import com.datayes.invest.pms.web.assets.PortfolioLoader
-import com.datayes.invest.pms.web.assets.enums.AssetClassType
 import com.datayes.invest.pms.web.assets.models.AssetCommon
-import com.datayes.invest.pms.web.model.models.AccountOverview
-import com.datayes.invest.pms.web.model.models.AssetClassWeight
-import com.datayes.invest.pms.web.model.models.Holding
-import com.datayes.invest.pms.web.model.models.IndustryWeightLeaf
-import com.datayes.invest.pms.web.model.models.IndustryWeightTree
-import com.datayes.invest.pms.web.model.models.NetValueTrendItem
-import com.datayes.invest.pms.web.model.models.Performance
-import com.datayes.invest.pms.web.model.models.TopHoldingStock
+import com.datayes.invest.pms.web.model.models.{AccountOverview, AssetClassWeight, Holding, IndustryWeightLeaf, IndustryWeightTree, NetValueTrendItem, Performance, TopHoldingStock}
 import javax.inject.Inject
-import play.pms.ClientException
-import com.datayes.invest.pms.entity.account.Account
+import org.joda.time.LocalDate
 
 class FundService extends Logging {
   
@@ -175,7 +161,7 @@ class FundService extends Logging {
     }
     
     val filledList = mutable.ListBuffer.empty[AssetClassWeight]
-    for (ac <- AssetClassType.values()) {
+    for (ac <- AssetClass.values()) {
       val res = assetClassWeights.find(_.assetClass == ac).getOrElse(AssetClassWeight(assetClass = ac))
       filledList.append(res)
     }
@@ -187,7 +173,7 @@ class FundService extends Logging {
   def getTopHoldingStock(accountId: Long, num: Int, asOfDate: LocalDate): TopHoldingStock = transaction {
     val account = helper.loadAccount(accountId, asOfDate)
     val assets = portfolioLoader.load(account, asOfDate, None)
-    val equityAssets = assets.filter { a => a.assetClass == AssetClassType.EQUITY }
+    val equityAssets = assets.filter { a => a.assetClass == AssetClass.EQUITY }
     val sorted = equityAssets.sortBy { a => a.marketValue * -1 }
     val topEquities = sorted.take(num)
     val topHoldings = topEquities.map { a => convertToHolding(a) }

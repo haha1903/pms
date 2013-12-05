@@ -1,6 +1,8 @@
 package com.datayes.invest.pms.entity.security;
 
 
+import com.datayes.invest.pms.dbtype.AssetClass;
+
 /*
 TODO This class is not used yet
 @Entity
@@ -32,4 +34,9 @@ public class Repo extends Security {
 	public void setMaturity(Integer maturity) {
 		this.maturity = maturity;
 	}
+
+    @Override
+    public AssetClass getPmsAssetClass() {
+        return AssetClass.REPO;
+    }
 }

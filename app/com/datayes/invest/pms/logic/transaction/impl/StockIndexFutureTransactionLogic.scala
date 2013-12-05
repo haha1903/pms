@@ -98,7 +98,7 @@ class StockIndexFutureTransactionLogic extends TransactionLogicBase with Logging
   private def getFutureCostBase(securityPosition: SecurityPosition, accountId: Long, asOfDate: LocalDate): BigDecimal = {
     var carryingValue: BigDecimal = 0
     val security = securityDao.findById(securityPosition.getSecurityId)
-    if (security.getAssetClassId == AssetClass.FUTURE.getDbValue) {
+    if (security.getAssetClassId == AssetClass.INDEX_FUTURE.getDbValue) {
       val carryingValueHist = findCarryingValueHist(securityPosition.getId, DefaultValues.CARRYING_VALUE_TYPE,
         accountId, asOfDate)
       carryingValue = carryingValueHist.getValueAmount

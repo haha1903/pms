@@ -3,7 +3,7 @@ package com.datayes.invest.pms.dbtype;
 public enum AssetClass implements DbValue<Integer> {
 
     FUND(1),
-    FUTURE(2),
+    INDEX_FUTURE(2),
     EQUITY(3),
     BOND(4),
     CASH(5),

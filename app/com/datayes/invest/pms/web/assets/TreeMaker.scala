@@ -2,13 +2,9 @@ package com.datayes.invest.pms.web.assets
 
 import com.datayes.invest.pms.entity.account.Account
 import com.datayes.invest.pms.logging.Logging
+import com.datayes.invest.pms.util.I18nUtil
 import com.datayes.invest.pms.web.assets.enums.AssetNodeType
-import com.datayes.invest.pms.web.assets.models.AssetCommon
-import com.datayes.invest.pms.web.assets.models.AssetNode
-import com.datayes.invest.pms.web.assets.models.AssetTree
-
-import play.api.i18n.Messages
-
+import com.datayes.invest.pms.web.assets.models.{AssetCommon, AssetNode, AssetTree}
 
 class TreeMaker(groupings: List[AssetNodeType], accounts: Seq[Account]) extends Logging {
   
@@ -17,7 +13,7 @@ class TreeMaker(groupings: List[AssetNodeType], accounts: Seq[Account]) extends 
   def create(assets: Seq[AssetCommon]): AssetTree = {
     val validGroupings = validateGroupings(groupings)
     val trees = makeTreeRecursivly(assets, validGroupings)
-    val root = new AssetTree(AssetNodeType.ROOT, Messages("AssetNodeType.ROOT"))
+    val root = new AssetTree(AssetNodeType.ROOT, I18nUtil.translate_AssetNodeType_ROOT())
     root.children = trees
     
     rollup(root)
@@ -69,9 +65,10 @@ class TreeMaker(groupings: List[AssetNodeType], accounts: Seq[Account]) extends 
   }
 
   private def groupByAssetClass(assets: Seq[AssetCommon]): List[(IdName, Seq[AssetCommon])] = {
-    val list = assets.groupBy { a => a.assetClass.toString }.toList
-    list.map { case (name, seq) =>
-      (IdName(name, Messages("AssetClassType." + name)), seq)
+    val list = assets.groupBy { a => a.assetClass }.toList
+    list.map { case (ac, seq) =>
+      val name = I18nUtil.translate_AssetClass(ac)
+      (IdName(ac.toString, name), seq)
     }
   }
 

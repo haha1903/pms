@@ -7,7 +7,7 @@ import org.joda.time.LocalDate
 import com.datayes.invest.pms.entity.account.SecurityPosition
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.util.DefaultValues
-import com.datayes.invest.pms.web.assets.enums.AssetClassType
+import com.datayes.invest.pms.dbtype.AssetClass
 
 
 class EquityAssetLoader(position: SecurityPosition, asOfDate: LocalDate, tranObj: TransferObject)
@@ -65,7 +65,7 @@ class EquityAssetLoader(position: SecurityPosition, asOfDate: LocalDate, tranObj
     }
     
     // other fields
-    equityAsset.assetClass = AssetClassType.EQUITY
+    equityAsset.assetClass = AssetClass.EQUITY
     equityAsset.exchange = security.getExchangeCode()
     equityAsset.industry = tranObj.industryService.getIndustryBySecurityId(position.getSecurityId())
   }

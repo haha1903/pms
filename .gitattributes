@@ -282,6 +282,7 @@ app/com/datayes/invest/pms/util/BeanUtil.java -text
 app/com/datayes/invest/pms/util/BigDecimalConstants.scala -text
 app/com/datayes/invest/pms/util/DefaultValues.scala -text
 app/com/datayes/invest/pms/util/FutureMultiplierHelper.java -text
+app/com/datayes/invest/pms/util/I18nUtil.scala -text
 app/com/datayes/invest/pms/util/gson/GsonExclude.java -text
 app/com/datayes/invest/pms/util/gson/GsonExcludeStrategy.java -text
 app/com/datayes/invest/pms/util/gson/PmsGsonBuilder.java -text
@@ -303,7 +304,6 @@ app/com/datayes/invest/pms/web/assets/IndexFutureAssetLoader.scala -text
 app/com/datayes/invest/pms/web/assets/PortfolioLoader.scala -text
 app/com/datayes/invest/pms/web/assets/TransferObject.scala -text
 app/com/datayes/invest/pms/web/assets/TreeMaker.scala -text
-app/com/datayes/invest/pms/web/assets/enums/AssetClassType.java -text
 app/com/datayes/invest/pms/web/assets/enums/AssetNodeType.java -text
 app/com/datayes/invest/pms/web/assets/enums/LongShort.java -text
 app/com/datayes/invest/pms/web/assets/models.scala -text
@@ -355,6 +355,7 @@ app/test/gsonscala/TestPmsGson.scala -text
 app/test/gsonscala/TypeAdapterRuntimeTypeWrapper.java -text
 app/test/gsonscala/models.scala -text
 app/test/importer/AddTradePrice.scala -text
+app/test/jupiter/OrderInputExample.java -text
 app/views/debug/mds.scala.html -text
 app/views/index.scala.html -text
 app/views/layout.scala.html -text
@@ -376,6 +377,7 @@ database/testing-script-taot/accountmaster_refresh.sh -text
 database/testing-script-taot/delete_positions.sh -text
 database/upgrade/1.0.3_to_1.1.0.sql -text
 lib/jupiter.jar -text svneol=unset#unset
+lib/stpapi.jar -text svneol=unset#unset
 /pom.xml -text
 project/Build.scala -text
 project/build.properties -text

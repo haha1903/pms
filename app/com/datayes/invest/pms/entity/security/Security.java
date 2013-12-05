@@ -1,12 +1,8 @@
 package com.datayes.invest.pms.entity.security;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.*;
 
+import com.datayes.invest.pms.dbtype.AssetClass;
 import org.hibernate.annotations.Proxy;
 
 import com.datayes.invest.pms.entity.EntityBase;
@@ -16,7 +12,7 @@ import com.datayes.invest.pms.entity.EntityBase;
 @Inheritance(strategy=InheritanceType.JOINED)
 @Proxy(lazy = false)
 @SuppressWarnings("unused")
-public class Security extends EntityBase {
+public abstract class Security extends EntityBase {
     
     private Long id;
 
@@ -96,5 +92,6 @@ public class Security extends EntityBase {
 		this.exchangeCode = exchangeCode;
 	}
     
-    
+    @Transient
+    public abstract AssetClass getPmsAssetClass();
 }

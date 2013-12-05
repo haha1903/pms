@@ -2,7 +2,7 @@ package com.datayes.invest.pms.system
 
 import com.datayes.invest.pms.dao.account.SystemIdMappingDao
 import com.datayes.invest.pms.logging.Logging
-import com.weston.jupiter.generated.Execution
+import com.weston.jupiter.generated.{TVP, Execution}
 import com.weston.jupiter.common.MarsPackage
 import org.apache.activemq.ActiveMQConnection
 import org.apache.activemq.ActiveMQConnectionFactory
@@ -59,7 +59,8 @@ class TransactionThread extends Runnable with Logging {
           var marsMsg = pkg.pop
           while (marsMsg != null) {
             val instance = marsMsg.getClassInstanceTag()
-            if (instance.toString == "Execution") {
+//            logger.info("marsMsg.getClassInstanceTag(): {}", instance.toString)  // TODO remove this
+            if (TVP.Execution.equals(instance)) {
               val execution = new Execution(marsMsg.getBody)
               logger.info("Execution: {} is in process", execution)
               transactionProcess.process(execution)
