@@ -159,10 +159,13 @@ package object models {
     securitySymbol: String,
     assetClass: AssetClass,
     exchange: String,
+    orderId: Option[Long],
     tradeSide: TradeSide,
     amount: BigDecimal,
     orderPrice: BigDecimal,
     executionPrice: BigDecimal,
+    executionAmount: BigDecimal,
+    executionCapital: BigDecimal,
     executionDate: LocalDate
   )
 
@@ -323,19 +326,25 @@ package object models {
     }
     
     implicit object TradeWrites extends Writes[Trade] {
-      def writes(o: Trade) = Json.obj(
-        "accountId" -> o.accountId,
-        "accountNo" -> o.accountNo,
-        "securityName" -> o.securityName,
-        "securitySymbol" -> o.securitySymbol,
-        "assetClass" -> I18nUtil.translate_AssetClass(o.assetClass),
-        "exchange" -> o.exchange,
-        "tradeSide" -> I18nUtil.translate_TradeSide(o.assetClass, o.tradeSide),
-        "amount" -> o.amount,
-        "orderPrice" -> o.orderPrice,
-        "executionPrice" -> o.executionPrice,
-        "executionDate" -> o.executionDate
-      )
+      def writes(o: Trade) = {
+        val sOrderId = o.orderId.map(_.toString).getOrElse("")
+        Json.obj(
+          "accountId" -> o.accountId,
+          "accountNo" -> o.accountNo,
+          "securityName" -> o.securityName,
+          "securitySymbol" -> o.securitySymbol,
+          "assetClass" -> I18nUtil.translate_AssetClass(o.assetClass),
+          "exchange" -> o.exchange,
+          "orderId" -> sOrderId,
+          "tradeSide" -> I18nUtil.translate_TradeSide(o.assetClass, o.tradeSide),
+          "amount" -> o.amount,
+          "orderPrice" -> o.orderPrice,
+          "executionPrice" -> o.executionPrice,
+          "executionAmount" -> o.executionAmount,
+          "executionCapital" -> o.executionCapital,
+          "executionDate" -> o.executionDate
+        )
+      }
     }
 
     implicit object OrderWrites extends Writes[Order] {

@@ -78,6 +78,7 @@ class TradeService {
         totalCapital / amount
       }
 
+      // TODO fix this
       val trd = Trade(
         accountId = account.getId,
         accountNo = account.getAccountNo,
@@ -85,10 +86,13 @@ class TradeService {
         securitySymbol = security.getTickerSymbol,
         assetClass = assetClass,
         exchange = security.getExchangeCode,
+        orderId = Some(0L),
         tradeSide = TradeSide.fromDbValue(tradeSideCode),
         amount = amount,
         orderPrice = BigDecimalConstants.ZERO,
         executionPrice = avgPrice,
+        executionAmount = amount,
+        executionCapital = amount * avgPrice,
         executionDate = asOfDate
       )
 
