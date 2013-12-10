@@ -403,6 +403,7 @@ database/testing-script-taot/accountmaster_refresh.sh -text
 database/testing-script-taot/delete_positions.sh -text
 database/upgrade/1.0_to_1.1.sql -text
 database/upgrade/1.1_to_1.2.sql -text
+database/upgrade/1.1_to_1.2_new.sql -text
 lib/jupiter.jar -text svneol=unset#unset
 lib/stpapi.jar -text svneol=unset#unset
 /pom.xml -text
