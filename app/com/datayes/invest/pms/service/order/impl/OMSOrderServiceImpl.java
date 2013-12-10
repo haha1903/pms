@@ -83,7 +83,7 @@ public class OMSOrderServiceImpl implements OrderService {
 
         jupiterOrder.externalClientID     = clientId;                                 // tenent client id
         jupiterOrder.externalAccountID    = String.valueOf(order.getAccountId());     // pms account id
-        jupiterOrder.externalSubaccountID = "";                                       // no subaccount right now
+        jupiterOrder.externalSubaccountID = "1";                                      // no subaccount right now
 
         jupiterOrder.emsSecurityID        = order.getSecurityId();
         jupiterOrder.side                 = getJupiterTradeSide(order.getTradeSide());
