@@ -92,3 +92,13 @@ logger {
     com.datayes.invest = DEBUG
     controllers = INFO
 }
+
+#
+# Visitor
+#
+visitor {
+    whitelist = [
+        #"10.20.102.*",
+        #"127.0.0.*"
+    ]
+}

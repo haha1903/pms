@@ -15,7 +15,7 @@ import com.datayes.invest.pms.persist.PersistService
 import com.datayes.invest.pms.system.SystemInjectors
 import com.datayes.invest.pms.system.SystemScheduler
 
-object Global extends WithFilters(new LoggingFilter) with Logging {
+object Global extends WithFilters(new LoggingFilter, new VisitingFilter) with Logging {
 
   private lazy val runningMode = {
     val sMode = Config.INSTANCE.getString("system.running.mode", RunningMode.NORMAL.toString())

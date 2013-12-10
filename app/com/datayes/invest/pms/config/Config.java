@@ -5,6 +5,8 @@ import org.joda.time.LocalTime;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
 
+import java.util.List;
+
 public class Config {
     
     public static final Config INSTANCE = new Config("application.pms");
@@ -75,6 +77,18 @@ public class Config {
             return getLocalTime(path);
         } catch (ConfigException.Missing e) {
             return defaultValue;
+        }
+    }
+
+    public List<String> getStringList(String path) {
+        return underlying.getStringList(path);
+    }
+
+    public List<String> getStringList(String path, List<String> defaultList) {
+        try {
+            return getStringList(path);
+        } catch (ConfigException.Missing e) {
+            return defaultList;
         }
     }
 }

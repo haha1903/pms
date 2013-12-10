@@ -12,12 +12,7 @@ import org.joda.time.LocalDateTime
 import com.datayes.invest.pms.entity.account.MarketData
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.service.marketdata.impl.MarketDataServiceImpl
-import com.datayes.invest.pms.util.gson.BigDecimalDeserializer
-import com.datayes.invest.pms.util.gson.BigDecimalSerializer
-import com.datayes.invest.pms.util.gson.LocalDateDeserializer
-import com.datayes.invest.pms.util.gson.LocalDateSerializer
-import com.datayes.invest.pms.util.gson.LocalDateTimeDeserializer
-import com.datayes.invest.pms.util.gson.LocalDateTimeSerializer
+import com.datayes.invest.pms.util.gson._
 import com.datayes.invest.pms.web.sso.AuthAction
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -30,8 +25,8 @@ class MDSMonitorController extends Controller with Logging {
   
   @Inject
   private var marketDataService: MarketDataServiceImpl = null
-  
-  private val gson = createGson()
+
+  private val gson = new PmsGsonBuilder().create()
 
   def monitor() = AuthAction { implicit req =>
     Ok(views.html.debug.mds())
@@ -61,19 +56,6 @@ class MDSMonitorController extends Controller with Logging {
     val missingIdMap = marketDataService.getCacheMissingSecurityId()
     val json = gson.toJson(missingIdMap)
     Ok(json)
-  }
-  
-  private def createGson(): Gson = {
-    // TODO this could be shared in the code base
-    val builder = new GsonBuilder
-    builder.registerTypeAdapter(classOf[LocalDate], new LocalDateSerializer)
-    builder.registerTypeAdapter(classOf[LocalDate], new LocalDateDeserializer)
-    builder.registerTypeAdapter(classOf[LocalDateTime], new LocalDateTimeSerializer)
-    builder.registerTypeAdapter(classOf[LocalDateTime], new LocalDateTimeDeserializer)
-    builder.registerTypeAdapter(classOf[BigDecimal], new BigDecimalSerializer)
-    builder.registerTypeAdapter(classOf[BigDecimal], new BigDecimalDeserializer)
-    val gson = builder.create()
-    gson
   }
 
 }

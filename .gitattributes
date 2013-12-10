@@ -231,6 +231,7 @@ app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateType.java -text
 app/com/datayes/invest/pms/persist/hibernate/usertype/LocalDateTypeDescriptor.java -text
 app/com/datayes/invest/pms/play/Global.scala -text
 app/com/datayes/invest/pms/play/LoggingFilter.scala -text
+app/com/datayes/invest/pms/play/VisitingFilter.scala -text
 app/com/datayes/invest/pms/service/ServiceModule.java -text
 app/com/datayes/invest/pms/service/calendar/CalendarService.java -text
 app/com/datayes/invest/pms/service/calendar/impl/CalendarServiceImpl.java -text
