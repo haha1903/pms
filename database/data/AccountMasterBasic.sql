@@ -88,4 +88,4 @@ INSERT INTO ACCOUNT_VALUATION_TYPE VALUES(16, "FutureShortValue", "空头期货�
 INSERT INTO ACCOUNT_VALUATION_TYPE VALUES(17, "RepoPrincipalAssetValue", "回购应收本金");
 INSERT INTO ACCOUNT_VALUATION_TYPE VALUES(18, "RepoPrincipalLiabilityValue", "回购应付本金");
 INSERT INTO ACCOUNT_VALUATION_TYPE VALUES(19, "RepoInterestAssetValue", "回购应收利息");
-INSERT INTO ACCOUNT_VALUATION_TYPE VALUES(20, "RepoInterestLiabilityValue", "回购应收利息");
+INSERT INTO ACCOUNT_VALUATION_TYPE VALUES(20, "RepoInterestLiabilityValue", "回购应付利息");
