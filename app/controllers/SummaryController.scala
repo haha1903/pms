@@ -12,11 +12,13 @@ import play.pms.PmsResult
 
 
 class SummaryController extends PmsController with Logging {
+
   @Inject
   private var summaryService: SummaryService = null
 
   def getSummary() = PmsAction { implicit req =>
     val asOfDate = paramAsOfDateOrToday
+
     val accountsSummary = summaryService.getSummary(asOfDate)
     val json = Json.toJson(accountsSummary)
     PmsResult(json)

@@ -138,6 +138,11 @@ class FundService extends Logging {
     standardFund.map(p => getFundPerformance(p, accountId, asOfDate)).toSeq
   }
 
+  private val ASSET_CLASSES_TO_DISPLAY = {
+    import AssetClass._
+    List(CASH, EQUITY, INDEX_FUTURE, BOND)
+  }
+
   // TODO refactor to not use AssetsLoader
   def getAssetProportion(accountId: Long, asOfDate: LocalDate): Seq[AssetClassWeight] = transaction {
     val account = helper.loadAccount(accountId, asOfDate)
@@ -161,7 +166,7 @@ class FundService extends Logging {
     }
     
     val filledList = mutable.ListBuffer.empty[AssetClassWeight]
-    for (ac <- AssetClass.values()) {
+    for (ac <- ASSET_CLASSES_TO_DISPLAY) {
       val res = assetClassWeights.find(_.assetClass == ac).getOrElse(AssetClassWeight(assetClass = ac))
       filledList.append(res)
     }

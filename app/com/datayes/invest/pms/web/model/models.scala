@@ -3,10 +3,28 @@ package com.datayes.invest.pms.web.model
 import com.datayes.invest.pms.dbtype.{AccountTypeType, AssetClass, TradeSide}
 import com.datayes.invest.pms.util.I18nUtil
 import com.datayes.invest.pms.util.BigDecimalConstants.ZERO
-import org.joda.time.{LocalDate, LocalDateTime}
+import org.joda.time.LocalDate
 import play.api.libs.json._
 
 package object models {
+
+  /*
+   * Common
+   */
+
+  implicit object AssetClassWrites extends Writes[AssetClass] {
+    def writes(o: AssetClass) = Json.obj(
+      "id" -> o.toString,
+      "label" -> I18nUtil.translate_AssetClass(o)
+    )
+  }
+
+  implicit object AccountTypeTypeWrites extends Writes[AccountTypeType] {
+    def writes(o: AccountTypeType) = Json.obj(
+      "id" -> o.toString,
+      "label" -> I18nUtil.translate_AccountTypeType(o)
+    )
+  }
 
   /*
    * Charts
@@ -180,7 +198,7 @@ package object models {
 
     implicit object AssetClassWeightWrites extends Writes[AssetClassWeight] {
       def writes(o: AssetClassWeight) = Json.obj(
-        "assetClass" -> o.assetClass.toString,
+        "assetClass" -> o.assetClass,
         "weight" -> o.weight,
         "marketValue" -> o.marketValue,
         "floatPnL" -> o.floatPnL,
@@ -259,10 +277,9 @@ package object models {
 
     implicit object AccountsSummaryItemWrites extends Writes[AccountsSummaryItem] {
       def writes(o: AccountsSummaryItem) = {
-        val typeName = if( null == o.category) "" else o.category.toString
         Json.obj(
           "count" -> o.count.toString,
-          "type" -> typeName,
+          "type" -> o.category,
           "ratio" -> o.ratio,
           "assetValue" -> o.assetValue,
           "netValue" -> o.netValue,

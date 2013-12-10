@@ -1,11 +1,13 @@
 package com.datayes.invest.pms.util
 
 import play.api.i18n.Messages
-import com.datayes.invest.pms.dbtype.{TradeSide, AssetClass}
+import com.datayes.invest.pms.dbtype.{AccountTypeType, TradeSide, AssetClass}
 import scala.reflect.runtime.{universe => ru}
 import com.datayes.invest.pms.web.assets.enums.AssetNodeType
 
 object I18nUtil {
+
+  def translate_AccountTypeType(accountTypeType: AccountTypeType): String = getMessage[AccountTypeType](accountTypeType)
 
   def translate_AssetNodeType_ROOT(): String = getMessage[AssetNodeType]("ROOT")
 

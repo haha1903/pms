@@ -12,7 +12,7 @@ import com.datayes.invest.pms.entity.EntityBase;
 @Inheritance(strategy=InheritanceType.JOINED)
 @Proxy(lazy = false)
 @SuppressWarnings("unused")
-public abstract class Security extends EntityBase {
+public class Security extends EntityBase {
     
     private Long id;
 
@@ -91,7 +91,13 @@ public abstract class Security extends EntityBase {
 	public void setExchangeCode(String exchangeCode) {
 		this.exchangeCode = exchangeCode;
 	}
-    
+
+    /*
+     * The method getPmsAssetClass() is intended be overriden by sub-classes
+     * It is used to denote the asset class of a security
+     */
     @Transient
-    public abstract AssetClass getPmsAssetClass();
+    public AssetClass getPmsAssetClass() {
+        return null;
+    }
 }

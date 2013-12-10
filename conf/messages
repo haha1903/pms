@@ -1,9 +1,16 @@
+AccountTypeType.EQUITY=权益
+AccountTypeType.FIXED_INCOME=固定收益
+AccountTypeType.ABSOLUTE_INCOME=绝对收益
+AccountTypeType.CASH_INCOME=现金收益
+
 AssetNodeType.ROOT=所有持仓
 
 AssetClass.EQUITY=股票
 AssetClass.CASH=现金
 AssetClass.INDEX_FUTURE=股指期货
 AssetClass.BOND=债券
+AssetClass.FUND=基金
+AssetClass.REPO=逆回购
 
 TradeSide.EQUITY.BUY=买入
 TradeSide.EQUITY.SELL=卖出
