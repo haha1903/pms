@@ -411,7 +411,7 @@ create table ORDERS
 (
    ORDER_ID             bigint not null comment "订单ID",
    SEQ_NO               bigint not null comment "订单序号, 用于update订单。同一个订单ID下，大的SEQ_NO表示新的记录",
-   IS_CURRENT           char(1) not null comment "是否是当前的记录，或是旧的记录"
+   IS_CURRENT           char(1) not null comment "是否是当前的记录，或是旧的记录",
    ORDER_BASKET_ID      bigint not null comment "ORDER_BASKET ID",
    ACCOUNT_ID           bigint not null comment "组合ID",
    SUB_ACCOUNT_ID       bigint comment "子组合ID，预留",
