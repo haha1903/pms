@@ -27,13 +27,30 @@ class VisitingFilter extends Filter with Logging with Results {
   }
 
   def checkVisitor(remoteAddress: String, whiteAddress: String): Boolean =  {
-    val visitorDotIndex = remoteAddress.lastIndexOf('.')
-    val whiteDotIndex = whiteAddress.lastIndexOf('.')
+    val remotes = remoteAddress.split(".")
+    val whites = whiteAddress.split(".")
 
-    val visitorDomain = remoteAddress.substring(0, visitorDotIndex )
-    val whiteDomain = whiteAddress.substring(0, whiteDotIndex)
+    var flag = true
+    try {
+      var i = 0
+      for ( s <- remotes ) {
+        if ( whites(i) != "*" ) {
+          if ( remotes(i) != whites(i) ) {
+            flag = false
+          }
+        }
+        i += 1
+      }
+    }
+    catch {
+      case e: ArrayIndexOutOfBoundsException => {
+        logger.error("The size of remote address {} doesn't match white list address {}", remoteAddress, whiteAddress)
+        flag = false
+      }
+      case _: Throwable => flag = false
+    }
 
-    visitorDomain == whiteDomain
+    flag
   }
 
 
