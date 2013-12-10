@@ -20,7 +20,7 @@ import com.datayes.invest.pms.dbtype.TransactionSource
 
 class TransactionProcess extends Logging {
   
-  private val OMS = "OMS"
+  private val OMS = "OrderManager"
   
   @Inject
   private var systemIdMappingDao: SystemIdMappingDao = null

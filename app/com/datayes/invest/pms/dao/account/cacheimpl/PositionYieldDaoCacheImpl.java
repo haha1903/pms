@@ -1,21 +1,19 @@
 package com.datayes.invest.pms.dao.account.cacheimpl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.joda.time.LocalDate;
-
-import com.datayes.invest.pms.dao.account.IdGenerator;
 import com.datayes.invest.pms.dao.account.PositionYieldDao;
+import com.datayes.invest.pms.dao.account.PositionYieldIdGenerator;
 import com.datayes.invest.pms.dao.account.cacheimpl.cache.Key;
 import com.datayes.invest.pms.entity.account.PositionYield;
+import org.joda.time.LocalDate;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PositionYieldDaoCacheImpl extends DaoCacheImpl<PositionYield, Long> implements PositionYieldDao {
     
     @Inject
-    private IdGenerator idGenerator;
+    private PositionYieldIdGenerator idGenerator;
 
     protected PositionYieldDaoCacheImpl() {
         super(PositionYield.class);
@@ -29,7 +27,7 @@ public class PositionYieldDaoCacheImpl extends DaoCacheImpl<PositionYield, Long>
     @Override
     public void save(PositionYield entity) {
         if (entity.getId() == null) {
-            Long id = idGenerator.getNextPositionYieldId();
+            Long id = idGenerator.getNextId();
             entity.setId(id);
         }
         update(entity);

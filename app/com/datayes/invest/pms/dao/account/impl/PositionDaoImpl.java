@@ -1,15 +1,15 @@
 package com.datayes.invest.pms.dao.account.impl;
 
-import javax.inject.Inject;
-
-import com.datayes.invest.pms.dao.account.IdGenerator;
 import com.datayes.invest.pms.dao.account.PositionDao;
+import com.datayes.invest.pms.dao.account.PositionIdGenerator;
 import com.datayes.invest.pms.entity.account.Position;
+
+import javax.inject.Inject;
 
 public class PositionDaoImpl extends AccountRelatedDaoImpl<Position, Long> implements PositionDao {
     
     @Inject
-    private IdGenerator idGenerator;
+    private PositionIdGenerator idGenerator;
 
     protected PositionDaoImpl() {
         super(Position.class);
@@ -20,7 +20,7 @@ public class PositionDaoImpl extends AccountRelatedDaoImpl<Position, Long> imple
 	    Long positionId = entity.getId();
 
         if (positionId == null) {
-            Long id = idGenerator.getNextPositionId();
+            Long id = idGenerator.getNextId();
             entity.setId(id);
         }
         

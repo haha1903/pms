@@ -1,22 +1,20 @@
 package com.datayes.invest.pms.dao.account.impl;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.persistence.TypedQuery;
-
+import com.datayes.invest.pms.dao.account.PositionIdGenerator;
+import com.datayes.invest.pms.dao.account.SecurityPositionDao;
+import com.datayes.invest.pms.entity.account.SecurityPosition;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 
-import com.datayes.invest.pms.dao.account.IdGenerator;
-import com.datayes.invest.pms.dao.account.SecurityPositionDao;
-import com.datayes.invest.pms.entity.account.SecurityPosition;
+import javax.inject.Inject;
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 public class SecurityPositionDaoImpl extends AccountRelatedDaoImpl<SecurityPosition, Long> implements
 		SecurityPositionDao {
     
     @Inject
-    private IdGenerator idGenerator;
+    private PositionIdGenerator idGenerator;
 
 	protected SecurityPositionDaoImpl() {
 		super(SecurityPosition.class);
@@ -52,7 +50,7 @@ public class SecurityPositionDaoImpl extends AccountRelatedDaoImpl<SecurityPosit
 	@Override
 	public void save(SecurityPosition entity) {
         if (entity.getId() == null) {
-            Long id = idGenerator.getNextPositionId();
+            Long id = idGenerator.getNextId();
             entity.setId(id);
         }
         

@@ -1,12 +1,10 @@
 package com.datayes.invest.pms.tools.importer
 
-import scala.collection.JavaConversions._
 import com.datayes.invest.pms.dao.security.SecurityDao
-import com.datayes.invest.pms.entity.security.Equity
 import com.datayes.invest.pms.entity.security.Security
 import com.datayes.invest.pms.logging.Logging
-import javax.inject.Inject
 import com.datayes.invest.pms.service.marketdata.MarketDataService
+import javax.inject.Inject
 
 abstract class SecurityRecordHandlerBase extends RecordHandler with Logging {
   
@@ -15,8 +13,18 @@ abstract class SecurityRecordHandlerBase extends RecordHandler with Logging {
 
   @Inject
   protected var securityDao: SecurityDao = null
-  
+
   protected def loadSecurity(symbol: String): Option[Security] = {
+    val resolver = new TickerResolver(securityDao)
+    val security = resolver.loadSecurity(symbol)
+    if (security == null) {
+      throw new RuntimeException("Import error. Cannot find security for symbol " + symbol)
+    } else {
+      Some(security)
+    }
+  }
+  
+  /*protected def loadSecurity(symbol: String): Option[Security] = {
     val fixedSymbol = fixSecuritySymbol(symbol)
     val list = securityDao.findByTickerSymbol(fixedSymbol)
     if (list == null || list.isEmpty) {
@@ -50,5 +58,5 @@ abstract class SecurityRecordHandlerBase extends RecordHandler with Logging {
       builder.append("0")
     }
     builder.toString + symbol
-  }
+  }*/
 }

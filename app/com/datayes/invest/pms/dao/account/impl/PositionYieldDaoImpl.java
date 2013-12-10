@@ -1,20 +1,18 @@
 package com.datayes.invest.pms.dao.account.impl;
 
-import com.datayes.invest.pms.dao.account.IdGenerator;
 import com.datayes.invest.pms.dao.account.PositionYieldDao;
+import com.datayes.invest.pms.dao.account.PositionYieldIdGenerator;
 import com.datayes.invest.pms.entity.account.PositionYield;
-
 import org.joda.time.LocalDate;
 
 import javax.inject.Inject;
 import javax.persistence.Query;
-
 import java.util.List;
 
 public class PositionYieldDaoImpl extends GenericAccountMasterDaoImpl<PositionYield, Long> implements PositionYieldDao{
     
     @Inject
-    private IdGenerator idGenerator;
+    private PositionYieldIdGenerator idGenerator;
     
     protected PositionYieldDaoImpl() {
         super(PositionYield.class);
@@ -25,7 +23,7 @@ public class PositionYieldDaoImpl extends GenericAccountMasterDaoImpl<PositionYi
         Long positionId = entity.getId();
 
         if (positionId == null) {
-            Long id = idGenerator.getNextPositionYieldId();
+            Long id = idGenerator.getNextId();
             entity.setId(id);
         }
         

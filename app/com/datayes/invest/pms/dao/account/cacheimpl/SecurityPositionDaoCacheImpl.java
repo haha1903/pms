@@ -1,14 +1,13 @@
 package com.datayes.invest.pms.dao.account.cacheimpl;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import com.datayes.invest.pms.dao.account.IdGenerator;
+import com.datayes.invest.pms.dao.account.PositionIdGenerator;
 import com.datayes.invest.pms.dao.account.SecurityPositionDao;
 import com.datayes.invest.pms.dao.account.cacheimpl.cache.Key;
 import com.datayes.invest.pms.entity.account.SecurityPosition;
+
+import javax.inject.Inject;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public class SecurityPositionDaoCacheImpl extends DaoCacheImpl<SecurityPosition, Long> implements SecurityPositionDao {
@@ -18,7 +17,7 @@ public class SecurityPositionDaoCacheImpl extends DaoCacheImpl<SecurityPosition,
     }
 
     @Inject
-    private IdGenerator idGenerator;
+    private PositionIdGenerator idGenerator;
 
 	@Override
 	public List<SecurityPosition> findByAccountId(Long accountId) {
@@ -49,7 +48,7 @@ public class SecurityPositionDaoCacheImpl extends DaoCacheImpl<SecurityPosition,
 	public void save(SecurityPosition entity) {
 		Long positionId = entity.getId();
 		if (positionId == null) {
-		    long id = idGenerator.getNextPositionId();
+		    long id = idGenerator.getNextId();
 		    entity.setId(id);
 		}
 		getCache().put(key(entity), entity);

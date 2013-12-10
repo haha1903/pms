@@ -98,6 +98,6 @@ public class Security extends EntityBase {
      */
     @Transient
     public AssetClass getPmsAssetClass() {
-        return null;
+        throw new UnsupportedOperationException("Please override this method in sub-classes");
     }
 }

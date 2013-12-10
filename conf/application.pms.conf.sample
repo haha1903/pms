@@ -19,6 +19,7 @@ hibernate.show_sql = false
 # Host information
 #
 pms {
+    client.id = dyStgClient01
     url = "http://localhost:9000"
     f2e.host = "f2e01-dev.datayes.com"
 }
@@ -74,7 +75,6 @@ market {
 #
 proxy {
     attribution {
-        client.id = 1
         odbc.name = "JYDB2"
         host = "http://invest02-dev.datayes.com:8080"
         # http request timeout, in seconds

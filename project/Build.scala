@@ -16,11 +16,13 @@ object ApplicationBuild extends Build {
   val appDependencies = Seq(
     "com.dyuproject.protostuff" % "protostuff-core" % protostuffVersion,
     "com.dyuproject.protostuff" % "protostuff-runtime" % protostuffVersion,
+    //"com.datayes" % "trading" % "1.2dev-SNAPSHOT" classifier "stp-api-jar",
     "com.datayes.paas.sso" % "datayes-sso" % "1.1.1" withSources,
     "com.google.code.gson" % "gson" % "2.2.4",
     "com.google.inject" % "guice" % "3.0",
     "com.rabbitmq" % "amqp-client" % "3.1.4",
     "commons-codec" % "commons-codec" % "1.8",
+    "commons-io" % "commons-io" % "2.4",
     "joda-time" % "joda-time" % "2.2",
     "mysql" % "mysql-connector-java" % "5.1.25",
     "org.apache.activemq" % "activemq-client" % "5.8.0",

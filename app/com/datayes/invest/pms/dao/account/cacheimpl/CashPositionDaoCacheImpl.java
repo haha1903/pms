@@ -1,20 +1,19 @@
 package com.datayes.invest.pms.dao.account.cacheimpl;
 
+import com.datayes.invest.pms.dao.account.CashPositionDao;
+import com.datayes.invest.pms.dao.account.PositionIdGenerator;
+import com.datayes.invest.pms.dao.account.cacheimpl.cache.Key;
+import com.datayes.invest.pms.entity.account.CashPosition;
+
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
-import com.datayes.invest.pms.dao.account.CashPositionDao;
-import com.datayes.invest.pms.dao.account.IdGenerator;
-import com.datayes.invest.pms.dao.account.cacheimpl.cache.Key;
-import com.datayes.invest.pms.entity.account.CashPosition;
-
 public class CashPositionDaoCacheImpl extends DaoCacheImpl<CashPosition, Long> implements CashPositionDao {
     
     @Inject
-    private IdGenerator idGenerator;
+    private PositionIdGenerator positionIdGenerator;
 
 	protected CashPositionDaoCacheImpl() {
         super(CashPosition.class);
@@ -43,7 +42,7 @@ public class CashPositionDaoCacheImpl extends DaoCacheImpl<CashPosition, Long> i
 	public void save(CashPosition entity) {
 	    Long positionId = entity.getId();
         if (positionId == null) {
-            long id = idGenerator.getNextPositionId();
+            long id = positionIdGenerator.getNextId();
             entity.setId(id);
         }
         Key k = key(entity);

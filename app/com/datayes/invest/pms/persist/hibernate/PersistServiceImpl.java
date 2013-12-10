@@ -51,10 +51,9 @@ public class PersistServiceImpl implements PersistService {
     }
     
     static void removeTransaction() {
-        if (transactionThreadLocal.get() == null) {
-            throw new PersistException("No transaction exists in current thread. Cannot not remove transaction.");
+        if (transactionThreadLocal.get() != null) {
+            transactionThreadLocal.remove();
         }
-        transactionThreadLocal.remove();
     }
     
     static EntityManagerFactory getEntityManagerFactory(PersistUnit unit) {

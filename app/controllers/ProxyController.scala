@@ -18,7 +18,7 @@ class ProxyController extends PmsController with Logging {
 
   val uploadPath = Config.INSTANCE.getString("proxy.upload.path")
 
-  val clientId = Config.INSTANCE.getString("proxy.attribution.client.id")
+  val clientId = Config.INSTANCE.getString("pms.client.id")
 
   val odbcName = Config.INSTANCE.getString("proxy.attribution.odbc.name")
       

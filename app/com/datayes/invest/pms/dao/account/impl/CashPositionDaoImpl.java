@@ -1,18 +1,17 @@
 package com.datayes.invest.pms.dao.account.impl;
 
-import java.util.List;
+import com.datayes.invest.pms.dao.account.CashPositionDao;
+import com.datayes.invest.pms.dao.account.PositionIdGenerator;
+import com.datayes.invest.pms.entity.account.CashPosition;
 
 import javax.inject.Inject;
 import javax.persistence.TypedQuery;
-
-import com.datayes.invest.pms.dao.account.CashPositionDao;
-import com.datayes.invest.pms.dao.account.IdGenerator;
-import com.datayes.invest.pms.entity.account.CashPosition;
+import java.util.List;
 
 public class CashPositionDaoImpl extends AccountRelatedDaoImpl<CashPosition, Long> implements CashPositionDao {
     
     @Inject
-    private IdGenerator idGenerator;
+    private PositionIdGenerator idGenerator;
 
 	protected CashPositionDaoImpl() {
 		super(CashPosition.class);
@@ -31,7 +30,7 @@ public class CashPositionDaoImpl extends AccountRelatedDaoImpl<CashPosition, Lon
 	@Override
 	public void save(CashPosition entity) {
         if (entity.getId() == null) {
-            Long id = idGenerator.getNextPositionId();
+            Long id = idGenerator.getNextId();
             entity.setId(id);
         }
         

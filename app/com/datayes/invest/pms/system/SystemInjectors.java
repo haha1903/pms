@@ -5,6 +5,7 @@ import com.datayes.invest.pms.dao.AccountExtraDaoCacheModule;
 import com.datayes.invest.pms.dao.AccountExtraDaoModule;
 import com.datayes.invest.pms.dao.IdGeneratorModule;
 import com.datayes.invest.pms.dao.SecurityDaoModule;
+import com.datayes.invest.pms.logic.LogicModule;
 import com.datayes.invest.pms.persist.PersistModule;
 import com.datayes.invest.pms.persist.PersistService;
 import com.datayes.invest.pms.service.ServiceModule;
@@ -24,6 +25,7 @@ public class SystemInjectors {
         Injector baseInjector = Guice.createInjector(
             new AccountBaseDaoModule(),
             new IdGeneratorModule(),
+            new LogicModule(),
             new PersistModule(),
             new SecurityDaoModule(),
             new ServiceModule(),

@@ -164,6 +164,25 @@ package object models {
     executionDate: LocalDate
   )
 
+  case class OrderBasket(
+    basketId: Long,
+    orders: List[Order]
+  )
+
+  case class Order(
+    orderId: Long,
+    accountId: Long,
+    accountNo: String,
+    assetClass: AssetClass,
+    tradeSide: TradeSide,
+    securityId: Long,
+    securitySymbol: String,
+    securityName: String,
+    exchange: String,
+    amount: Long,
+    price: BigDecimal
+  )
+
   /*
    * Json writes
    */
@@ -316,5 +335,28 @@ package object models {
         "executionDate" -> o.executionDate
       )
     }
+
+    implicit object OrderWrites extends Writes[Order] {
+      def writes(o: Order) = Json.obj(
+        "orderId" -> o.orderId,
+        "accountId" -> o.accountId,
+        "accountNo" -> o.accountNo,
+        "tradeSide" -> I18nUtil.translate_TradeSide(o.assetClass, o.tradeSide),
+        "securityId" -> o.securityId,
+        "securitySymbol" -> o.securitySymbol,
+        "securityName" -> o.securityName,
+        "exchange" -> o.exchange,
+        "amount" -> o.amount,
+        "price" -> o.price
+      )
+    }
+
+    implicit object OrderBasketWrites extends Writes[OrderBasket] {
+      def writes(o: OrderBasket) = Json.obj(
+        "basketId" -> o.basketId,
+        "orders" -> o.orders
+      )
+    }
+
   }
 }

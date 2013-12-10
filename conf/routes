@@ -42,6 +42,8 @@ GET     /portfolio/settings/set                              @controllers.Portfo
 
 # Trade
 GET     /trading/history                                     @controllers.TradeController.history
+POST    /trading/order/import                                @controllers.TradeController.orderImport
+
 
 # Proxy for attribution
 GET     /attribution                                         @controllers.ProxyController.attribution
