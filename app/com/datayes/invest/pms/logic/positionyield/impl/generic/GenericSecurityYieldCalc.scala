@@ -10,10 +10,10 @@ import javax.inject.Inject
 import org.joda.time.LocalDate
 import scala.collection.JavaConversions._
 import com.datayes.invest.pms.service.calendar.CalendarService
-import com.datayes.invest.pms.logic.positionyield.impl.singleyield.SingleSecurityYieldCalc
 import com.datayes.invest.pms.service.marketdata.MarketDataService
 import com.datayes.invest.pms.util.DefaultValues
 import com.datayes.invest.pms.util.BigDecimalConstants
+import com.datayes.invest.pms.logic.calculation.positionyield.SingleSecurityYieldCalc
 
 
 abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecurityYieldCalc {

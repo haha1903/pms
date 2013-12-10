@@ -1,5 +1,4 @@
-package com.datayes.invest.pms.logic.positionyield.impl.singleyield
-
+package com.datayes.invest.pms.logic.calculation.positionyield
 
 trait SingleGenericYieldCalc {
 

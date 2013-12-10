@@ -187,6 +187,11 @@ app/com/datayes/invest/pms/logic/accountinit/AccountSourceData.scala -text
 app/com/datayes/invest/pms/logic/accountinit/PositionInitializer.scala -text
 app/com/datayes/invest/pms/logic/accountinit/PositionSourceData.scala -text
 app/com/datayes/invest/pms/logic/accountinit/RateSourceData.scala -text
+app/com/datayes/invest/pms/logic/calculation/accountvaluation/AccountValuationCalc.scala -text
+app/com/datayes/invest/pms/logic/calculation/positionyield/SingleCashYieldCalc.scala -text
+app/com/datayes/invest/pms/logic/calculation/positionyield/SingleGenericYieldCalc.scala -text
+app/com/datayes/invest/pms/logic/calculation/positionyield/SingleSecurityYieldCalc.scala -text
+app/com/datayes/invest/pms/logic/calculation/webinterface/CurrentCashCalc.scala -text
 app/com/datayes/invest/pms/logic/order/OrderManager.java -text
 app/com/datayes/invest/pms/logic/order/impl/OrderManagerImpl.java -text
 app/com/datayes/invest/pms/logic/positionyield/PositionYieldCalc.scala -text
@@ -199,9 +204,6 @@ app/com/datayes/invest/pms/logic/positionyield/impl/StockYieldCalc.scala -text
 app/com/datayes/invest/pms/logic/positionyield/impl/generic/GenericCashYieldCalc.scala -text
 app/com/datayes/invest/pms/logic/positionyield/impl/generic/GenericSecurityYieldCalc.scala -text
 app/com/datayes/invest/pms/logic/positionyield/impl/generic/GenericYieldCalc.scala -text
-app/com/datayes/invest/pms/logic/positionyield/impl/singleyield/SingleCashYieldCalc.scala -text
-app/com/datayes/invest/pms/logic/positionyield/impl/singleyield/SingleGenericYieldCalc.scala -text
-app/com/datayes/invest/pms/logic/positionyield/impl/singleyield/SingleSecurityYieldCalc.scala -text
 app/com/datayes/invest/pms/logic/process/EODProcess.scala -text
 app/com/datayes/invest/pms/logic/process/Processor.scala -text
 app/com/datayes/invest/pms/logic/process/SODProcess.scala -text
@@ -222,7 +224,6 @@ app/com/datayes/invest/pms/logic/transaction/impl/TransactionLogicBase.scala -te
 app/com/datayes/invest/pms/logic/valuation/ValuationFacade.scala -text
 app/com/datayes/invest/pms/logic/valuation/account/AccountValuationLogic.scala -text
 app/com/datayes/invest/pms/logic/valuation/account/AccountValuationLogicFactory.scala -text
-app/com/datayes/invest/pms/logic/valuation/account/impl/AccountValuationCalc.scala -text
 app/com/datayes/invest/pms/logic/valuation/account/impl/AccountValuationLogicImpl.scala -text
 app/com/datayes/invest/pms/logic/valuation/position/PositionValuationLogic.scala -text
 app/com/datayes/invest/pms/logic/valuation/position/PositionValuationLogicFactory.scala -text

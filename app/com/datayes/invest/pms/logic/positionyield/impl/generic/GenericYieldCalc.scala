@@ -17,7 +17,7 @@ import com.datayes.invest.pms.entity.account.PositionHist
 import com.datayes.invest.pms.entity.security.EquityDividend
 import scala.Some
 import com.datayes.invest.pms.service.calendar.CalendarService
-import com.datayes.invest.pms.logic.positionyield.impl.singleyield.SingleGenericYieldCalc
+import com.datayes.invest.pms.logic.calculation.positionyield.SingleGenericYieldCalc
 
 
 abstract class GenericYieldCalc extends PositionYieldCalc with SingleGenericYieldCalc with Logging {

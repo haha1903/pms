@@ -2,8 +2,8 @@ package com.datayes.invest.pms.logic.positionyield.impl.generic
 
 import com.datayes.invest.pms.entity.account.Position
 import org.joda.time.LocalDate
-import com.datayes.invest.pms.logic.positionyield.impl.singleyield.SingleCashYieldCalc
 import com.datayes.invest.pms.util.BigDecimalConstants
+import com.datayes.invest.pms.logic.calculation.positionyield.SingleCashYieldCalc
 
 
 abstract class GenericCashYieldCalc extends GenericYieldCalc with SingleCashYieldCalc {

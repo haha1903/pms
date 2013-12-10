@@ -1,4 +1,4 @@
-package com.datayes.invest.pms.logic.positionyield.impl.singleyield
+package com.datayes.invest.pms.logic.calculation.positionyield
 
 import com.datayes.invest.pms.entity.account.SecurityTransaction
 import com.datayes.invest.pms.logging.Logging

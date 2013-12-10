@@ -23,6 +23,7 @@ import com.datayes.invest.pms.dbtype.TransactionClass
 import com.datayes.invest.pms.dbtype.CashTransactionMethod
 import com.datayes.invest.pms.entity.account.SourceTransaction
 import com.datayes.invest.pms.util.DefaultValues
+import com.datayes.invest.pms.logic.calculation.webinterface.CurrentCashCalc
 
 
 /*
@@ -94,7 +95,7 @@ class CashSettlementProcessor extends Processor with Logging {
     val cashPositionHist = getPositionHist(accountId, LedgerType.CASH, asOfDate)
     if (cashPositionHist != null) {
       var cashAmountAvailable = cashPositionHist.getQuantity
-      cashAmountAvailable = (cashAmountAvailable - payableAmountAvailable + receivablePositionAmountAvailable).bigDecimal
+      cashAmountAvailable = CurrentCashCalc.calculateCurrentCash(cashAmountAvailable, payableAmountAvailable, receivablePositionAmountAvailable).bigDecimal
       cashPositionHist.setQuantity(cashAmountAvailable)
       positionHistDao.update(cashPositionHist)
     }

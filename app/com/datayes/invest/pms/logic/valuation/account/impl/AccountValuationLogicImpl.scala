@@ -28,6 +28,7 @@ import com.datayes.invest.pms.entity.account.PositionValuationHist
 import com.datayes.invest.pms.entity.account.CarryingValueHist
 import com.datayes.invest.pms.dao.account.AccountValuationInitDao
 import com.datayes.invest.pms.util.BigDecimalConstants
+import com.datayes.invest.pms.logic.calculation.accountvaluation.AccountValuationCalc
 
 class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
 

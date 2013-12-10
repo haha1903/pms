@@ -147,7 +147,9 @@ package object models {
   	assetValue: BigDecimal = ZERO,
   	netValue: BigDecimal = ZERO,
   	pnl: BigDecimal = ZERO,
-  	cash: BigDecimal = ZERO
+  	cash: BigDecimal = ZERO,
+    payableValue: BigDecimal = ZERO,
+    receivableValue: BigDecimal = ZERO
   )
   
   case class Trade(

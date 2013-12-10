@@ -18,6 +18,7 @@ import com.datayes.invest.pms.web.assets.models.AssetCommon
 import com.datayes.invest.pms.web.model.models.{AccountOverview, AssetClassWeight, Holding, IndustryWeightLeaf, IndustryWeightTree, NetValueTrendItem, Performance, TopHoldingStock}
 import javax.inject.Inject
 import org.joda.time.LocalDate
+import com.datayes.invest.pms.logic.calculation.webinterface.CurrentCashCalc
 
 class FundService extends Logging {
   
@@ -51,6 +52,9 @@ class FundService extends Logging {
     val dailyReturn = getOverviewValue(accountId, asOfDate, AccountValuationType.DAILY_RETURN)
     val marketValue = getOverviewValue(accountId, asOfDate, AccountValuationType.SECURITY)  // TODO this may not be correct
     val cashValue = getOverviewValue(accountId, asOfDate, AccountValuationType.CASH)
+    val payableValue = getOverviewValue(accountId, asOfDate, AccountValuationType.PAYABLE_SETTLEMENT)
+    val receivableValue = getOverviewValue(accountId, asOfDate, AccountValuationType.RECEIVABLE_SETTLEMENT)
+    val currentCash = CurrentCashCalc.calculateCurrentCash(cashValue, payableValue, receivableValue)
     val fundReturn = getFundReturnAsOfDate(accountId, asOfDate)
     val pnl = getOverviewValue(accountId, asOfDate, AccountValuationType.PROFIT_LOSS)
 
@@ -58,7 +62,7 @@ class FundService extends Logging {
       unitNet,
       dailyReturn,
       marketValue,
-      cashValue,
+      currentCash,
       fundReturn,
       pnl
     )
@@ -197,10 +201,10 @@ class FundService extends Logging {
     val valHist = accountValuationHistDao.findById(pk)
     if (valHist == null) {
       logger.warn("Failed to load account valuation hist ({}) for account #{} on {}", accValType, accountId, asOfDate)
-      BigDecimal("0")
+      BigDecimalConstants.ZERO
     } else if (valHist.getValueAmount == null) {
       logger.warn("Account valuation hist ({}) for account #{} on {} is null", accValType, accountId, asOfDate)
-      BigDecimal("0")
+      BigDecimalConstants.ZERO
     }else {
       valHist.getValueAmount
     }
@@ -210,7 +214,7 @@ class FundService extends Logging {
     val accValType = AccountValuationType.DAILY_RETURN
     val accValHists = accountValuationHistDao.findByAccountIdTypeIdBeforeDate(accountId,
       accValType.getDbValue, asOfDate)
-    val ratio = accValHists.foldLeft(BigDecimal("1")) { (product, valHist) =>
+    val ratio = accValHists.foldLeft(BigDecimalConstants.ONE) { (product, valHist) =>
       product * (valHist.getValueAmount + 1)
     }
     ratio - 1
