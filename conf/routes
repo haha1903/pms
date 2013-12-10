@@ -52,7 +52,7 @@ POST    /attrupload                                          @controllers.ProxyC
 
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file                                         controllers.Assets.at(path="/public", file)
+GET     /assets/*file                                        controllers.Assets.at(path="/public", file)
 
 
 ###################
@@ -72,4 +72,4 @@ GET     /debug/mds/monitor                                   @controllers.debug.
 GET     /debug/mds/initMds                                   @controllers.debug.MDSMonitorController.initMds
 GET     /debug/mds/cacheData                                 @controllers.debug.MDSMonitorController.cacheData
 GET     /debug/mds/cacheSize                                 @controllers.debug.MDSMonitorController.cacheSize
-GET     /debug/mds/cacheMissing                               @controllers.debug.MDSMonitorController.cacheMissing
+GET     /debug/mds/cacheMissing                              @controllers.debug.MDSMonitorController.cacheMissing

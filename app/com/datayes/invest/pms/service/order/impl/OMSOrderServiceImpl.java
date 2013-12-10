@@ -7,6 +7,7 @@ import com.datayes.invest.pms.service.ServiceException;
 import com.datayes.invest.pms.service.order.Order;
 import com.datayes.invest.pms.service.order.OrderBasket;
 import com.datayes.invest.pms.service.order.OrderService;
+import com.weston.jupiter.common.ParamsReader;
 import com.weston.jupiter.generated.*;
 import com.weston.stpapi.STPClient;
 import org.joda.time.LocalTime;
@@ -20,11 +21,19 @@ public class OMSOrderServiceImpl implements OrderService {
 
     private static Logger LOGGER = LoggerFactory.getLogger(OMSOrderServiceImpl.class);
 
-    private final String localeName = "Tiger";
 
-    private final String configDirectory = "/home/taot/Downloads/jupiter/stp-api/etc/";
+    private final String omsHost = Config.INSTANCE.getString("oms.host");
+
+    private final Integer omsPort = Config.INSTANCE.getInt("oms.port");
+
+    private final String stpLocale = Config.INSTANCE.getString("oms.stp.locale");
+
+    private final String stpUsername = Config.INSTANCE.getString("oms.stp.username");
+
+    private final String stpPassword = Config.INSTANCE.getString("oms.stp.password");
 
     private String clientId = Config.INSTANCE.getString("pms.client.id");
+
 
     @Override
     public OrderBasket placeOrders(OrderBasket basket) {
@@ -37,7 +46,8 @@ public class OMSOrderServiceImpl implements OrderService {
 
         STPClient client = new STPClient();
         // TODO config for username, password, localeName, and other configs
-        boolean initResult = client.init("xingen.song", "passwd", localeName, configDirectory);
+        ParamsReader paramsReader = STPClient.createSimpleParamsReader(omsHost, Integer.toString(omsPort));
+        boolean initResult = client.init(stpUsername, stpPassword, stpLocale, paramsReader);
         if (! initResult) {
             throw new ServiceException("Failed to initialize STP client");
         }

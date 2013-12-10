@@ -38,9 +38,15 @@ paas.sso {
 #
 # External Systems
 #
-jupitar.jms {
-    url = "tcp://trading4-dev.datayes.com:61666"
-    topic = "Topic.Tiger.ClientUpdate"
+oms {
+    host = "trading4-dev.datayes.com"
+    port = 61666
+    stp {
+        locale = "Tiger"
+        username = "xingen.song"
+        password = "passwd"
+    }
+    execution.topic = "Topic.Tiger.ClientUpdate"
 }
 redis {
     host = "redis01-dev"

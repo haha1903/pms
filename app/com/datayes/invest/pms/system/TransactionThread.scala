@@ -1,17 +1,12 @@
 package com.datayes.invest.pms.system
 
-import com.datayes.invest.pms.dao.account.SystemIdMappingDao
-import com.datayes.invest.pms.logging.Logging
-import com.weston.jupiter.generated.{TVP, Execution}
-import com.weston.jupiter.common.MarsPackage
-import org.apache.activemq.ActiveMQConnection
-import org.apache.activemq.ActiveMQConnectionFactory
-import javax.jms.MessageListener
-import javax.jms.Session
-import javax.jms.Message
-import javax.jms.TextMessage
-import javax.inject.Inject
 import com.datayes.invest.pms.config.Config
+import com.datayes.invest.pms.logging.Logging
+import com.weston.jupiter.common.MarsPackage
+import com.weston.jupiter.generated.{Execution, TVP}
+import javax.inject.Inject
+import javax.jms.{Message, MessageListener, Session, TextMessage}
+import org.apache.activemq.{ActiveMQConnection, ActiveMQConnectionFactory}
 
 class TransactionThread extends Runnable with Logging {
   
@@ -31,11 +26,13 @@ class TransactionThread extends Runnable with Logging {
   }
   
   def createSession(): Session = {
-    val mqUrl = Config.INSTANCE.getString("jupitar.jms.url")
+    val jmsHost = Config.INSTANCE.getString("oms.host")
+    val jmsPort = Config.INSTANCE.getInt("oms.port")
+    val jmsUrl = "tcp://" + jmsHost + ":" + jmsPort
+
     val username = ActiveMQConnection.DEFAULT_USER
     val password = ActiveMQConnection.DEFAULT_PASSWORD
-    val factory = new ActiveMQConnectionFactory(username,
-      password, mqUrl)
+    val factory = new ActiveMQConnectionFactory(username, password, jmsUrl)
     val conn = factory.createConnection
     conn.start()
     session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE)
@@ -43,7 +40,7 @@ class TransactionThread extends Runnable with Logging {
   }
 
   def run(): Unit = {
-    val recvTopicName = Config.INSTANCE.getString("jupitar.jms.topic")
+    val recvTopicName = Config.INSTANCE.getString("oms.execution.topic")
     val session = createSession;
     val topic = session.createTopic(recvTopicName);
     val consumer = session.createConsumer(topic)
@@ -59,7 +56,6 @@ class TransactionThread extends Runnable with Logging {
           var marsMsg = pkg.pop
           while (marsMsg != null) {
             val instance = marsMsg.getClassInstanceTag()
-//            logger.info("marsMsg.getClassInstanceTag(): {}", instance.toString)  // TODO remove this
             if (TVP.Execution.equals(instance)) {
               val execution = new Execution(marsMsg.getBody)
               logger.info("Execution: {} is in process", execution)

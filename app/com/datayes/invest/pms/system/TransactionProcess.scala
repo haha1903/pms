@@ -1,26 +1,22 @@
 package com.datayes.invest.pms.system
 
-import com.weston.jupiter.generated.Execution
-import java.text.SimpleDateFormat
-import org.joda.time.LocalDate
-import org.joda.time.LocalDateTime
-import com.datayes.invest.pms.logging.Logging
-import com.datayes.invest.pms.persist.dsl.transaction
-import com.datayes.invest.pms.logic.transaction.TransactionLogicFactory
-import javax.inject.Inject
-import com.datayes.invest.pms.dao.account.SystemIdMappingDao
-import com.datayes.invest.pms.logic.transaction.Transaction
-import com.datayes.invest.pms.dbtype.IdName
-import com.datayes.invest.pms.logic.transaction.BusinessException
-import com.datayes.invest.pms.dbtype.TransactionClass
+import com.datayes.invest.pms.dao.account.{OrderDao, SourceTransactionDao, SystemIdMappingDao}
+import com.datayes.invest.pms.dbtype.{TradeSide, TransactionClass, TransactionSource}
 import com.datayes.invest.pms.entity.account.SourceTransaction
-import com.datayes.invest.pms.dao.account.SourceTransactionDao
-import com.datayes.invest.pms.dbtype.TradeSide
-import com.datayes.invest.pms.dbtype.TransactionSource
+import com.datayes.invest.pms.logging.Logging
+import com.datayes.invest.pms.logic.transaction.{BusinessException, Transaction, TransactionLogicFactory}
+import com.datayes.invest.pms.persist.dsl.transaction
+import com.weston.jupiter.generated.Execution
+import com.weston.stpapi.STPClient
+import javax.inject.Inject
+import org.joda.time.{LocalDate, LocalDateTime}
 
 class TransactionProcess extends Logging {
   
-  private val OMS = "OrderManager"
+//  private val OMS = "OrderManager"
+
+  @Inject
+  private var orderDao: OrderDao = null
   
   @Inject
   private var systemIdMappingDao: SystemIdMappingDao = null
@@ -30,6 +26,8 @@ class TransactionProcess extends Logging {
   
   @Inject
   private var transactionLogicFactory: TransactionLogicFactory = null
+
+  private val stpClient: STPClient = new STPClient()
 
   def process(execution: Execution): Unit = {
     transaction {
@@ -41,24 +39,27 @@ class TransactionProcess extends Logging {
   }
 
   private def createTransactionByExecution(e: Execution): Transaction = {
-    val sdf = new SimpleDateFormat("yyyyMMdd");
     val amount = BigDecimal.valueOf(e.amount)
     val price = BigDecimal.valueOf(e.price)
-    val brokerId: java.lang.Long = systemIdMappingDao.findPmsId(e.brokerID.toString, IdName.BROKER_ID.getDbValue(), OMS)
-    if (brokerId == null) {
-      logger.warn("Execution's brokerId is {}, which does not matched any brokerId in PMS!", e.brokerID)
-    }
-    val traderId = systemIdMappingDao.findPmsId(e.traderID.toString, IdName.TRADER_ID.getDbValue(), OMS)
-    if (traderId == null) {
-      logger.warn("Execution's traderId is {}, which does not matched any traderId in PMS!", e.traderID)
-    }
-    val accountId = systemIdMappingDao.findPmsId(e.accountID.toString, IdName.ACCOUNT_ID.getDbValue(), OMS)
-    if (accountId == null) {
-      throw new BusinessException("Execution's account id is " + e.accountID + ",it does not matched any accountId in PMS!")
-    }
+    val brokerId: java.lang.Long = null
+    val traderId: java.lang.Long = null
+//    val brokerId: java.lang.Long = systemIdMappingDao.findPmsId(e.brokerID.toString, IdName.BROKER_ID.getDbValue(), OMS)
+//    if (brokerId == null) {
+//      logger.warn("Execution's brokerId is {}, which does not matched any brokerId in PMS!", e.brokerID)
+//    }
+//    val traderId = systemIdMappingDao.findPmsId(e.traderID.toString, IdName.TRADER_ID.getDbValue(), OMS)
+//    if (traderId == null) {
+//      logger.warn("Execution's traderId is {}, which does not matched any traderId in PMS!", e.traderID)
+//    }
+//    val accountId = systemIdMappingDao.findPmsId(e.accountID.toString, IdName.ACCOUNT_ID.getDbValue(), OMS)
+//    if (accountId == null) {
+//      throw new BusinessException("Execution's account id is " + e.accountID + ",it does not matched any accountId in PMS!")
+//    }
+
     if (e.getEmsSecurityID == null) {
-      throw new BusinessException("emsSecurityId cannot be null")
+      throw new BusinessException("emsSecurityId is null")
     }
+    val accountId = getAccountId(e)
 
     val executionDate = e.executionDate.toString() match { 
       case "-1" => throw new BusinessException("executionDate cannot be null") 
@@ -72,6 +73,15 @@ class TransactionProcess extends Logging {
       getLongOption(brokerId), executionDate, settlementDate, TradeSide.valueOf(side), price, amount,
       TransactionSource.OMS.getDbValue, transactionClass)
     t
+  }
+
+  private def getAccountId(e: Execution): Long = {
+    val orderId: Long = stpClient.parseExternalOrderNumber(e.getExternalOrderID)
+    val order = orderDao.findCurrentById(orderId)
+    if (order == null) {
+      throw new BusinessException("Order #" + orderId + " not found")
+    }
+    order.getAccountId
   }
   
   private def saveSourceTransaction(t: Transaction) {
