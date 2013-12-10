@@ -69,9 +69,17 @@ public class OrderManagerImpl implements OrderManager {
         // Convert from DB order
         List<com.datayes.invest.pms.entity.account.Order> orders = orderDao.findCurrentByBasketId(orderBasketId);
         OrderBasket basket = new OrderBasket(orderBasketId);
+        boolean hasInvalidStatus = false;
         for (com.datayes.invest.pms.entity.account.Order dbOrd : orders) {
+            OrderStatus status = OrderStatus.fromDbValue(dbOrd.getOrderStatus());
+            if (status != OrderStatus.CREATED) {
+                hasInvalidStatus = true;
+            }
             Order ord = fromDbOrder(dbOrd);
             basket.getOrders().add(ord);
+        }
+        if (hasInvalidStatus) {
+            throw new RuntimeException("The basket " + orderBasketId + " has orders with invalid status. Orders to be placed must be OrderStatus.CREATED");
         }
 
         // Invoke order service

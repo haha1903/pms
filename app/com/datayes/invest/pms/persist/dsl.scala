@@ -1,9 +1,6 @@
 package com.datayes.invest.pms.persist
 
-import scala.collection.JavaConversions._
 import com.datayes.invest.pms.logging.Logging
-import javax.persistence.EntityTransaction
-
 
 package object dsl extends Logging {
 

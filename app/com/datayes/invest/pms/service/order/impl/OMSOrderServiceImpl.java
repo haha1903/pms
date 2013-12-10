@@ -78,10 +78,14 @@ public class OMSOrderServiceImpl implements OrderService {
         jupiterOrder.emsSecurityID        = order.getSecurityId();
         jupiterOrder.side                 = getJupiterTradeSide(order.getTradeSide());
         jupiterOrder.amountOpen           = order.getAmount();
-        jupiterOrder.priceLimit           = order.getPriceLimit().doubleValue();
-        jupiterOrder.priceGuideline       = order.getPriceGuideline().doubleValue();
+        if (order.getPriceLimit() != null) {
+            jupiterOrder.priceLimit           = order.getPriceLimit().doubleValue();
+        }
+        if (order.getPriceGuideline() != null) {
+            jupiterOrder.priceGuideline       = order.getPriceGuideline().doubleValue();
+        }
         // Straight through process
-        if(order.isStpFlag()) {                                                       // 自动合规, 自动拆单, etc
+        if(order.isStpFlag() != null && order.isStpFlag()) {                          // 自动合规, 自动拆单, etc
             jupiterOrder.stpAlgorithm      = getJupiterStpAlgorithm(order.getStpAlgorithm());
             jupiterOrder.stpStartTime      = toJupiterLocalTime(order.getStpStartTime());
             jupiterOrder.stpEndTime        = toJupiterLocalTime(order.getStpEndTime());

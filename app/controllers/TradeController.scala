@@ -5,7 +5,7 @@ import com.datayes.invest.pms.web.model.models.ModelWrites._
 import com.datayes.invest.pms.web.model.models.{ Order => MOrder, OrderBasket => MOrderBasket }
 import com.datayes.invest.pms.web.service.TradeService
 import javax.inject.Inject
-import org.joda.time.LocalDate
+import org.joda.time.{LocalTime, LocalDate}
 import play.api.libs.json.Json
 import com.datayes.invest.pms.tools.importer.order.OrderImporter
 import com.datayes.invest.pms.entity.account.Account
@@ -16,6 +16,8 @@ import com.datayes.invest.pms.service.order.OrderBasket
 import com.datayes.invest.pms.service.order.Order
 import play.pms._
 import scala.collection.JavaConversions._
+import com.datayes.invest.pms.logic.order.OrderManager
+import com.weston.jupiter.generated.TradeType
 
 class TradeController extends PmsController with Logging {
 
@@ -27,6 +29,9 @@ class TradeController extends PmsController with Logging {
 
   @Inject
   private var orderImporter: OrderImporter = null
+
+  @Inject
+  private var orderManager: OrderManager = null
 
   @Inject
   private var securityDao: SecurityDao = null
@@ -42,7 +47,7 @@ class TradeController extends PmsController with Logging {
     PmsResult(json)
   }
 
-  def orderImport = PmsAction(parse.multipartFormData) { implicit req =>
+  def importOrderCsv = PmsAction(parse.multipartFormData) { implicit req =>
     transaction {
       val accountId = {
         val name = "accountId"
@@ -56,14 +61,11 @@ class TradeController extends PmsController with Logging {
 
       val account = accountDao.findById(accountId)
 
-      println("dataParts: " + req.body.dataParts)
-
       if (account == null) {
         throw new ClientException("Invalid account id " + accountId)
       }
 
       try {
-
         req.body.file("upload").map { file =>
           val tmpFile = file.ref.file
           logger.debug("Order import csv file received: " + tmpFile)
@@ -83,6 +85,29 @@ class TradeController extends PmsController with Logging {
     }
   }
 
+  def placeOrder = PmsAction { implicit req =>
+    val basketId: Long = param("basketId")
+    val sStpAlgorithm: String = param("stpAlgorithm")
+    val sStpStartTime: Int = param("stpStartTime")
+    val sStpEndTime: Int = param("stpEndTime")
+
+    val stpAlgorithm = TradeType.valueOf(sStpAlgorithm)
+    val stpStartTime = parseLocalTime(sStpStartTime)
+    val stpEndTime = parseLocalTime(sStpEndTime)
+
+    tradeService.placeOrders(basketId, stpAlgorithm, stpStartTime, stpEndTime)
+
+    val json = Json.obj("success" -> true)
+    PmsResult(json)
+  }
+
+  private def parseLocalTime(value: Int): LocalTime = {
+    val hour = value / 10000
+    val minute = (value % 10000) / 100
+    val second = value % 100
+    val time = new LocalTime(hour, minute, second)
+    time
+  }
 
   private def convertOrderBasket(basket: OrderBasket, account: Account): MOrderBasket = {
     val mOrders = basket.getOrders.map(o => convertOrder(o, account)).toList

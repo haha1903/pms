@@ -11,8 +11,6 @@ class VisitingFilter extends Filter with Logging with Results {
   val whitelist = Config.INSTANCE.getStringList("visitor.whitelist", List("10.20.102.*"))
 
   override def apply(next: (RequestHeader) => Result)(rh: RequestHeader): Result = {
-    logger.debug("{} {} from {}", rh.method, rh.path, rh.remoteAddress)
-
     val remoteAddress = rh.remoteAddress
     val isInList = whitelist.exists(a => checkVisitor(remoteAddress, a))
     val path = rh.path

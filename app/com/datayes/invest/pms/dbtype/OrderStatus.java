@@ -4,7 +4,7 @@ package com.datayes.invest.pms.dbtype;
 public enum OrderStatus implements DbValue<String> {
 
     CREATED("CREATED"),
-    PLACED("CREATED"),
+    PLACED("PLACED"),
     REJECTED("REJECTED"),
     CANCELLED("CANCELLED");
 

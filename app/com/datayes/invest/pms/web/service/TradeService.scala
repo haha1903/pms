@@ -1,22 +1,31 @@
 package com.datayes.invest.pms.web.service
 
-import com.datayes.invest.pms.dao.account.{SecurityTransactionDao, AccountDao}
-import com.datayes.invest.pms.persist.dsl.transaction
-import com.datayes.invest.pms.web.model.models.Trade
-import org.joda.time.LocalDate
-import scala.collection.mutable.ListBuffer
-import play.pms.ClientException
 import scala.collection.JavaConversions._
+import scala.collection.mutable.ListBuffer
+
+import com.datayes.invest.pms.dao.account.{AccountDao, OrderDao, SecurityTransactionDao}
 import com.datayes.invest.pms.dao.security.SecurityDao
-import com.datayes.invest.pms.util.BigDecimalConstants
-import com.datayes.invest.pms.dbtype.TradeSide
-import javax.inject.Inject
+import com.datayes.invest.pms.dbtype.{OrderStatus, TradeSide}
 import com.datayes.invest.pms.entity.account.Account
+import com.datayes.invest.pms.logic.order.OrderManager
+import com.datayes.invest.pms.persist.dsl.transaction
+import com.datayes.invest.pms.util.BigDecimalConstants
+import com.datayes.invest.pms.web.model.models.Trade
+import com.weston.jupiter.generated.TradeType
+import javax.inject.Inject
+import org.joda.time.{LocalDateTime, LocalDate, LocalTime}
+import play.pms.ClientException
 
 class TradeService {
 
   @Inject
   private var accountDao: AccountDao = null
+
+  @Inject
+  private var orderDao: OrderDao = null
+
+  @Inject
+  private var orderManager: OrderManager = null
 
   @Inject
   private var securityDao: SecurityDao = null
@@ -88,6 +97,27 @@ class TradeService {
 
     val sorted = trades.sortWith { case (t1, t2) => t1.executionDate.isBefore(t2.executionDate) }.toList
     sorted
+  }
+
+  def placeOrders(basketId: Long, stpAlgorithm: TradeType, stpStartTime: LocalTime, stpEndTime: LocalTime): Unit = transaction {
+    val orders = orderDao.findCurrentByBasketId(basketId)
+    val today = LocalDate.now()
+    // set STP parameters
+    for (o <- orders) {
+      o.setStpFlag(true)
+      o.setStpAlgorithm(stpAlgorithm.toString)
+      o.setStpStartTime(today.toLocalDateTime(stpStartTime))
+      o.setStpEndTime(today.toLocalDateTime(stpEndTime))
+      orderDao.update(o)
+    }
+    orderManager.placeOrders(basketId)
+    // update order status
+    val now = LocalDateTime.now()
+    for (o <- orders) {
+      o.setOrderStatus(OrderStatus.PLACED.getDbValue)
+      o.setStatusChangeDate(now)
+      orderDao.update(o)
+    }
   }
 
   private def findMinOpenDate(accounts: List[Account]): LocalDate = {

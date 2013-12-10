@@ -15,6 +15,7 @@ public class OrderDaoImpl extends AccountRelatedDaoImpl<Order, Order.PK> impleme
     @Override
     public List<Order> findCurrentByBasketId(Long basketId) {
         TypedQuery<Order> query = getEntityManager().createQuery("from Order where basketId = :basketId and isCurrent = true", Order.class);
+        query.setParameter("basketId", basketId);
         List<Order> list = query.getResultList();
         return list;
     }

@@ -58,20 +58,6 @@ public class Order {
     public Order() {
     }
 
-//    public Order(PK pk, Long basketId, Long accountId, Long securityId, LocalDate asOfDate,
-//                 LocalDateTime asOfTime,BigDecimal amount, String tradeSideCode) {
-//        this();
-//
-//        this.pk = pk;
-//        this.basketId = basketId;
-//        this.accountId = accountId;
-//        this.securityId = securityId;
-//        this.asOfDate = asOfDate;
-//        this.asOfTime = asOfTime;
-//        this.amount = amount;
-//        this.tradeSideCode = tradeSideCode;
-//    }
-
     @Id
     public PK getPk() {
         return pk;
@@ -249,6 +235,9 @@ public class Order {
         private Long id;
 
         private Long seqNo;
+
+        private PK() {
+        }
 
         public PK(Long id, Long seqNo) {
             this.id = id;
