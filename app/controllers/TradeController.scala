@@ -95,9 +95,12 @@ class TradeController extends PmsController with Logging {
     val stpStartTime = parseLocalTime(sStpStartTime)
     val stpEndTime = parseLocalTime(sStpEndTime)
 
-    tradeService.placeOrders(basketId, stpAlgorithm, stpStartTime, stpEndTime)
+    val (accountNo, retBasketId) = tradeService.placeOrders(basketId, stpAlgorithm, stpStartTime, stpEndTime)
 
-    val json = Json.obj("success" -> true)
+    val json = Json.obj(
+      "accountNo" -> accountNo,
+      "basketId" -> retBasketId
+    )
     PmsResult(json)
   }
 

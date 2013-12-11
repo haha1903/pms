@@ -169,7 +169,7 @@ class TradeService {
     trade
   }
 
-  def placeOrders(basketId: Long, stpAlgorithm: TradeType, stpStartTime: LocalTime, stpEndTime: LocalTime): Unit = transaction {
+  def placeOrders(basketId: Long, stpAlgorithm: TradeType, stpStartTime: LocalTime, stpEndTime: LocalTime): (String, Long) = transaction {
     val orders = orderDao.findCurrentByBasketId(basketId)
     val today = LocalDate.now()
     // set STP parameters
@@ -188,6 +188,15 @@ class TradeService {
       o.setStatusChangeDate(now)
       orderDao.update(o)
     }
+
+    val accountNo = orders.headOption match {
+      case Some(order) =>
+        val account = accountDao.findById(order.getAccountId)
+        account.getAccountNo
+      case None => ""
+    }
+
+    (accountNo, basketId)
   }
 
   private def findMinOpenDate(accounts: List[Account]): LocalDate = {
