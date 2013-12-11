@@ -870,7 +870,7 @@ create table SYSTEM_ID_MAPPING
 /*==============================================================*/
 create table SOURCE_TRANSACTION
 (
-    ID bigint not null AUTO_INCREMENT,
+   ID bigint not null AUTO_INCREMENT,
 	ACCOUNT_ID bigint not null,
 	SECURITY_ID bigint not null,
 	SOURCE_TRANSACTION_ID varchar(40) not null,
