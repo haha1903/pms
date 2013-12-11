@@ -163,7 +163,7 @@ package object models {
     tradeSide: TradeSide,
     amount: BigDecimal,
     orderPrice: BigDecimal,
-    executionPrice: BigDecimal,
+    executionAvgPrice: BigDecimal,
     executionAmount: BigDecimal,
     executionCapital: BigDecimal,
     executionDate: LocalDate
@@ -339,7 +339,7 @@ package object models {
           "tradeSide" -> I18nUtil.translate_TradeSide(o.assetClass, o.tradeSide),
           "amount" -> o.amount,
           "orderPrice" -> o.orderPrice,
-          "executionPrice" -> o.executionPrice,
+          "executionAvgPrice" -> o.executionAvgPrice,
           "executionAmount" -> o.executionAmount,
           "executionCapital" -> o.executionCapital,
           "executionDate" -> o.executionDate

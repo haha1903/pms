@@ -96,13 +96,13 @@ public class OrderManagerImpl implements OrderManager {
         order.setPriceLimit(dbOrder.getPriceLimit());
         order.setPriceGuideline(dbOrder.getPriceGuideline());
 
-        order.setStpFlag(order.isStpFlag());
+        order.setStpFlag(dbOrder.getStpFlag());
 
         order.setStpAlgorithm(dbOrder.getStpAlgorithm());
-        if (order.getStpStartTime() != null) {
+        if (dbOrder.getStpStartTime() != null) {
             order.setStpStartTime(dbOrder.getStpStartTime().toLocalTime());
         }
-        if (order.getStpEndTime() != null) {
+        if (dbOrder.getStpEndTime() != null) {
             order.setStpEndTime(dbOrder.getStpEndTime().toLocalTime());
         }
 

@@ -6,10 +6,11 @@ import com.datayes.invest.pms.entity.account.SourceTransaction
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.logic.transaction.{BusinessException, Transaction, TransactionLogicFactory}
 import com.datayes.invest.pms.persist.dsl.transaction
-import com.weston.jupiter.generated.Execution
+import com.weston.jupiter.generated.{Tag, Execution}
 import com.weston.stpapi.STPClient
 import javax.inject.Inject
 import org.joda.time.{LocalDate, LocalDateTime}
+import java.text.SimpleDateFormat
 
 class TransactionProcess extends Logging {
   
@@ -59,24 +60,50 @@ class TransactionProcess extends Logging {
     if (e.getEmsSecurityID == null) {
       throw new BusinessException("emsSecurityId is null")
     }
-    val accountId = getAccountId(e)
-
-    val executionDate = e.executionDate.toString() match { 
-      case "-1" => throw new BusinessException("executionDate cannot be null") 
-      case _ => new LocalDateTime(e.executionDate)
+    val orderId: Long = {
+      val oid = stpClient.parseExternalOrderNumber(e.getExternalOrderID)
+      if (oid > 0) {
+        oid
+      } else {
+        throw new RuntimeException("Order id not found. FIX THIS")
+      }
     }
+    val accountId = getAccountId(orderId)
+
+    val executionDate = getExecutionDateTime(e)
+
     val sourceTransactionId = e.executionID.toString()
-    val settlementDate = e.settlementDate.toString() match { case "-1" => null case _ => new LocalDate(e.settlementDate) }
+    val settlementDate = if (e.getSettlementDate < 0) {
+      null
+    } else {
+      parseLocalDate(e.getSettlementDate)
+    }
+//    val settlementDate = e.settlementDate.toString() match { case "-1" => null case _ => new LocalDate(e.settlementDate) }
     val side = e.side.name().toUpperCase()
     val transactionClass = TransactionClass.TRADE
-    val t = Transaction(accountId, e.getEmsSecurityID, sourceTransactionId, getLongOption(traderId),
+
+    val t = Transaction(accountId, e.getEmsSecurityID, sourceTransactionId, Some(orderId), getLongOption(traderId),
       getLongOption(brokerId), executionDate, settlementDate, TradeSide.valueOf(side), price, amount,
       TransactionSource.OMS.getDbValue, transactionClass)
     t
   }
 
-  private def getAccountId(e: Execution): Long = {
-    val orderId: Long = stpClient.parseExternalOrderNumber(e.getExternalOrderID)
+  private def getExecutionDateTime(e: Execution): LocalDateTime = {
+    val dateFormat = new SimpleDateFormat(Tag.formatDateTime)
+    val time = Tag.getTime(e.getCreationTime, dateFormat)
+    val dateTime = new LocalDateTime(time)
+    dateTime
+  }
+
+  private def parseLocalDate(iDate: Long): LocalDate = {
+    val year = iDate / 10000
+    val month = (iDate % 10000) / 100
+    val day = iDate % 100
+    val date = new LocalDate(year.toInt, month.toInt, day.toInt)
+    date
+  }
+
+  private def getAccountId(orderId: Long): Long = {
     val order = orderDao.findCurrentById(orderId)
     if (order == null) {
       throw new BusinessException("Order #" + orderId + " not found")
@@ -85,7 +112,7 @@ class TransactionProcess extends Logging {
   }
   
   private def saveSourceTransaction(t: Transaction) {
-    val sourceTransaction = new SourceTransaction(t.accountId, t.securityId, t.sourceTransactionId,
+    val sourceTransaction = new SourceTransaction(t.accountId, t.securityId, t.sourceTransactionId, getLongOrNull(t.orderIdOpt),
             getLongOrNull(t.traderId), getLongOrNull(t.brokerId), t.executionDate,
             t.settlementDate, t.side.toString, t.price.bigDecimal, t.amount.bigDecimal, t.transactionSourceId,
             t.transactionClass.getDbValue())

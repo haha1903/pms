@@ -8,6 +8,7 @@ case class Transaction(
   var accountId: Long,
   var securityId: Long,
   var sourceTransactionId: String,
+  var orderIdOpt: Option[Long],
   var traderId: Option[Long],
   var brokerId: Option[Long],
   var executionDate: LocalDateTime,

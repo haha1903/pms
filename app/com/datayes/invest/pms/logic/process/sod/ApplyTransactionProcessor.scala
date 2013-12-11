@@ -35,10 +35,12 @@ class ApplyTransactionProcessor extends Logging {
     }
   }
 
-  private def createTransaction(sourceTransaction: SourceTransaction): Transaction =
-    Transaction(sourceTransaction.getAccountId,
+  private def createTransaction(sourceTransaction: SourceTransaction): Transaction = {
+
+    val t = Transaction(sourceTransaction.getAccountId,
       sourceTransaction.getSecurityId,
       sourceTransaction.getSourceTransactionId,
+      getLongOption(sourceTransaction.getOrderId),
       getLongOption(sourceTransaction.getTraderId),
       getLongOption(sourceTransaction.getBrokerId),
       sourceTransaction.getExecutionDate,
@@ -48,6 +50,9 @@ class ApplyTransactionProcessor extends Logging {
       sourceTransaction.getAmount,
       sourceTransaction.getTransactionSourceId,
       TransactionClass.fromDbValue(sourceTransaction.getTransactionClassCode))
+
+    t
+  }
 
   private def getLongOption(d: java.lang.Long): Option[Long] = {
     if (d == null) {

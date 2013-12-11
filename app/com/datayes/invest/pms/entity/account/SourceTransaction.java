@@ -30,6 +30,8 @@ public class SourceTransaction extends EntityBase {
     private Long securityId;
     
     private String sourceTransactionId;
+
+    private Long orderId;
     
     private Long traderId;
     
@@ -54,13 +56,14 @@ public class SourceTransaction extends EntityBase {
         
     }
     
-    public SourceTransaction(Long accountId, Long securityId, String sourceTransactionId,
+    public SourceTransaction(Long accountId, Long securityId, String sourceTransactionId, Long orderId,
                     Long traderId, Long brokerId, LocalDateTime executionDate, LocalDate settlementDate,
                     String tradeSideCode, BigDecimal price, BigDecimal amount, 
                     Integer transactionSourceId, String transactionClassCode) {
         this.accountId = accountId;
         this.securityId = securityId;
         this.sourceTransactionId = sourceTransactionId;
+        this.orderId = orderId;
         this.traderId = traderId;
         this.brokerId = brokerId;
         this.executionDate = executionDate;
@@ -108,6 +111,15 @@ public class SourceTransaction extends EntityBase {
 
     public void setSourceTransactionId(String sourceTransactionId) {
         this.sourceTransactionId = sourceTransactionId;
+    }
+
+    @Column(name = "ORDER_ID")
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
     }
 
     @Column(name = "TRADER_ID")

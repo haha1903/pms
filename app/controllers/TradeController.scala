@@ -75,7 +75,7 @@ class TradeController extends PmsController with Logging {
           PmsResult(json)
 
         }.getOrElse {
-          throw new ClientException("Failed to import account. Missing import csv file")
+          throw new ClientException("Failed to import orders. Missing import csv file")
         }
       } catch {
         case e: Throwable =>

@@ -874,6 +874,7 @@ create table SOURCE_TRANSACTION
 	ACCOUNT_ID bigint not null,
 	SECURITY_ID bigint not null,
 	SOURCE_TRANSACTION_ID varchar(40) not null,
+   ORDER_ID bigint,
 	TRADER_ID bigint,
 	BROKER_ID bigint,
 	EXECUTION_DATE datetime,

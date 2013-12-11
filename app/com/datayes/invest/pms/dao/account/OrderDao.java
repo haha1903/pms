@@ -8,5 +8,7 @@ public interface OrderDao extends AccountRelatedGenericDao<Order, Order.PK> {
 
     Order findCurrentById(Long orderId);
 
+    List<Order> findCurrentListByIds(List<Long> orderIds);
+
     List<Order> findCurrentByBasketId(Long basketId);
 }

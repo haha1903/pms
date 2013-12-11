@@ -58,7 +58,7 @@ class TransactionThread extends Runnable with Logging {
             val instance = marsMsg.getClassInstanceTag()
             if (TVP.Execution.equals(instance)) {
               val execution = new Execution(marsMsg.getBody)
-              logger.info("Execution: {} is in process", execution)
+              logger.info("Execution recevied: {}", execution)
               transactionProcess.process(execution)
             }
             marsMsg = pkg.pop

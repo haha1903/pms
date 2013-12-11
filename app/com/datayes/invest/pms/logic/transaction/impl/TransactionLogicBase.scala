@@ -120,7 +120,11 @@ abstract class TransactionLogicBase extends TransactionLogic {
     val securityTransaction = new SecurityTransaction(t.accountId, asOfDate, t.transactionSourceId, t.transactionClass.getDbValue(),
       t.securityId, t.side.getDbValue())
 
-    securityTransaction.setOrderId(null)
+    t.orderIdOpt match {
+      case Some(id) => securityTransaction.setOrderId(id)
+      case None => securityTransaction.setOrderId(null)
+    }
+
     securityTransaction.setSourceTransactionId(t.sourceTransactionId)
     securityTransaction.setSourceTransactionDate(t.executionDate)
     securityTransaction.setTransactionStatus(null)

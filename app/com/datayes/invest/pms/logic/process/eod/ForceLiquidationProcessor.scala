@@ -79,7 +79,7 @@ class ForceLiquidationProcessor extends Processor with Logging {
             accountId, securityPosition.getId, quantity, price)
     val tradeSide = getTradeSide(securityPosition.getLedgerId)
     val t = Transaction(accountId, securityPosition.getSecurityId,
-            DefaultValues.PMS_SOURCE_TRANSACTION_ID, getLongOption(null), getLongOption(null), asOfDate.toLocalDateTime(LocalTime.MIDNIGHT),
+            DefaultValues.PMS_SOURCE_TRANSACTION_ID, None, getLongOption(null), getLongOption(null), asOfDate.toLocalDateTime(LocalTime.MIDNIGHT),
             null, tradeSide, price, quantity, TransactionSource.PMS.getDbValue, TransactionClass.TRADE)
     val engine = transactionLogicFactory.get(t)
     engine.process(t)

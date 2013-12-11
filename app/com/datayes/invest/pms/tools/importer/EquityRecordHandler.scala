@@ -83,7 +83,8 @@ class EquityRecordHandler extends SecurityRecordHandlerBase {
     val srcTransaction = new SourceTransaction(
       context.accountId,
       equity.getId,
-      "",
+      "",   // sourceTransactionId
+      null, // orderId
       null, // traderId
       null, // brokerId
       context.asOfDate.toLocalDateTime(LocalTime.MIDNIGHT), // executionDate

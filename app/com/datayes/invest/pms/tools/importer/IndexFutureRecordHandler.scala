@@ -95,7 +95,8 @@ class IndexFutureRecordHandler extends SecurityRecordHandlerBase {
     val srcTransaction = new SourceTransaction(
       context.accountId,
       future.getId,
-      "",
+      "",   // sourceTransactionId
+      null, // orderId
       null, // traderId
       null, // brokerId
       context.asOfDate.toLocalDateTime(LocalTime.MIDNIGHT), // executionDate
