@@ -10,6 +10,8 @@ import com.datayes.invest.pms.dao.account.cacheimpl.cache.CacheWorkspace;
 import com.datayes.invest.pms.entity.account.CashPosition;
 import com.datayes.invest.pms.entity.account.Position;
 import com.datayes.invest.pms.entity.account.SecurityPosition;
+import org.joda.time.LocalDate;
+import org.joda.time.LocalDateTime;
 
 
 public class PositionDaoCacheImpl implements PositionDao {
@@ -28,6 +30,30 @@ public class PositionDaoCacheImpl implements PositionDao {
             SecurityPosition p = (SecurityPosition) obj;
             if (p.getAccountId().equals(accountId)) {
                 positions.add(p);
+            }
+        }
+        return positions;
+    }
+
+    @Override
+    public List<Position> findByAccountIdBeforeAsOfDate(Long accountId, LocalDate asOfDate) {
+        LocalDateTime startDateTime = new LocalDateTime(asOfDate.plusDays(1).toDateTimeAtStartOfDay());
+        CacheWorkspace cacheWs = CacheWorkspace.current();
+        List<Position> positions = new ArrayList<>();
+        for (Object obj : cacheWs.get(CashPosition.class).getAll()) {
+            CashPosition p = (CashPosition) obj;
+            if (p.getAccountId().equals(accountId)) {
+                if ( p.getOpenDate().isBefore(startDateTime) ) {
+                    positions.add(p);
+                }
+            }
+        }
+        for (Object obj : cacheWs.get(SecurityPosition.class).getAll()) {
+            SecurityPosition p = (SecurityPosition) obj;
+            if (p.getAccountId().equals(accountId)) {
+                if ( p.getOpenDate().isBefore(startDateTime) ) {
+                    positions.add(p);
+                }
             }
         }
         return positions;

@@ -23,7 +23,7 @@ import com.datayes.invest.pms.util.BeanUtil;
 @Entity
 @Table(name = "CARRYING_VALUE_HIST")
 @Proxy(lazy = false)
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@Cache(usage = CacheConcurrencyStrategy.NONE)
 public class CarryingValueHist extends EntityBase implements Serializable{
 
     private PK pk;

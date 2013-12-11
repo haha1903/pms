@@ -17,7 +17,7 @@ import com.datayes.invest.pms.entity.account.PositionHist
 import com.datayes.invest.pms.entity.account.SecurityPosition
 import com.datayes.invest.pms.entity.account.CashPosition
 import com.datayes.invest.pms.entity.account.CarryingValueHist
-import com.datayes.invest.pms.util.DefaultValues
+import com.datayes.invest.pms.util.{BigDecimalConstants, DefaultValues}
 
 
 class PositionRenewProcessor extends Processor with Logging {
@@ -141,7 +141,8 @@ class PositionRenewProcessor extends Processor with Logging {
 
   private def refreshAccount(account: Account, asOfDate: LocalDate): Unit = {
     val accountId = account.getId
-    val positions = positionDao.findByAccountId(accountId)
+    //val positions = positionDao.findByAccountId(accountId)
+    val positions = positionDao.findByAccountIdBeforeAsOfDate(accountId, asOfDate)
     val previousDay = asOfDate.minusDays(1)
 
     val prevPositionHists = loadPositionHists(positions, previousDay)
@@ -150,20 +151,20 @@ class PositionRenewProcessor extends Processor with Logging {
     for (p <- positions) {
       val positionId = p.getId.toLong
 
-      prevPositionHists.get(positionId) match {
+      val prevPosHist = prevPositionHists.get(positionId) match {
         case Some(hist) =>
-          refreshPositionHist(hist, asOfDate)
-        case None =>
-          logger.error("Failed to find position hist for position #{} on {}", positionId, previousDay)
+          hist
+        case None => new PositionHist(new PositionHist.PK(positionId, asOfDate), BigDecimalConstants.ZERO, BigDecimalConstants.ZERO)
       }
+      refreshPositionHist(prevPosHist, asOfDate)
 
       prevCarryingValueHists.get(positionId) match {
         case Some(hist) =>
           refreshCarryingValueHist(hist, asOfDate)
         case None =>
-          if (!p.isInstanceOf[CashPosition]) {
-            logger.error("Failed to find carrying value hist for position #{} on {}", positionId, previousDay)
-          }
+          //if (!p.isInstanceOf[CashPosition]) {
+          //  logger.error("Failed to find carrying value hist for position #{} on {}", positionId, previousDay)
+          //}
       }
     }
     
