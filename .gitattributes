@@ -405,7 +405,7 @@ database/testing-script-taot/delete_positions.sh -text
 database/upgrade/1.0_to_1.1.sql -text
 database/upgrade/1.1_to_1.2.sql -text
 lib/jupiter.jar -text svneol=unset#unset
-lib/trading-1.2.0b1-20131210.045833-1-stp-api-jar.jar -text svneol=unset#unset
+lib/trading-1.2a2-20131211.061604-5-stp-api-jar.jar -text svneol=unset#unset
 /pom.xml -text
 project/Build.scala -text
 project/build.properties -text
