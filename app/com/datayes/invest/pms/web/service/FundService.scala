@@ -1,14 +1,14 @@
 package com.datayes.invest.pms.web.service
 
 import scala.collection.mutable
-import scala.collection.JavaConversions.asScalaBuffer
+import scala.collection.JavaConversions._
 import scala.math.BigDecimal.int2bigDecimal
 import scala.util.control.Breaks.{break, breakable}
 
-import com.datayes.invest.pms.dao.account.{AccountDao, AccountValuationHistDao}
+import com.datayes.invest.pms.dao.account.{PositionYieldDao, PositionDao, AccountDao, AccountValuationHistDao}
 import com.datayes.invest.pms.dao.security.{EquityDao, PriceVolumeDao, SecurityDao}
-import com.datayes.invest.pms.dbtype.{AccountValuationType, AssetClass}
-import com.datayes.invest.pms.entity.account.AccountValuationHist
+import com.datayes.invest.pms.dbtype.{LedgerType, AccountValuationType, AssetClass}
+import com.datayes.invest.pms.entity.account.{Position, Account, AccountValuationHist}
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.persist.dsl.transaction
 import com.datayes.invest.pms.service.marketdata.MarketDataService
@@ -19,6 +19,7 @@ import com.datayes.invest.pms.web.model.models.{AccountOverview, AssetClassWeigh
 import javax.inject.Inject
 import org.joda.time.LocalDate
 import com.datayes.invest.pms.logic.calculation.webinterface.CurrentCashCalc
+import com.datayes.invest.pms.logic.calculation.assetyield.GenericAssetYieldCalc
 
 class FundService extends Logging {
   
@@ -39,6 +40,12 @@ class FundService extends Logging {
   
   @Inject
   private var portfolioLoader: PortfolioLoader = null
+
+  @Inject
+  private var positionDao: PositionDao = null
+
+  @Inject
+  private var positionYieldDao: PositionYieldDao = null
 
   @Inject
   private var priceVolumeDao: PriceVolumeDao = null
@@ -150,33 +157,71 @@ class FundService extends Logging {
   // TODO refactor to not use AssetsLoader
   def getAssetProportion(accountId: Long, asOfDate: LocalDate): Seq[AssetClassWeight] = transaction {
     val account = helper.loadAccount(accountId, asOfDate)
-    val assets = portfolioLoader.load(account, asOfDate, None)
-    val assetClassWeights = assets.groupBy(a => a.assetClass).map { case (assetClass, assets) =>
-      val obj = AssetClassWeight(assetClass)
-      for (a <- assets) {
-        obj.marketValue += a.marketValue
-        obj.floatPnL += a.floatPnL
-        obj.weight += a.weight
-      }
-      obj
-    }.toSeq
+    val netValue = getAccountValue(account, asOfDate, AccountValuationType.NET_WORTH)
+    val payableValue = getAccountValue(account, asOfDate, AccountValuationType.PAYABLE_SETTLEMENT)
+    val receivableValue = getAccountValue(account, asOfDate, AccountValuationType.RECEIVABLE_SETTLEMENT)
+    val positions = getPositionByType(account: Account)
+    val positionSums = positions.map{ case(ledgerType, list) => {
+      val positionIds = list.map(_.getId)
+      val yields = positionYieldDao.findByPositionIdsAsOfDate(positionIds, asOfDate)
 
-    var totalMarketValue = BigDecimalConstants.ZERO
-    var totalFloatPnL = BigDecimalConstants.ZERO
-    for (w <- assetClassWeights) {
-      totalMarketValue += w.marketValue
-      totalFloatPnL += w.floatPnL
-      if (w.marketValue > 0) w.floatPnLRate = w.floatPnL / w.marketValue
-    }
-    
+      val earnLossSum = yields.foldLeft(BigDecimalConstants.ZERO)(_ + _.getEarnLossCamt)
+      val beginValueSum = yields.foldLeft(BigDecimalConstants.ZERO)(_ + _.getBeginValueCamt)
+      val inCamtSum = yields.foldLeft(BigDecimalConstants.ZERO)(_ + _.getInCamt)
+      val endValueSum = yields.foldLeft(BigDecimalConstants.ZERO)(_ + _.getEndValueCamt)
+
+      (ledgerType, (earnLossSum, beginValueSum, inCamtSum, endValueSum))
+    }}
+
     val filledList = mutable.ListBuffer.empty[AssetClassWeight]
-    for (ac <- ASSET_CLASSES_TO_DISPLAY) {
-      val res = assetClassWeights.find(_.assetClass == ac).getOrElse(AssetClassWeight(assetClass = ac))
-      filledList.append(res)
-    }
-    val sorted = filledList.sortBy { acw => acw.weight * -1 }
-    
-    sorted
+    ASSET_CLASSES_TO_DISPLAY.foreach( ac => {
+      import AssetClass._
+      val sum = if ( INDEX_FUTURE == ac ) {
+        val ledgerType1 = LedgerType.FUTURE_LONG
+        val ledgerType2 = LedgerType.FUTURE_SHORT
+
+        val longSum = positionSums.get(ledgerType1).getOrElse((BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO))
+        val shortSum = positionSums.get(ledgerType2).getOrElse((BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO))
+
+        (longSum._1 + shortSum._1, longSum._2 + shortSum._2, longSum._3 + shortSum._3, longSum._4 + shortSum._4)
+      }
+      else if ( BOND == ac ) {
+        (BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO)
+      }
+      else if ( CASH == ac ) {
+        val ledgerType = LedgerType.CASH
+        val tempSum = positionSums.get(ledgerType).getOrElse((BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO))
+        (tempSum._1, tempSum._2, tempSum._3, CurrentCashCalc.calculateCurrentCash(tempSum._4, payableValue, receivableValue))
+      }
+      else if ( EQUITY == ac ) {
+        val ledgerType = LedgerType.SECURITY
+        positionSums.get(ledgerType).getOrElse((BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO))
+      }
+      else {
+        (BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO)
+      }
+
+      val acw = AssetClassWeight(ac)
+      acw.marketValue = sum._4
+      acw.floatPnL = sum._1
+      acw.weight = if ( BigDecimalConstants.ZERO != netValue ) {
+        acw.marketValue / netValue
+      }
+      else {
+        logger.error("The net value of account id {} is zero on {}", accountId, asOfDate)
+        BigDecimalConstants.ZERO
+      }
+      acw.floatPnLRate = if ( BigDecimalConstants.ZERO != (sum._2 + sum._3) ) {
+        GenericAssetYieldCalc.calculateEarnLossRate(acw.floatPnL, sum._2, sum._3)
+      }
+      else {
+        BigDecimalConstants.ZERO
+      }
+
+      filledList.append(acw)
+    })
+
+    filledList.sortBy { acw => acw.weight * -1 }
   }
 
   def getTopHoldingStock(accountId: Long, num: Int, asOfDate: LocalDate): TopHoldingStock = transaction {
@@ -407,6 +452,25 @@ class FundService extends Logging {
     holding.weight = asset.weight
     
     holding
+  }
+
+  private def getAccountValue(account: Account, asOfDate: LocalDate, valuationType: AccountValuationType): BigDecimal = {
+    val pk = new AccountValuationHist.PK(account.getId, valuationType.getDbValue(), asOfDate)
+    val hist = accountValuationHistDao.findById(pk)
+    if (hist == null) {
+      logger.warn(" {} not found for account {}", valuationType, account.getId)
+      BigDecimalConstants.ZERO
+    } else if (hist.getValueAmount() == null || hist.getValueAmount().abs < BigDecimalConstants.EPSILON) {
+      logger.warn("{} is or close to zero for account {}: {}", valuationType, account.getId, hist.getValueAmount())
+      BigDecimalConstants.ZERO
+    } else {
+      hist.getValueAmount()
+    }
+  }
+
+  private def getPositionByType(account: Account): Map[LedgerType, List[Position]] = {
+    val positions = positionDao.findByAccountId(account.getId).toList
+    positions.groupBy(p => LedgerType.fromDbValue(p.getLedgerId))
   }
 
 }
