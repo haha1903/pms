@@ -41,7 +41,8 @@ class AccountDataService extends Logging {
   def exportSubaccounts() = transaction {
     accounts.map(a => {
       val accountName = a.getAccountName
-      s"通联数据~$accountName~SubaccountName~1~"
+      val accountId = a.getId
+      s"通联数据~$accountName~SubaccountName-$accountId~1-$accountId~"
     }).mkString("\n")
   }
 
@@ -81,7 +82,7 @@ class AccountDataService extends Logging {
     }
     }.mkString("\n")
     val cashPosition = cashPositionDao.findByAccountIdLedgerId(accountId, 2L)
-    val quantity = cashPosition match {
+    val quantity: BigDecimal = cashPosition match {
       case null => logger.error(s"cash position not found: accountName: $accountName"); 0
       case _ => {
         val positionHist = positionHistDao.findByPositionIdAsOfDate(cashPosition.getId, asOfDate)
@@ -91,7 +92,7 @@ class AccountDataService extends Logging {
         }
       }
     }
-    s"""#comments
+    f"""#comments
       |Date,$asOfDate
       |Client,通联数据
       |Account,$accountName
@@ -99,7 +100,7 @@ class AccountDataService extends Logging {
       |#Security,type,amount,average-price
       |$securityValues
       |#CASH,amount,margin-rate
-      |CASH,$quantity,1.00
+      |CASH,$quantity%.11f,1.00
       |#EOF
     """.stripMargin
   }
