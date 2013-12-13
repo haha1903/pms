@@ -12,32 +12,20 @@ import com.datayes.invest.pms.config.Config
 import com.datayes.invest.pms.dao.security.SecurityDao
 import com.datayes.invest.pms.dbtype.LedgerType
 import scala.collection.JavaConversions._
-import java.{util, lang}
-import com.datayes.invest.pms.entity.account.{Position, PositionHist, CarryingValueHist}
 import scala.collection.mutable
+import com.datayes.invest.pms.entity.account.{PositionHist, CashPosition, CarryingValueHist}
+import java.lang
 
 class AccountDataService extends Logging {
 
-  @Inject
-  private var accountDao: AccountDao = _
-
-  @Inject
-  private var securityDao: SecurityDao = _
-
-  @Inject
-  private var securityPositionDao: SecurityPositionDao = _
-
-  @Inject
-  private var cashPositionDao: CashPositionDao = _
-
-  @Inject
-  private var positionHistDao: PositionHistDao = _
-
-  @Inject
-  private var carryingValueHistDao: CarryingValueHistDao = _
+  @Inject private var accountDao: AccountDao = _
+  @Inject private var securityDao: SecurityDao = _
+  @Inject private var securityPositionDao: SecurityPositionDao = _
+  @Inject private var cashPositionDao: CashPositionDao = _
+  @Inject private var positionHistDao: PositionHistDao = _
+  @Inject private var carryingValueHistDao: CarryingValueHistDao = _
 
   private val clientId = Config.INSTANCE.getString("pms.client.id")
-
   private def accounts = accountDao.findAll()
 
   def exportClients() = s"通联数据~99 West Lujiazui Road, Pudong, Shanghai, P.R.China 200120~CN~CNY~$clientId~"
@@ -76,18 +64,33 @@ class AccountDataService extends Logging {
       val security = securityDao.findById(sp.getSecurityId)
       val exchangeCode = security.getExchangeCode
       val tickerSymbol = security.getTickerSymbol
-      val positionHist = positionHistDao.findByPositionIdAsOfDate(sp.getId, asOfDate)
+      val securityPositionId = sp.getId
+      val positionHist = positionHistDao.findByPositionIdAsOfDate(securityPositionId, asOfDate)
       val ledgerType = LedgerType.fromDbValue(sp.getLedgerId) match {
         case LedgerType.SECURITY => "LONG"
         case LedgerType.FUTURE_LONG => "LONG"
         case LedgerType.FUTURE_SHORT => "SHORT"
       }
-      val amount = carryingValueHists.filter(_.getPK.getPositionId == sp.getId).head.getValueAmount
+      val positionCarryingValueHists = carryingValueHists.filter(_.getPK.getPositionId == securityPositionId)
+      val amount: BigDecimal = positionCarryingValueHists.size match {
+        case 0 => logger.error(s"position carrying value not found: accountName: $accountName, security position id: $securityPositionId, date: $asOfDate"); 0
+        case _ => positionCarryingValueHists.head.getValueAmount
+      }
       val quantity = positionHist.getQuantity
-      s"$exchangeCode.$tickerSymbol,$ledgerType,$quantity,$amount"
+      f"$exchangeCode.$tickerSymbol,$ledgerType,$quantity%.11f,$amount%.11f"
     }
     }.mkString("\n")
-    val quantity = positionHistDao.findByPositionIdAsOfDate(cashPositionDao.findByAccountIdLedgerId(accountId, 2L).getId, asOfDate).getQuantity
+    val cashPosition = cashPositionDao.findByAccountIdLedgerId(accountId, 2L)
+    val quantity = cashPosition match {
+      case null => logger.error(s"cash position not found: accountName: $accountName"); 0
+      case _ => {
+        val positionHist = positionHistDao.findByPositionIdAsOfDate(cashPosition.getId, asOfDate)
+        positionHist match {
+          case null => logger.error(s"cash position not found: accountName: $accountName"); 0
+          case _ => positionHist.getQuantity
+        }
+      }
+    }
     s"""#comments
       |Date,$asOfDate
       |Client,通联数据
@@ -96,7 +99,7 @@ class AccountDataService extends Logging {
       |#Security,type,amount,average-price
       |$securityValues
       |#CASH,amount,margin-rate
-      |CASH,$quantity,1.00`
+      |CASH,$quantity,1.00
       |#EOF
     """.stripMargin
   }

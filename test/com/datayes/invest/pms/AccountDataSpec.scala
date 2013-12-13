@@ -1,13 +1,10 @@
 package com.datayes.invest.pms.test
 
 import org.specs2.mutable._
-import scala.io.{BufferedSource, Source}
 
 import com.datayes.invest.pms.util.SpecService
 import org.joda.time.LocalDate
 import java.io.{PrintWriter, File}
-import scala.collection.mutable
-import java.lang.Long
 
 class AccountDataSpec extends Specification with SpecService {
   def export(path: String)(op: PrintWriter => Unit)(implicit parent: String = "/Users/changhai/tmp/pms_export") = {
@@ -19,6 +16,7 @@ class AccountDataSpec extends Specification with SpecService {
   }
 
   "Account Data" should {
+    /*
     "export clients" in {
       val s = accountDataService.exportClients
       s must_== "通联数据~99 West Lujiazui Road, Pudong, Shanghai, P.R.China 200120~CN~CNY~dyStgClient01~"
@@ -36,6 +34,7 @@ class AccountDataSpec extends Specification with SpecService {
       val s = accountDataService.exportEquityPosition(1L, LocalDate.parse("2013-09-06"))
       s must not beNull
     }
+    */
     "export all" in {
       export("clients") { pw =>
         pw.print(accountDataService.exportClients)
@@ -46,7 +45,7 @@ class AccountDataSpec extends Specification with SpecService {
       export("subaccounts") { pw =>
         pw.print(accountDataService.exportSubaccounts)
       }
-      val positions = accountDataService.exportEquityPositions(LocalDate.parse("2013-09-06"))
+      val positions = accountDataService.exportEquityPositions(LocalDate.parse("2013-12-12"))
       positions.foreach { p =>
         val (id, content) = p
         export(s"equity_position_$id") { pw =>
