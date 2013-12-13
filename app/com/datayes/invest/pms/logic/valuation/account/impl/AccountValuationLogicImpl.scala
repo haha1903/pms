@@ -372,7 +372,7 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
       
     }*/
     val positionIds = specifiedPositions.map(_.getId())
-    val hists = positionValuationHistDao.findByPositionIdListTypeIdAsOfDate(positionIds, ledgerType.getDbValue(), asOfDate)
+    val hists = positionValuationHistDao.findByPositionIdListTypeIdAsOfDate(positionIds, DefaultValues.POSITION_VALUATION_TYPE.getDbValue, asOfDate)
     val values = hists.map(_.getValueAmount())
     values.foldLeft(BigDecimal(0))(_ + _)
   }
