@@ -1,11 +1,13 @@
 package com.datayes.invest.pms.util
 
-import com.datayes.invest.pms.web.service.AccountService
+import com.datayes.invest.pms.web.service.AccountDataService
 
-/**
- * Created by changhai on 13-12-12.
- */
 trait SpecService extends SpecDao {
-  val accountService = new AccountService
-  accountService.setValue("accountDao", accountDao)
+  val accountDataService = new AccountDataService
+  accountDataService.setValue("accountDao", accountDao)
+  accountDataService.setValue("securityDao", securityDao)
+  accountDataService.setValue("cashPositionDao", cashPositionDao)
+  accountDataService.setValue("securityPositionDao", securityPositionDao)
+  accountDataService.setValue("positionHistDao", positionHistDao)
+  accountDataService.setValue("carryingValueHistDao", carryingValueHistDao)
 }

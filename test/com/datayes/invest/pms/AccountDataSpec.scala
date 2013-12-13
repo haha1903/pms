@@ -1,44 +1,58 @@
 package com.datayes.invest.pms.test
 
 import org.specs2.mutable._
+import scala.io.{BufferedSource, Source}
 
-import play.api.test._
-import play.api.test.Helpers._
-import controllers.AccountController
-import com.datayes.invest.pms.web.service.AccountService
-import com.datayes.invest.pms.dao.account.impl.AccountDaoImpl
-import com.datayes.invest.pms.persist.hibernate.PersistServiceImpl
-import com.datayes.invest.pms.persist.{Persist, Transaction}
-import scala.reflect.ClassTag
-import java.lang.reflect.Constructor
-import com.datayes.invest.pms.util.{SpecService, SpecUtil}
+import com.datayes.invest.pms.util.SpecService
+import org.joda.time.LocalDate
+import java.io.{PrintWriter, File}
+import scala.collection.mutable
+import java.lang.Long
 
 class AccountDataSpec extends Specification with SpecService {
-  "The 'Hello world' string" should {
-    "contain 12 characters" in {
-      "Hello world!" must have size (12)
-    }
-    "start with 'Hello'" in {
-      "Hello world" must startWith("Hello")
-    }
-    "end with 'world'" in {
-      "Hello world" must endWith("world")
-    }
+  def export(path: String)(op: PrintWriter => Unit)(implicit parent: String = "/Users/changhai/tmp/pms_export") = {
+    val folder = new File(parent)
+    folder.mkdirs
+    val pw = new PrintWriter(new File(folder, path))
+    op(pw)
+    pw.close
   }
-  "Computer model" should {
 
-    "be retrieved by id" in {
-      running(FakeApplication()) {
-        "haha" in {
-          "hello" must have size 5
+  "Account Data" should {
+    "export clients" in {
+      val s = accountDataService.exportClients
+      s must_== "通联数据~99 West Lujiazui Road, Pudong, Shanghai, P.R.China 200120~CN~CNY~dyStgClient01~"
+    }
+
+    "export accounts" in {
+      val s = accountDataService.exportAccounts
+      s must_== "通联数据~量化策略C~CNY~1~"
+    }
+    "export subaccounts" in {
+      val s = accountDataService.exportSubaccounts
+      s must_== "通联数据~量化策略C~SubaccountName~1~"
+    }
+    "respond equity position" in {
+      val s = accountDataService.exportEquityPosition(1L, LocalDate.parse("2013-09-06"))
+      s must not beNull
+    }
+    "export all" in {
+      export("clients") { pw =>
+        pw.print(accountDataService.exportClients)
+      }
+      export("accounts") { pw =>
+        pw.print(accountDataService.exportAccounts)
+      }
+      export("subaccounts") { pw =>
+        pw.print(accountDataService.exportSubaccounts)
+      }
+      val positions = accountDataService.exportEquityPositions(LocalDate.parse("2013-09-06"))
+      positions.foreach { p =>
+        val (id, content) = p
+        export(s"equity_position_$id") { pw =>
+          pw.print(content)
         }
       }
-    }
-    "respond to the index Action" in {
-      val controller = new AccountController
-      controller.setValue("accountService", accountService)
-      val result = controller.list(FakeRequest("GET", "/list"))
-      result must not beNull
     }
   }
 }
