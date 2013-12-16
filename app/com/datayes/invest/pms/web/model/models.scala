@@ -82,13 +82,14 @@ package object models {
 
   case class IndustryWeightTree(name: String, children: Seq[IndustryWeightNode]) extends IndustryWeightNode
   
-  case class Holding(name: String, ticker: String) {
+  case class Holding(name: String, ticker: String, securityId: Long) {
     var marketPrice: BigDecimal  = ZERO
     var marketValue: BigDecimal  = ZERO
     var holdingValuePrice: BigDecimal = ZERO
     var industry: String = ""
     var floatPnL: BigDecimal = ZERO
     var weight: BigDecimal = ZERO
+    var benchmarkIndexWeight: BigDecimal = ZERO
   }
   
   case class TopHoldingStock(
@@ -248,6 +249,7 @@ package object models {
 	
 	implicit object HoldingWrites extends Writes[Holding] {
       def writes(o: Holding) = Json.obj(
+        "securityId" -> o.securityId,
         "name" -> o.name.toString,
         "ticker" -> o.ticker.toString,
         "marketPrice" -> o.marketPrice,
@@ -255,7 +257,8 @@ package object models {
         "holdingValuePrice" -> o.holdingValuePrice,
         "industry" -> o.industry.toString,
         "floatPnL" -> o.floatPnL,
-        "weight" -> o.weight
+        "weight" -> o.weight,
+        "benchmarkIndexWeight" -> o.benchmarkIndexWeight
       )
     }
     

@@ -17,6 +17,7 @@ import play.pms.PmsAction
 import play.pms.PmsController
 import play.pms.PmsResult
 import play.api.libs.json.JsString
+import com.datayes.invest.pms.util.DefaultValues
 
 
 class FundController extends PmsController with Logging {
@@ -78,8 +79,9 @@ class FundController extends PmsController with Logging {
     val accountId: Long = param("accountId")
     val number: Int = param("number").default(10)
     val asOfDate = paramAsOfDateOrToday()
+    val benchmarkIndex: String = param("benchmarkIndex").default(DefaultValues.BENCHMARK_MARKET_INDEX)
     
-    val topHoldingStock = fundService.getTopHoldingStock(accountId, number, asOfDate)
+    val topHoldingStock = fundService.getTopHoldingStock(accountId, number, asOfDate, benchmarkIndex)
     val json = Json.toJson(topHoldingStock)
     PmsResult(json)
   }

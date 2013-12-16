@@ -20,7 +20,7 @@ import javax.inject.Inject
 import org.joda.time.LocalDate
 import com.datayes.invest.pms.logic.calculation.webinterface.CurrentCashCalc
 import com.datayes.invest.pms.logic.calculation.assetyield.GenericAssetYieldCalc
-import com.datayes.invest.pms.service.marketindex.MarketIndexService
+import com.datayes.invest.pms.service.marketindex.{Index, MarketIndexService}
 
 class FundService extends Logging {
   
@@ -236,7 +236,8 @@ class FundService extends Logging {
     filledList.sortBy { acw => acw.weight * -1 }
   }
 
-  def getTopHoldingStock(accountId: Long, num: Int, asOfDate: LocalDate): TopHoldingStock = transaction {
+  def getTopHoldingStock(accountId: Long, num: Int, asOfDate: LocalDate, benchmarkIndex: String): TopHoldingStock = transaction {
+    val indexOpt = marketIndexService.getIndexes.find(_.getId == benchmarkIndex)
     val account = helper.loadAccount(accountId, asOfDate)
     val assets = portfolioLoader.load(account, asOfDate, None)
     val equityAssets = assets.filter { a => a.assetClass == AssetClass.EQUITY }
@@ -245,8 +246,15 @@ class FundService extends Logging {
     val topHoldings = topEquities.map { a => convertToHolding(a) }
     
     var totalWeight = BigDecimalConstants.ZERO
-    for (a <- topEquities) {
+    for (a <- topHoldings) {
       totalWeight += a.weight
+      
+      a.benchmarkIndexWeight = indexOpt match {
+        case Some(index) =>
+          marketIndexService.getIndexWeight(index.getId, asOfDate, a.securityId)
+        case None =>
+          BigDecimalConstants.ZERO
+      }
     }
     
     val topHoldingStock = TopHoldingStock(num, totalWeight, topHoldings)
@@ -420,7 +428,7 @@ class FundService extends Logging {
     var fundReturn: BigDecimal = 1
     while (date.compareTo(asOfDate) <= 0) {
       val pk = new AccountValuationHist.PK(accountId, AccountValuationType.DAILY_RETURN.getDbValue, date)
-      var accountValuationHist = accountValuationHistDao.findById(pk)
+      val accountValuationHist = accountValuationHistDao.findById(pk)
       if (accountValuationHist != null) {
         val dailyReturn: BigDecimal = accountValuationHist.getValueAmount
         fundReturn = fundReturn * (dailyReturn + 1)
@@ -455,7 +463,7 @@ class FundService extends Logging {
   }
 
   private def convertToHolding(asset: AssetCommon): Holding = {
-    val holding = Holding(asset.name, asset.code)
+    val holding = Holding(asset.name, asset.code, asset.securityId)
     holding.marketPrice = asset.marketPrice
     holding.marketValue = asset.marketValue
     holding.holdingValuePrice = asset.holdingValuePrice
