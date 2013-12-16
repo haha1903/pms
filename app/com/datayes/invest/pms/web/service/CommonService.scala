@@ -6,7 +6,7 @@ import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.persist.dsl.transaction
 import com.datayes.invest.pms.service.calendar.CalendarService
 import com.datayes.invest.pms.service.industry.IndustryService
-import com.datayes.invest.pms.service.marketindex.{Index, MarketIndexService}
+import com.datayes.invest.pms.service.marketindex.{MarketIndexInfo, MarketIndexService}
 import javax.inject.Inject
 import org.joda.time.LocalDate
 
@@ -26,8 +26,8 @@ class CommonService extends Logging {
     industryService.getIndustries().toList
   }
 
-  def getMarketIndexes(): List[Index] = {
-    marketIndexService.getIndexes.toList
+  def getMarketIndexes(): List[MarketIndexInfo] = {
+    marketIndexService.getAvailableIndexes.toList
   }
 
   def previousTradeDay(date: LocalDate, exchange: String, numOfDays: Int): LocalDate = transaction {

@@ -70,7 +70,8 @@ package object models {
     var marketValue: BigDecimal = ZERO,
     var weight: BigDecimal = ZERO,
     var floatPnL: BigDecimal = ZERO,
-    var floatPnLRate: BigDecimal = ZERO)
+    var floatPnLRate: BigDecimal = ZERO
+  )
 
   sealed abstract class IndustryWeightNode {
     val name: String
@@ -78,7 +79,7 @@ package object models {
     var weight: BigDecimal = ZERO
   }
 
-  case class IndustryWeightLeaf(name: String) extends IndustryWeightNode
+  case class IndustryWeightLeaf(name: String, var benchmarkIndexWeight: BigDecimal = ZERO) extends IndustryWeightNode
 
   case class IndustryWeightTree(name: String, children: Seq[IndustryWeightNode]) extends IndustryWeightNode
   
@@ -240,7 +241,7 @@ package object models {
         )
         node match {
           case leaf: IndustryWeightLeaf =>
-            json
+            json ++ Json.obj("benchmarkIndexWeight" -> leaf.benchmarkIndexWeight)
           case tree: IndustryWeightTree =>
             json ++ Json.obj("children" -> tree.children)
         }

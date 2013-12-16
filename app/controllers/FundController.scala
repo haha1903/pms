@@ -50,8 +50,9 @@ class FundController extends PmsController with Logging {
   def industryProportion() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
     val asOfDate = paramAsOfDateOrToday()
+    val benchmarkIndex: String = paramBenchmarkIndex()
     
-    val industryProportions = fundService.getIndustryProportion(accountId, asOfDate)
+    val industryProportions = fundService.getIndustryProportion(accountId, asOfDate, benchmarkIndex)
     val json = Json.toJson(industryProportions)
     PmsResult(json)
   }

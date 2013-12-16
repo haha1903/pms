@@ -2,7 +2,7 @@ package com.datayes.invest.pms.service.marketindex;
 
 import com.datayes.invest.pms.util.BeanUtil;
 
-public class Index {
+public class MarketIndexInfo {
 
 	private final String id;
 	
@@ -10,7 +10,7 @@ public class Index {
 
     private final String tickerSymbol;
 
-	public Index(String id, String name, String tickerSymbol) {
+	public MarketIndexInfo(String id, String name, String tickerSymbol) {
 		this.id = id;
 		this.name = name;
         this.tickerSymbol = tickerSymbol;

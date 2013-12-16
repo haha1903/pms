@@ -1,26 +1,29 @@
 package com.datayes.invest.pms.web.service
 
+import java.lang.{ Long => JLong }
+import java.util.{ Map => JMap }
 import scala.collection.mutable
 import scala.collection.JavaConversions._
 import scala.math.BigDecimal.int2bigDecimal
 import scala.util.control.Breaks.{break, breakable}
 
-import com.datayes.invest.pms.dao.account.{PositionYieldDao, PositionDao, AccountDao, AccountValuationHistDao}
+import com.datayes.invest.pms.dao.account.{AccountDao, AccountValuationHistDao, PositionDao, PositionYieldDao}
 import com.datayes.invest.pms.dao.security.{EquityDao, PriceVolumeDao, SecurityDao}
-import com.datayes.invest.pms.dbtype.{LedgerType, AccountValuationType, AssetClass}
-import com.datayes.invest.pms.entity.account.{Position, Account, AccountValuationHist}
+import com.datayes.invest.pms.dbtype.{AccountValuationType, AssetClass, LedgerType}
+import com.datayes.invest.pms.entity.account.{Account, AccountValuationHist, Position}
 import com.datayes.invest.pms.logging.Logging
+import com.datayes.invest.pms.logic.calculation.assetyield.GenericAssetYieldCalc
+import com.datayes.invest.pms.logic.calculation.webinterface.CurrentCashCalc
 import com.datayes.invest.pms.persist.dsl.transaction
 import com.datayes.invest.pms.service.marketdata.MarketDataService
+import com.datayes.invest.pms.service.marketindex.{MarketIndexComponent, MarketIndexService}
 import com.datayes.invest.pms.util.{BigDecimalConstants, DefaultValues}
 import com.datayes.invest.pms.web.assets.PortfolioLoader
 import com.datayes.invest.pms.web.assets.models.AssetCommon
 import com.datayes.invest.pms.web.model.models.{AccountOverview, AssetClassWeight, Holding, IndustryWeightLeaf, IndustryWeightTree, NetValueTrendItem, Performance, TopHoldingStock}
 import javax.inject.Inject
 import org.joda.time.LocalDate
-import com.datayes.invest.pms.logic.calculation.webinterface.CurrentCashCalc
-import com.datayes.invest.pms.logic.calculation.assetyield.GenericAssetYieldCalc
-import com.datayes.invest.pms.service.marketindex.{Index, MarketIndexService}
+import com.datayes.invest.pms.service.industry.IndustryService
 
 class FundService extends Logging {
   
@@ -35,6 +38,9 @@ class FundService extends Logging {
   
   @Inject
   private var helper: ServiceHelper = null
+
+  @Inject
+  private var industryService: IndustryService = null
 
   @Inject
   private var marketDataService: MarketDataService = null
@@ -87,7 +93,7 @@ class FundService extends Logging {
 
     val items = startDateOpt match {
       case Some(startDate) =>
-        val benchmarkIndexTicker = marketIndexService.getIndexes().find(ind => ind.getId == benchmarkIndexId) match {
+        val benchmarkIndexTicker = marketIndexService.getAvailableIndexes().find(ind => ind.getId == benchmarkIndexId) match {
           case Some(index) =>
             index.getTickerSymbol
           case None =>
@@ -126,7 +132,7 @@ class FundService extends Logging {
   }
 
   // TODO refactor to not use AssetsLoader
-  def getIndustryProportion(accountId: Long, asOfDate: LocalDate): IndustryWeightTree = transaction {
+  def getIndustryProportion(accountId: Long, asOfDate: LocalDate, benchmarkIndex: String): IndustryWeightTree = transaction {
     val account = helper.loadAccount(accountId, asOfDate)
     val assets = portfolioLoader.load(account, asOfDate, None)
     // Filter stock
@@ -139,6 +145,12 @@ class FundService extends Logging {
       }
       obj
     }.toSeq
+
+    val benchmarkIndustryWeights = getBenchmarkIndexIndustryWeights(benchmarkIndex, asOfDate)
+    for (w <- industryWeights) {
+      val industryWeight = benchmarkIndustryWeights.get(w.name).getOrElse(BigDecimalConstants.ZERO)
+      w.benchmarkIndexWeight = industryWeight
+    }
 
     var totalMarketValue = BigDecimalConstants.ZERO
     var totalWeight = BigDecimalConstants.ZERO
@@ -153,6 +165,21 @@ class FundService extends Logging {
     tree.weight = totalWeight
 
     tree
+  }
+
+  private def getBenchmarkIndexIndustryWeights(benchmarkIndex: String, asOfDate: LocalDate): Map[String, BigDecimal] = {
+    val marketIndex = marketIndexService.getMarketIndex(benchmarkIndex, asOfDate)
+    val components: JMap[JLong, MarketIndexComponent] = marketIndex.getComponents()
+    val industryWeights = components.toList.map { case (securityId, comp) =>
+      val industry = industryService.getIndustryBySecurityId(securityId)
+      val weight = comp.getWeight
+      (industry, weight)
+    }.groupBy(_._1).map { case (industry, compList) =>
+      val totalWeight = compList.map(_._2).foldLeft(BigDecimalConstants.ZERO)(_ + _)
+      (industry, totalWeight)
+    }
+
+    industryWeights.toMap
   }
 
   def getPerformanceOverview(accountId: Long, asOfDate: LocalDate, standardFund: List[(String, Long)]): Seq[Performance] = transaction {
@@ -237,7 +264,7 @@ class FundService extends Logging {
   }
 
   def getTopHoldingStock(accountId: Long, num: Int, asOfDate: LocalDate, benchmarkIndex: String): TopHoldingStock = transaction {
-    val indexOpt = marketIndexService.getIndexes.find(_.getId == benchmarkIndex)
+    val indexOpt = marketIndexService.getAvailableIndexes.find(_.getId == benchmarkIndex)
     val account = helper.loadAccount(accountId, asOfDate)
     val assets = portfolioLoader.load(account, asOfDate, None)
     val equityAssets = assets.filter { a => a.assetClass == AssetClass.EQUITY }

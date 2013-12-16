@@ -9,6 +9,9 @@ import java.util.concurrent.ConcurrentMap;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.datayes.invest.pms.service.marketindex.MarketIndex;
+import com.datayes.invest.pms.service.marketindex.MarketIndexComponent;
+import com.datayes.invest.pms.service.marketindex.MarketIndexInfo;
 import org.jboss.netty.util.internal.ConcurrentHashMap;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
@@ -18,19 +21,18 @@ import scala.math.BigDecimal;
 
 import com.datayes.invest.pms.dao.security.MarketIndexDao;
 import com.datayes.invest.pms.service.calendar.CalendarService;
-import com.datayes.invest.pms.service.marketindex.Index;
 import com.datayes.invest.pms.service.marketindex.MarketIndexService;
 import com.datayes.invest.pms.util.BigDecimalConstants;
 
 @Singleton
 public class MarketIndexServiceImpl implements MarketIndexService {
 	
-	private static final List<Index> indexList = Arrays.asList(
+	private static final List<MarketIndexInfo> indexList = Arrays.asList(
         // TODO Temporarily hard-code them here
-	    new Index("HSSLL", "沪深300", "000300"),
-	    new Index("SZWL", "上证50", "000016"),
-	    new Index("SZYBL", "上证180", "000010"),
-	    new Index("ZZWLL", "中证500", "000905")
+	    new MarketIndexInfo("HSSLL", "沪深300", "000300"),
+	    new MarketIndexInfo("SZWL", "上证50", "000016"),
+	    new MarketIndexInfo("SZYBL", "上证180", "000010"),
+	    new MarketIndexInfo("ZZWLL", "中证500", "000905")
 	);
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MarketIndexServiceImpl.class);
@@ -44,7 +46,7 @@ public class MarketIndexServiceImpl implements MarketIndexService {
 	private ConcurrentMap<CacheKey, MarketIndex> indexCache = new ConcurrentHashMap<>();
 
 	@Override
-	public List<Index> getIndexes() {
+	public List<MarketIndexInfo> getAvailableIndexes() {
 		return indexList;
 	}
 
@@ -55,20 +57,7 @@ public class MarketIndexServiceImpl implements MarketIndexService {
 		    return BigDecimalConstants.ZERO();
 		}
 		
-		// Need to use data of previous trade day because today's data might not be ready yet
-		LocalDate tradeDate = calendarService.previousTradeDay(asOfDate);
-		
-		CacheKey key = new CacheKey(indexId, tradeDate);
-		MarketIndex marketIndex = indexCache.get(key);
-		if (marketIndex == null) {
-			MarketIndex newMarketIndex = loadMarketIndex(indexId, tradeDate);
-			if (newMarketIndex != null) {
-				marketIndex = indexCache.putIfAbsent(key, newMarketIndex);
-				if (marketIndex == null) {
-					marketIndex = newMarketIndex;
-				}
-			}
-		}
+        MarketIndex marketIndex = internalGetMarketIndex(indexId, asOfDate);
 		
 		if (marketIndex == null || marketIndex.getComponents() == null || marketIndex.getComponents().isEmpty()) {
 			return BigDecimalConstants.ZERO();
@@ -82,7 +71,32 @@ public class MarketIndexServiceImpl implements MarketIndexService {
 		return comp.getWeight();
 	}
 
-	private MarketIndex loadMarketIndex(String indexId, LocalDate asOfDate) {
+    @Override
+    public MarketIndex getMarketIndex(String indexId, LocalDate asOfDate) {
+        return internalGetMarketIndex(indexId, asOfDate);
+    }
+
+    private MarketIndex internalGetMarketIndex(String indexId, LocalDate asOfDate) {
+
+        // Need to use data of previous trade day because today's data might not be ready yet
+        LocalDate tradeDate = calendarService.previousTradeDay(asOfDate);
+
+        CacheKey key = new CacheKey(indexId, tradeDate);
+        MarketIndex marketIndex = indexCache.get(key);
+        if (marketIndex == null) {
+            MarketIndex newMarketIndex = loadMarketIndex(indexId, tradeDate);
+            if (newMarketIndex != null) {
+                marketIndex = indexCache.putIfAbsent(key, newMarketIndex);
+                if (marketIndex == null) {
+                    marketIndex = newMarketIndex;
+                }
+            }
+        }
+
+        return marketIndex;
+    }
+
+    private MarketIndex loadMarketIndex(String indexId, LocalDate asOfDate) {
 		List<com.datayes.invest.pms.entity.security.MarketIndex> list = marketIndexDao.findByMarketIndexEndDate(indexId, asOfDate);
 		Map<Long, MarketIndexComponent> components = new HashMap<>();
 		if (list == null || list.isEmpty()) {
@@ -100,7 +114,7 @@ public class MarketIndexServiceImpl implements MarketIndexService {
 	}
 	
 	private boolean checkIndex(String indexId) {
-	    for (Index ind : indexList) {
+	    for (MarketIndexInfo ind : indexList) {
 	        if (ind.getId().equals(indexId)) {
 	            return true;
 	        }

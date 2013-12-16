@@ -7,7 +7,7 @@ import play.api.libs.json.JsString
 import play.api.libs.json.Writes
 import com.datayes.invest.pms.entity.account.Account
 import play.api.libs.json.Json
-import com.datayes.invest.pms.service.marketindex.Index
+import com.datayes.invest.pms.service.marketindex.MarketIndexInfo
 
 package object writes {
 
@@ -42,9 +42,9 @@ package object writes {
     )
   }
 
-  implicit object IndexWrites extends Writes[Index] {
+  implicit object IndexWrites extends Writes[MarketIndexInfo] {
 
-    def writes(o: Index) = Json.obj(
+    def writes(o: MarketIndexInfo) = Json.obj(
       "id" -> o.getId,
       "name" -> o.getName,
       "tickerSymbol" -> o.getTickerSymbol

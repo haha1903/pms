@@ -1,4 +1,4 @@
-package com.datayes.invest.pms.service.marketindex.impl;
+package com.datayes.invest.pms.service.marketindex;
 
 import com.datayes.invest.pms.util.BeanUtil;
 
