@@ -27,7 +27,7 @@ public class MarketDataServiceMockImpl implements MarketDataService {
     }
 
     public void setMarketDataMap(Map<Long, MarketData> map) {
-        Map<Long, MarketData> newMap = new HashMap<>(map);
+        Map<Long, MarketData> newMap = new HashMap(map);
         this.marketDataMap = Collections.unmodifiableMap(newMap);
     }
 
@@ -35,6 +35,11 @@ public class MarketDataServiceMockImpl implements MarketDataService {
     public List<MarketData> getMarketDataBetweenDates(Long securityId, LocalDate startDate, LocalDate endDate) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void reinitialize() {
+
     }
 
 }
