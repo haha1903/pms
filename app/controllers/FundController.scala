@@ -40,9 +40,9 @@ class FundController extends PmsController with Logging {
   def netTrend() = PmsAction { implicit req =>
     val accountId: Long = param("accountId")
     val asOfDate: LocalDate = paramAsOfDateOrToday()
-    val benchmarkIndexId: String = param("benchmarkIndexId")
+    val benchmarkIndex: String = paramBenchmarkIndex()
     
-    val netValueTrendItems = fundService.getNetTrend(accountId, asOfDate, benchmarkIndexId)
+    val netValueTrendItems = fundService.getNetTrend(accountId, asOfDate, benchmarkIndex)
     val json = Json.toJson(netValueTrendItems)
     PmsResult(json)
   }
