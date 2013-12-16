@@ -26,10 +26,11 @@ import com.datayes.invest.pms.util.BigDecimalConstants;
 public class MarketIndexServiceImpl implements MarketIndexService {
 	
 	private static final List<Index> indexList = Arrays.asList(
-	    new Index("HSSLL", "沪深300"),
-	    new Index("SZWL", "上证50"),
-	    new Index("SZYBL", "上证180"),
-	    new Index("ZZWLL", "中证500")
+        // TODO Temporarily hard-code them here
+	    new Index("HSSLL", "沪深300", "000300"),
+	    new Index("SZWL", "上证50", "000016"),
+	    new Index("SZYBL", "上证180", "000010"),
+	    new Index("ZZWLL", "中证500", "000905")
 	);
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(MarketIndexServiceImpl.class);

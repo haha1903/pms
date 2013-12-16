@@ -580,7 +580,7 @@ class AccountValuationLogicImpl extends AccountValuationLogic with Logging {
       }
     }
 
-    saveAccountValuationHist(account, accValType, preciseAsNumber(dailyReturn), findLatestAdjustTs)
+    saveAccountValuationHist(account, accValType, dailyReturn.bigDecimal, findLatestAdjustTs)
     dailyReturn
   }
 

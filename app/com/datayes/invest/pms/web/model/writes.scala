@@ -46,7 +46,8 @@ package object writes {
 
     def writes(o: Index) = Json.obj(
       "id" -> o.getId,
-      "name" -> o.getName
+      "name" -> o.getName,
+      "tickerSymbol" -> o.getTickerSymbol
     )
   }
 }

@@ -51,6 +51,11 @@ class EquityAssetLoader(position: SecurityPosition, asOfDate: LocalDate, tranObj
     if (tranObj.positionValuationHist != null && tranObj.prevPositionValuationHist != null) {
       equityAsset.dailyPnL = tranObj.positionValuationHist.getValueAmount() - tranObj.prevPositionValuationHist.getValueAmount()
     }
+
+    // floatPnL
+    if (asset.marketValue != null && asset.holdingValue != null) {
+      asset.floatPnL = asset.marketValue - asset.holdingValue
+    }
     
     // benchmarkIndexWeight
     val benchmarkIndex = tranObj.benchmarkIndexOpt.getOrElse(DefaultValues.BENCHMARK_MARKET_INDEX)

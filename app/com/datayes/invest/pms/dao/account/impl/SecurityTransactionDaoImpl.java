@@ -79,12 +79,13 @@ public class SecurityTransactionDaoImpl extends AccountRelatedDaoImpl<SecurityTr
 		return result;
 	}
 
-    public List<SecurityTransaction> findTransactionsExecDateTradeSide(List<Long> securityIds, LocalDate execDate, TradeSide tradeSide) {
+    public List<SecurityTransaction> findTransactionsExecDateTradeSide(Long accountId, List<Long> securityIds, LocalDate execDate, TradeSide tradeSide) {
         LocalDateTime startDateTime = new LocalDateTime(execDate.toDateTimeAtStartOfDay());
         LocalDateTime endDateTime = new LocalDateTime(execDate.plusDays(1).toDateTimeAtStartOfDay());
         Query q = getEntityManager().createQuery(" from " + classOfEntity.getName()
-                + " where securityId in :securitIds and executionDate >= :startDateTime and executionDate < :endDateTime and tradeSideCode = :tradeSideCode");
+                + " where accountId = :accountId and securityId in :securitIds and executionDate >= :startDateTime and executionDate < :endDateTime and tradeSideCode = :tradeSideCode");
 
+        q.setParameter("accountId", accountId);
         q.setParameter("securitIds", securityIds);
         q.setParameter("startDateTime", startDateTime);
         q.setParameter("endDateTime", endDateTime);

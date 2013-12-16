@@ -1,6 +1,6 @@
 package com.datayes.invest.pms.service.marketindex;
 
-import org.apache.commons.lang3.ObjectUtils;
+import com.datayes.invest.pms.util.BeanUtil;
 
 public class Index {
 
@@ -8,9 +8,12 @@ public class Index {
 	
 	private final String name;
 
-	public Index(String id, String name) {
+    private final String tickerSymbol;
+
+	public Index(String id, String name, String tickerSymbol) {
 		this.id = id;
 		this.name = name;
+        this.tickerSymbol = tickerSymbol;
 	}
 
 	public String getId() {
@@ -20,18 +23,18 @@ public class Index {
 	public String getName() {
 		return name;
 	}
-	
-	@Override
+
+    public String getTickerSymbol() {
+        return tickerSymbol;
+    }
+
+    @Override
 	public boolean equals(Object obj) {
-	    if (! (obj instanceof Index)) {
-	        return false;
-	    }
-	    Index other = (Index) obj;
-	    return ObjectUtils.equals(this.id, other.id) && ObjectUtils.equals(this.name, other.name);
+	    return BeanUtil.equals(this, obj);
 	}
 	
 	@Override
 	public String toString() {
-	    return "Index [id=" + id + ", name=" + name + "]";
+	    return BeanUtil.toString(this);
 	}
 }

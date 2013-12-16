@@ -40,8 +40,6 @@ object DefaultValues {
   val POSITION_VALUATION_TYPE = PositionValuationType.MARKET
   
   val SH_STOCK_EXCHANGE_CODE = "XSHG"
-
-  val STOCK_INDEX_FUTURE_PRICE_RATIO = 300
   
   val THIS_FUND = "本基金"
     

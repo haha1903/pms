@@ -28,6 +28,7 @@ import com.datayes.invest.pms.entity.security.Future
 import com.datayes.invest.pms.entity.security.Repo
 import scala.Some
 import com.datayes.invest.pms.util.FutureMultiplierHelper
+import com.datayes.invest.pms.logic.calculation.marketvalue.MarketValueCalc
 
 
 class MarketValuationLogic extends PositionValuationLogic with Logging {
@@ -134,43 +135,41 @@ class MarketValuationLogic extends PositionValuationLogic with Logging {
   }
 
   private def valuatePosition(position: Position, positionHist: PositionHist, positionValuationHistOpt: Option[PositionValuationHist]): Unit = {
-    val (price: BigDecimal, currencyCode: String) = position match {
+    val currencyCode: String =  position.getCurrencyCode
+    val (price: BigDecimal, valueAmount: BigDecimal) = position match {
       case securityPosition: SecurityPosition =>
         val security = securityDao.findById(securityPosition.getSecurityId)
         security match {
           case equity: Equity =>
             val p = getEquityMarketPrice(securityPosition.getSecurityId)
-            val c = securityPosition.getCurrencyCode
-            (p, c)
+            val v = MarketValueCalc.calculateEquityValue(p, positionHist.getQuantity)
+            (p, v)
 
           case future: Future =>
             logger.debug("Future #{}", securityPosition.getSecurityId)
             // TODO How to get STOCK_INDEX_FUTURE_PRICE_RATIO?
-            val p = if (future.getDeliveryDate() != null && future.getDeliveryDate().toLocalDate().isAfter(asOfDate)) {
+            if (future.getDeliveryDate() != null && future.getDeliveryDate().toLocalDate().isAfter(asOfDate)) {
               val ratio = FutureMultiplierHelper.getRatio(future.getContractMultiplier())
-              val v = getFutureMarketPrice(securityPosition.getSecurityId) * ratio
-              v
+              val p = getFutureMarketPrice(securityPosition.getSecurityId)
+              val v = MarketValueCalc.calculateFutureValue(p, positionHist.getQuantity, ratio)
+              (p, v)
             } else {
-              BigDecimalConstants.ZERO
+              (BigDecimalConstants.ZERO, BigDecimalConstants.ZERO)
             }
-            val c = securityPosition.getCurrencyCode
-            (p, c)
 
-          case repo: Repo => (BigDecimal(0), securityPosition.getCurrencyCode)
+          case repo: Repo => (BigDecimalConstants.ZERO, BigDecimalConstants.ZERO)
           
           case x =>
             throw new RuntimeException("Unable to handle security " + x.getClass)
         }
 
       case cashPosition: CashPosition =>
-        (DefaultValues.CASH_PRICE, cashPosition.getCurrencyCode)
+        (DefaultValues.CASH_PRICE, positionHist.getQuantity)
 
       case s => throw new RuntimeException("Unable to handle position " + (if (s == null) "null" else s.getClass.getName))
     }
 
     logger.debug("Position #{} quantity: {} on {}", positionHist.getPK.getPositionId, positionHist.getQuantity, asOfDate)
-    val valueAmount = price * positionHist.getQuantity
-
     savePositionValuationHist(position, positionHist, positionValuationHistOpt, price, valueAmount, currencyCode)
   }
 

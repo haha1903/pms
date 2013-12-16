@@ -16,5 +16,5 @@ public interface SecurityTransactionDao extends AccountRelatedGenericDao<Securit
 
 	List<SecurityTransaction> findRepoTransactionOnReturnDate(Long accountId, LocalDate asOfDate);
 
-    List<SecurityTransaction> findTransactionsExecDateTradeSide(List<Long> securityIds, LocalDate execDate, TradeSide tradeSide);
+    List<SecurityTransaction> findTransactionsExecDateTradeSide(Long accountId, List<Long> securityIds, LocalDate execDate, TradeSide tradeSide);
 }

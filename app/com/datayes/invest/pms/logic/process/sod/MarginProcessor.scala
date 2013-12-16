@@ -5,7 +5,7 @@ import com.datayes.invest.pms.dao.account.{ CarryingValueHistDao, CashPositionDa
 import com.datayes.invest.pms.dao.account.{ PositionHistDao, SecurityPositionDao, CashTransactionDao }
 import com.datayes.invest.pms.dao.security.{ FutureDao, SecurityDao, PriceVolumeDao, FuturePriceVolumeDao }
 import com.datayes.invest.pms.entity.account.{Account, CashTransaction, SecurityPosition}
-import com.datayes.invest.pms.util.DefaultValues
+import com.datayes.invest.pms.util.{FutureMultiplierHelper, DefaultValues, BigDecimalConstants}
 import org.joda.time.{LocalTime, LocalDate }
 import javax.inject.Inject
 import scala.collection.JavaConversions._
@@ -13,7 +13,6 @@ import scala.math.BigDecimal._
 import com.datayes.invest.pms.service.marketdata.MarketDataService
 import com.datayes.invest.pms.entity.security.Future
 import com.datayes.invest.pms.dbtype.LedgerType
-import com.datayes.invest.pms.util.BigDecimalConstants
 import com.datayes.invest.pms.entity.account.CarryingValueHist
 import com.datayes.invest.pms.dbtype.TransactionSource
 import com.datayes.invest.pms.dbtype.TransactionClass
@@ -21,6 +20,7 @@ import com.datayes.invest.pms.dbtype.CashTransactionType
 import com.datayes.invest.pms.dbtype.CashTransactionMethod
 import com.datayes.invest.pms.dbtype.CashTransactionReason
 import com.datayes.invest.pms.logic.process.Processor
+import com.datayes.invest.pms.logic.calculation.marketvalue.MarketValueCalc
 
 class MarginProcessor extends Processor with Logging {
 
@@ -83,7 +83,8 @@ class MarginProcessor extends Processor with Logging {
   private def refreshMargin(accountId: Long, securityPosition: SecurityPosition, asOfDate: LocalDate): Unit = {
     val settlementPrice = getSettlementPrice(securityPosition.getSecurityId, asOfDate.minusDays(1))
     val quantity = getQuantity(securityPosition.getId, asOfDate)
-    val totalAmount = settlementPrice * quantity * DefaultValues.STOCK_INDEX_FUTURE_PRICE_RATIO
+    val ratio = FutureMultiplierHelper.getRatio(securityPosition.asInstanceOf[Future].getContractMultiplier())
+    val totalAmount = MarketValueCalc.calculateFutureValue(settlementPrice, quantity, ratio)
     
     if (quantity == 0) {
       return

@@ -81,13 +81,13 @@ public class OMSOrderServiceImpl implements OrderService {
     private OrderPM convertOrder(Order order) {
         OrderPM jupiterOrder              = new OrderPM();
 
-//        jupiterOrder.externalClientID     = clientId;                                 // tenent client id
-//        jupiterOrder.externalAccountID    = String.valueOf(order.getAccountId());     // pms account id
-//        jupiterOrder.externalSubaccountID = "1";                                      // no subaccount right now
+        jupiterOrder.externalClientID     = clientId;                                    // tenent client id
+        jupiterOrder.externalAccountID    = String.valueOf(order.getAccountId());        // pms account id
+        jupiterOrder.externalSubaccountID = "1-" + jupiterOrder.externalAccountID;       // no subaccount right now
 
-        jupiterOrder.externalClientID     = "dyStgClient01";    // tenent client id
-        jupiterOrder.externalAccountID    = "dyStgAcctEQ";      // pms account id
-        jupiterOrder.externalSubaccountID = "dyStgSubacctEQ1";  // no subaccount right now
+//        jupiterOrder.externalClientID     = "dyStgClient01";    // tenent client id
+//        jupiterOrder.externalAccountID    = "dyStgAcctEQ";      // pms account id
+//        jupiterOrder.externalSubaccountID = "dyStgSubacctEQ1";  // no subaccount right now
 
         jupiterOrder.emsSecurityID        = order.getSecurityId();
         jupiterOrder.side                 = getJupiterTradeSide(order.getTradeSide());

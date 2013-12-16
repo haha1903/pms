@@ -20,6 +20,7 @@ import javax.inject.Inject
 import org.joda.time.LocalDate
 import com.datayes.invest.pms.logic.calculation.webinterface.CurrentCashCalc
 import com.datayes.invest.pms.logic.calculation.assetyield.GenericAssetYieldCalc
+import com.datayes.invest.pms.service.marketindex.MarketIndexService
 
 class FundService extends Logging {
   
@@ -37,6 +38,9 @@ class FundService extends Logging {
 
   @Inject
   private var marketDataService: MarketDataService = null
+
+  @Inject
+  private var marketIndexService: MarketIndexService = null
   
   @Inject
   private var portfolioLoader: PortfolioLoader = null
@@ -75,7 +79,7 @@ class FundService extends Logging {
     )
   }
 
-  def getNetTrend(accountId: Long, asOfDate: LocalDate, benchmarkIndexTicker: String): Seq[NetValueTrendItem] = transaction {
+  def getNetTrend(accountId: Long, asOfDate: LocalDate, benchmarkIndexId: String): Seq[NetValueTrendItem] = transaction {
     helper.loadAccount(accountId, asOfDate)
     val netValueHists = loadNetValueHistsBeforeDate(accountId, asOfDate)
     val fundReturnHists = loadFundReturnHistsBeforeDate(accountId, asOfDate)
@@ -83,6 +87,12 @@ class FundService extends Logging {
 
     val items = startDateOpt match {
       case Some(startDate) =>
+        val benchmarkIndexTicker = marketIndexService.getIndexes().find(ind => ind.getId == benchmarkIndexId) match {
+          case Some(index) =>
+            index.getTickerSymbol
+          case None =>
+            throw new RuntimeException("Cannot find market index by id " + benchmarkIndexId)
+        }
         val equityList =  equityDao.findByTickerSymbol(benchmarkIndexTicker)
         val benchmarkSecurityId = {
           if(null == equityList || equityList.isEmpty) {
@@ -119,7 +129,8 @@ class FundService extends Logging {
   def getIndustryProportion(accountId: Long, asOfDate: LocalDate): IndustryWeightTree = transaction {
     val account = helper.loadAccount(accountId, asOfDate)
     val assets = portfolioLoader.load(account, asOfDate, None)
-    val assetsWithIndustry = assets.filter { a => a.industry != null }
+    // Filter stock
+    val assetsWithIndustry = assets.filter { a => a.industry != null && a.assetClass == AssetClass.EQUITY }
     val industryWeights = assetsWithIndustry.groupBy(a => a.industry).map { case (industry, assets) =>
       val obj = IndustryWeightLeaf(industry)
       for (a <- assets) {
@@ -191,7 +202,8 @@ class FundService extends Logging {
       else if ( CASH == ac ) {
         val ledgerType = LedgerType.CASH
         val tempSum = positionSums.get(ledgerType).getOrElse((BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO, BigDecimalConstants.ZERO))
-        (tempSum._1, tempSum._2, tempSum._3, CurrentCashCalc.calculateCurrentCash(tempSum._4, payableValue, receivableValue))
+        //TODO: the earn loss of cash should not be zero
+        (BigDecimalConstants.ZERO, tempSum._2, tempSum._3, CurrentCashCalc.calculateCurrentCash(tempSum._4, payableValue, receivableValue))
       }
       else if ( EQUITY == ac ) {
         val ledgerType = LedgerType.SECURITY
@@ -404,7 +416,7 @@ class FundService extends Logging {
   }
 
   private def getFundReturn(accountId: Long, asOfDate: LocalDate, func: LocalDate => LocalDate): BigDecimal = {
-    var date = func(asOfDate)
+    var date = func(asOfDate).plusDays(1)    // Have to exclude the start date's DAILY_RETURN
     var fundReturn: BigDecimal = 1
     while (date.compareTo(asOfDate) <= 0) {
       val pk = new AccountValuationHist.PK(accountId, AccountValuationType.DAILY_RETURN.getDbValue, date)

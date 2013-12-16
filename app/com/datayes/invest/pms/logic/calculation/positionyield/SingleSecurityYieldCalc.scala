@@ -3,6 +3,8 @@ package com.datayes.invest.pms.logic.calculation.positionyield
 import com.datayes.invest.pms.entity.account.SecurityTransaction
 import com.datayes.invest.pms.logging.Logging
 import com.datayes.invest.pms.util.BigDecimalConstants
+import com.datayes.invest.pms.dbtype.LedgerType
+import com.datayes.invest.pms.logic.calculation.marketvalue.MarketValueCalc
 
 
 trait SingleSecurityYieldCalc extends SingleGenericYieldCalc with Logging {
@@ -19,9 +21,17 @@ trait SingleSecurityYieldCalc extends SingleGenericYieldCalc with Logging {
     sellTransactionValue - sellTransactionQuantity / positionQuantity * carryingValue
   }
 
-  def sumSingleSecurityTransaction(transactions: List[SecurityTransaction]): (BigDecimal, BigDecimal) = {
+  def sumSingleSecurityTransaction(transactions: List[SecurityTransaction], ledgerType: LedgerType, ratio: Option[BigDecimal]): (BigDecimal, BigDecimal) = {
     val sumQuantity = transactions.foldLeft(BigDecimalConstants.ZERO)(_ + _.getAmount)
-    val sumValue = transactions.foldLeft(BigDecimalConstants.ZERO)((start, transaction) => start + transaction.getAvgPrice * transaction.getAmount)
+    val sumValue = transactions.foldLeft(BigDecimalConstants.ZERO)((start, transaction) => {
+      val value = if ( LedgerType.SECURITY == ledgerType ) {
+        MarketValueCalc.calculateEquityValue(transaction.getAvgPrice, transaction.getAmount)
+      }
+      else {
+        MarketValueCalc.calculateFutureValue(transaction.getAvgPrice, transaction.getAmount, ratio.getOrElse(BigDecimalConstants.ONE))
+      }
+      start + value
+    })
     (sumQuantity, sumValue)
   }
 
@@ -29,13 +39,7 @@ trait SingleSecurityYieldCalc extends SingleGenericYieldCalc with Logging {
     earnLoss - priceDiff
   }
 
-  def calculateSingleTradeEarn(buyTransaction: (BigDecimal, BigDecimal), sellTransaction: (BigDecimal, BigDecimal), price: BigDecimal): BigDecimal = {
-    val buyQuantity = buyTransaction._1
-    val buyValue = buyTransaction._2
-
-    val sellQuantity = sellTransaction._1
-    val sellValue = sellTransaction._2
-
-    (buyQuantity - sellQuantity) * price - buyValue + sellValue
+  def calculateSingleTradeEarn(buyValue: BigDecimal, sellValue: BigDecimal, buySellDiff: BigDecimal): BigDecimal = {
+    buySellDiff - buyValue + sellValue
   }
 }

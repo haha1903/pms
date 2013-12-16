@@ -90,7 +90,7 @@ class IndexFutureRecordHandler extends SecurityRecordHandlerBase {
     } else {
       if (quantityDelta >= 0) TradeSide.SHORT else TradeSide.COVER
     }
-    val price = getPrice(future, context.openDate.toLocalDate(), values)
+    val price = getPrice(future, context.asOfDate, values)
     
     val srcTransaction = new SourceTransaction(
       context.accountId,

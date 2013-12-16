@@ -1,19 +1,19 @@
 package com.datayes.invest.pms.logic.positionyield.impl.generic
 
 import java.lang.{Long=> JLong}
-import com.datayes.invest.pms.dao.security.EquityDividendDao
+import com.datayes.invest.pms.dao.security.{SecurityDao, EquityDividendDao}
 import com.datayes.invest.pms.dao.account.{PositionValuationHistDao, CarryingValueHistDao, SecurityTransactionDao}
 import com.datayes.invest.pms.entity.account._
-import com.datayes.invest.pms.entity.security.EquityDividend
+import com.datayes.invest.pms.entity.security.{Equity, Future, Security, EquityDividend}
 import com.datayes.invest.pms.dbtype.{LedgerType, TradeSide}
 import javax.inject.Inject
 import org.joda.time.LocalDate
 import scala.collection.JavaConversions._
 import com.datayes.invest.pms.service.calendar.CalendarService
 import com.datayes.invest.pms.service.marketdata.MarketDataService
-import com.datayes.invest.pms.util.DefaultValues
-import com.datayes.invest.pms.util.BigDecimalConstants
+import com.datayes.invest.pms.util.{FutureMultiplierHelper, DefaultValues, BigDecimalConstants}
 import com.datayes.invest.pms.logic.calculation.positionyield.SingleSecurityYieldCalc
+import com.datayes.invest.pms.logic.calculation.marketvalue.MarketValueCalc
 
 
 abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecurityYieldCalc {
@@ -25,6 +25,9 @@ abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecu
 
   @Inject
   private var marketDataService: MarketDataService = null
+
+  @Inject
+  private var securityDao: SecurityDao = null
 
   @Inject
   private var securityTransactionDao: SecurityTransactionDao = null
@@ -129,7 +132,22 @@ abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecu
       val marketDataOpt = marketDataMap.get(securityId)
       if ( marketDataOpt.nonEmpty ) {
         val price = marketDataOpt.get.getPrice
-        val tradeEarn = calculateSingleTradeEarn(buyTransaction, sellTransaction, price)
+        val buyQuantity = buyTransaction._1
+        val sellQuantity = sellTransaction._1
+        val buyValue =  buyTransaction._2
+        val sellValue = sellTransaction._2
+
+        val security = securityDao.findById(securityId)
+        val buySellDiff = security match {
+          case equity: Equity =>
+            MarketValueCalc.calculateEquityValue(price, buyQuantity - sellQuantity)
+
+          case future: Future =>
+            val ratio = FutureMultiplierHelper.getRatio(future.getContractMultiplier())
+            MarketValueCalc.calculateFutureValue(price, buyQuantity - sellQuantity, ratio)
+        }
+
+        val tradeEarn = calculateSingleTradeEarn(buyValue, sellValue, buySellDiff)
         (positionId, tradeEarn)
       }
       else {
@@ -146,24 +164,58 @@ abstract class GenericSecurityYieldCalc extends GenericYieldCalc with SingleSecu
     *
    */
   protected def calculateInOutCamt(positions: List[Position], asOfDate: LocalDate, tradeSide: TradeSide): Map[Long, (BigDecimal, BigDecimal)] = {
+    val accountId = positions(0).getAccountId
     val securityIds = positions.map(position => position.asInstanceOf[SecurityPosition].getSecurityId)
 
-    val transactionList = securityTransactionDao.findTransactionsExecDateTradeSide(securityIds, asOfDate, tradeSide).toList
+    val transactionList = securityTransactionDao.findTransactionsExecDateTradeSide(accountId, securityIds, asOfDate, tradeSide).toList
     val transactionMap = transactionList.groupBy(_.getSecurityId)
 
     positions.map(position => {
       val positionId: Long = position.getId
       val securityId: Long = position.asInstanceOf[SecurityPosition].getSecurityId
+      val security  = securityDao.findById(securityId)
 
-      val oneSecTransactionsOpt = transactionMap.get(securityId)
+      val doTransactionFlag = security match {
+        case equity: Equity => true
+        case future: Future => {
+          if ( TradeSide.BUY == tradeSide || TradeSide.SELL == tradeSide ) {   // test if it is long future
+            if ( LedgerType.FUTURE_LONG == LedgerType.fromDbValue(position.getLedgerId) ) {
+              true
+            }
+            else {
+              false
+            }
+          }
+          else {                         // is short future
+            if ( LedgerType.FUTURE_SHORT == LedgerType.fromDbValue(position.getLedgerId) ) {
+              true
+            }
+            else {
+              false
+            }
+          }
+        }
+      }
 
-      val quantitySum = if ( oneSecTransactionsOpt.nonEmpty ) {
-        sumSingleSecurityTransaction(oneSecTransactionsOpt.get)
+      if ( doTransactionFlag ) {
+        val ratio = security match {
+          case equity: Equity => None
+          case future: Future => Some(BigDecimal(FutureMultiplierHelper.getRatio(future.getContractMultiplier())))
+        }
+
+        val oneSecTransactionsOpt = transactionMap.get(securityId)
+
+        val quantitySum = if ( oneSecTransactionsOpt.nonEmpty ) {
+          sumSingleSecurityTransaction(oneSecTransactionsOpt.get, LedgerType.fromDbValue(position.getLedgerId), ratio)
+        }
+        else {
+          (BigDecimalConstants.ZERO, BigDecimalConstants.ZERO)
+        }
+        (positionId, quantitySum)
       }
       else {
-        (BigDecimalConstants.ZERO,BigDecimalConstants.ZERO)
+        (positionId, (BigDecimalConstants.ZERO, BigDecimalConstants.ZERO))
       }
-      (positionId, quantitySum)
     }).toMap
   }
 

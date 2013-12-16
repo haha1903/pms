@@ -50,11 +50,7 @@ abstract class CommonAssetLoader(position: SecurityPosition, asOfDate: LocalDate
       asset.marketPrice = tranObj.positionValuationHist.getMarketPrice()
       asset.marketValue = tranObj.positionValuationHist.getValueAmount()
     }
-    
-    // floatPnL
-    if (asset.marketValue != null && asset.holdingValue != null) {
-      asset.floatPnL = asset.marketValue - asset.holdingValue
-    }
+
     
   }
 }

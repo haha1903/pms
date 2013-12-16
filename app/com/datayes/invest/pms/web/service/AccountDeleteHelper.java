@@ -1,22 +1,14 @@
 package com.datayes.invest.pms.web.service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import com.datayes.invest.pms.dao.account.*;
+import com.datayes.invest.pms.entity.account.Order;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.datayes.invest.pms.dao.account.AccountDao;
-import com.datayes.invest.pms.dao.account.AccountValuationHistDao;
-import com.datayes.invest.pms.dao.account.AccountValuationInitDao;
-import com.datayes.invest.pms.dao.account.CarryingValueHistDao;
-import com.datayes.invest.pms.dao.account.FeeDao;
-import com.datayes.invest.pms.dao.account.PositionDao;
-import com.datayes.invest.pms.dao.account.PositionHistDao;
-import com.datayes.invest.pms.dao.account.PositionInitDao;
-import com.datayes.invest.pms.dao.account.PositionValuationHistDao;
-import com.datayes.invest.pms.dao.account.PositionYieldDao;
-import com.datayes.invest.pms.dao.account.SourceTransactionDao;
-import com.datayes.invest.pms.dao.account.TransactionDao;
 import com.datayes.invest.pms.entity.account.Account;
 import com.datayes.invest.pms.entity.account.Position;
 import com.datayes.invest.pms.entity.account.PositionInit;
@@ -40,6 +32,12 @@ public class AccountDeleteHelper {
 
     @Inject
     private FeeDao feeDao;
+
+    @Inject
+    private OrderDao orderDao;
+
+    @Inject
+    private OrderBasketDao orderBasketDao;
 
     @Inject
     private PositionDao positionDao;
@@ -76,6 +74,7 @@ public class AccountDeleteHelper {
         LOGGER.info("Start to deleting account #" + accountId);
         deleteTransactions(accountId);
         deleteSourceTransactions(accountId);
+        deleteOrdersAndOrderBaskets(accountId);
         deleteCarryingValueHists(accountId);
         deletePositionYield(accountId);
         deletePositions(accountId);
@@ -84,6 +83,19 @@ public class AccountDeleteHelper {
         deleteFees(accountId);
         accountDao.delete(account);
         LOGGER.info("Account #" + accountId + " deleted");
+    }
+
+    private void deleteOrdersAndOrderBaskets(Long accountId) {
+        // delete orders
+        List<Order> orders = orderDao.findByAccountId(accountId);
+        Set<Long> basketIds = new HashSet<>();
+        for (Order ord : orders) {
+            basketIds.add(ord.getBasketId());
+            orderDao.delete(ord);
+        }
+
+        // delete order baskets
+
     }
 
     private void deletePositionYield(Long accountId) {

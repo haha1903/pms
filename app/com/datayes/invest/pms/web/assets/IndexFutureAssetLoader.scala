@@ -50,6 +50,12 @@ class IndexFutureAssetLoader(position: SecurityPosition, asOfDate: LocalDate, tr
     } else {
       logger.warn("Position {} should be an index future position but has incompatible ledger {}", position.getId(), ledger)
     }
+
+    // floatPnL
+    if (asset.marketValue != null && asset.holdingValue != null) {
+      val direction = if (futureAsset.longShort == LongShort.SHORT) -1 else 1
+      asset.floatPnL = (asset.marketValue - asset.holdingValue) * direction
+    }
     
     // margin occupied
     val security = tranObj.securityDao.findById(position.getSecurityId())

@@ -12,6 +12,9 @@ GET     /saml/*path                                          @controllers.Applic
 # Common
 GET     /common/industries                                   @controllers.CommonController.industries
 GET     /common/marketIndexes                                @controllers.CommonController.marketIndexes
+GET     /common/calendar/isTradeDay                          @controllers.CommonController.isTradeDay
+GET     /common/calendar/nextTradeDay                        @controllers.CommonController.nextTradeDay
+GET     /common/calendar/previousTradeDay                    @controllers.CommonController.previousTradeDay
 
 # Account
 GET     /account/list                                        @controllers.AccountController.list

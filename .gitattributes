@@ -189,6 +189,7 @@ app/com/datayes/invest/pms/logic/accountinit/PositionSourceData.scala -text
 app/com/datayes/invest/pms/logic/accountinit/RateSourceData.scala -text
 app/com/datayes/invest/pms/logic/calculation/accountvaluation/AccountValuationCalc.scala -text
 app/com/datayes/invest/pms/logic/calculation/assetyield/GenericAssetYieldCalc.scala -text
+app/com/datayes/invest/pms/logic/calculation/marketvalue/MarketValueCalc.scala -text
 app/com/datayes/invest/pms/logic/calculation/positionyield/SingleCashYieldCalc.scala -text
 app/com/datayes/invest/pms/logic/calculation/positionyield/SingleGenericYieldCalc.scala -text
 app/com/datayes/invest/pms/logic/calculation/positionyield/SingleSecurityYieldCalc.scala -text
